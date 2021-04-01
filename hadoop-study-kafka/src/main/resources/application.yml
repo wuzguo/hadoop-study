@@ -1,0 +1,13 @@
+server:
+  port: 6800
+
+spring:
+  kafka:
+    bootstrap-servers: 10.50.2.220:9092
+    consumer:
+      group-id: hadoop-study
+      auto-offset-reset: latest
+      enable-auto-commit: false
+    listener:
+      ack-mode: record
+      concurrency: 2
