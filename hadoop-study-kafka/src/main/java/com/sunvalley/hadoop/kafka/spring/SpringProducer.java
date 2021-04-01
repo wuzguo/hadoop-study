@@ -19,6 +19,6 @@ public class SpringProducer {
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     public void sendMessage(String topicName, Object message) {
-        kafkaTemplate.send(topicName, message);
+        kafkaTemplate.send(topicName, message).addCallback(result -> System.out.println("发送成功"), ex -> System.out.println(ex.getMessage()));
     }
 }

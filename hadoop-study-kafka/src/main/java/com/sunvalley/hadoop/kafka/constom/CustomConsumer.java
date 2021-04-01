@@ -14,16 +14,16 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
  * @date 2021/4/1 10:02
  */
 
-public class ConstomConsumer {
+public class CustomConsumer {
 
     public static void main(String[] args) {
         Properties props = new Properties();
         props.put("bootstrap.servers", "10.50.2.220:9092");
         // 消费者组，只要group.id相同，就属于同一个消费者组
-        props.put("group.id", "test");
+        props.put("group.id", "customer");
         // 自动提交offset
-        props.put("enable.auto.commit", "false");
-
+        props.put("enable.auto.commit", "true");
+        props.put("auto.commit.interval.ms", "1000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
