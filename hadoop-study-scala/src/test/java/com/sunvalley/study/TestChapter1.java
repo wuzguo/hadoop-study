@@ -15,7 +15,6 @@ import org.junit.Test;
 @FixMethodOrder
 public class TestChapter1 {
 
-
     private BigInteger factorial2(BigInteger x) {
         return x.equals(BigInteger.ZERO) ? BigInteger.ONE : x.multiply(factorial2(x.subtract(BigInteger.ONE)));
     }

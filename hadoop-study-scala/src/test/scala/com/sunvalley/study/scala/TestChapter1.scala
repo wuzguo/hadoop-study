@@ -1,10 +1,11 @@
 package com.sunvalley.study.scala
 
-import org.junit.Test
+import org.junit.{FixMethodOrder, Test}
 
 import java.math.BigInteger
 
 
+@FixMethodOrder
 class TestChapter1 {
 
     @Test
@@ -23,7 +24,6 @@ class TestChapter1 {
         println(factorial(100))
     }
 
-
     def factorial2(x: BigInteger): BigInteger =
         if (x == BigInteger.ZERO)
             BigInteger.ONE
@@ -35,5 +35,17 @@ class TestChapter1 {
         println(factorial2(BigInteger.valueOf(100)))
     }
 
-    
+    @Test
+    def testMyClass(): Unit = {
+        println(new MyClass(1, "Tomcat"))
+    }
+
+    def hasUpper(name: String): Boolean  = {
+        name.exists(_.isUpper)
+    }
+
+    @Test
+    def TestHasUpper (): Unit = {
+        println(hasUpper("Tomcat"))
+    }
 }
