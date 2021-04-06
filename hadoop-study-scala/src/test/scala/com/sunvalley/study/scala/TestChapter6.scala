@@ -6,6 +6,7 @@ import org.junit.{FixMethodOrder, Test}
 @FixMethodOrder
 class TestChapter6 {
 
+    implicit def intToRational(x: Int): Rational = new Rational(x)
 
     @Test
     def testRational(): Unit = {
@@ -20,5 +21,25 @@ class TestChapter6 {
         println(oneHalf * twoThirds)
 
         println(oneHalf + twoThirds)
+
+        val r = new Rational(3, 4)
+
+        // 3/2
+        println(r * 2)
+
+        // overloaded method * with alternatives:
+        //  (x: Double)Double <and>
+        //  (x: Float)Float <and>
+        //  (x: Long)Long <and>
+        //  (x: Int)Int <and>
+        //  (x: Char)Int <and>
+        //  (x: Short)Int <and>
+        //  (x: Byte)Int
+        // cannot be applied to (com.sunvalley.study.scala.Rational)
+        //        println(2 * r)
+
+        //  implicit def intToRational(x: Int) = new Rational(x)
+        // 增加这行隐式转换，自动将整数转换为Rational
+        println(2 * r)
     }
 }

@@ -5,26 +5,48 @@ class Rational(n: Int, d: Int) {
 
     private val g = gcd(n.abs, d.abs)
 
-    val number: Int = n / g
-    val demon: Int = d / g
+    val numer: Int = n / g
+    val denom: Int = d / g
 
-    println("created " + number + "/" + demon)
+    println("created " + numer + "/" + denom)
 
-    override def toString = number + "/" + demon
+    override def toString = numer + "/" + denom
 
     def this(n: Int) = this(n, 1)
 
     def add(that: Rational): Rational = {
-        new Rational(number * that.demon + that.number * demon, demon * that.demon)
+        new Rational(numer * that.denom + that.numer * denom, denom * that.denom)
     }
 
     def +(that: Rational): Rational = {
-        new Rational(number * that.demon + that.number * demon, demon * that.demon)
+        new Rational(numer * that.denom + that.numer * denom, denom * that.denom)
     }
 
-    def * (that: Rational): Rational = new Rational(number * that.number, demon * that.demon)
+    def +(i: Int): Rational =
+        new Rational(numer + i * denom, denom)
 
-    def lessThan(that: Rational) = this.number * that.demon < that.number * this.demon
+    def -(that: Rational): Rational =
+        new Rational(
+            numer * that.denom - that.numer * denom,
+            denom * that.denom
+        )
+
+    def -(i: Int): Rational =
+        new Rational(numer - i * denom, denom)
+
+    def *(that: Rational): Rational =
+        new Rational(numer * that.numer, denom * that.denom)
+
+    def *(i: Int): Rational =
+        new Rational(numer * i, denom)
+
+    def /(that: Rational): Rational =
+        new Rational(numer * that.denom, denom * that.numer)
+
+    def /(i: Int): Rational =
+        new Rational(numer, denom * i)
+
+    def lessThan(that: Rational) = this.numer * that.denom < that.numer * this.denom
 
     def max(that: Rational) = if (this.lessThan(that)) that else this
 
