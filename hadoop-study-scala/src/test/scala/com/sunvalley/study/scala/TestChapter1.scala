@@ -4,7 +4,6 @@ import org.junit.{FixMethodOrder, Test}
 
 import java.math.BigInteger
 import scala.collection.immutable.HashMap
-import scala.collection.mutable
 
 
 @FixMethodOrder
@@ -42,12 +41,12 @@ class TestChapter1 {
         println(new MyClass(1, "Tomcat"))
     }
 
-    def hasUpper(name: String): Boolean  = {
+    def hasUpper(name: String): Boolean = {
         name.exists(_.isUpper)
     }
 
     @Test
-    def testHasUpper (): Unit = {
+    def testHasUpper(): Unit = {
         println(hasUpper("Tomcat"))
     }
 

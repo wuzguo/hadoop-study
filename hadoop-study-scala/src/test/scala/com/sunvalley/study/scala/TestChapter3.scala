@@ -3,6 +3,8 @@ package com.sunvalley.study.scala
 import org.junit.{FixMethodOrder, Test}
 
 import java.math.BigInteger
+import scala.collection.mutable
+import scala.io.Source
 
 
 @FixMethodOrder
@@ -130,7 +132,7 @@ class TestChapter3 {
         println(thrill.mkString(", "))
 
         // List(until)
-        println(thrill.filterNot( s => s.length == 4))
+        println(thrill.filterNot(s => s.length == 4))
 
         // List(until, fill, Will)
         println(thrill.reverse)
@@ -140,5 +142,63 @@ class TestChapter3 {
 
         // List(fill, until)
         println(thrill.tail)
+    }
+
+    @Test
+    def testTuple(): Unit = {
+        val pair = (99, "Luftballons")
+        println(pair.getClass)
+        println(pair._1)
+        println(pair._2)
+
+        val pair2 = ('u', 'r', "the", 1, 4, "me")
+        println(pair2._6)
+        println(pair2.toString())
+
+        var jetSet = Set("Boeing", "Airbus")
+        jetSet += "Lear"
+        println(jetSet.contains("Cessna"))
+        println(jetSet.getClass)
+
+
+        val treasureMap = mutable.Map[Int, String]()
+        treasureMap += (1 -> "Go to island.")
+        treasureMap += (2 -> "Find big X on ground.")
+        treasureMap += (3 -> "Dig.")
+        println(treasureMap(2))
+
+    }
+
+    def formatArgs(args: Array[String]) = args.mkString("\n")
+
+    @Test
+    def testFormatArgs(): Unit = {
+        val res = formatArgs(Array("one", "two", "three"))
+        println(res)
+        assert(res == "one\ntwo\nthree")
+    }
+
+    def widthOfLength(s: String) = s.length.toString.length
+
+
+    @Test
+    def testSource() = {
+        val  args: Array[String] = Array("D:\\logs\\test.log")
+        if (args.length > 0) {
+            val lines = Source.fromFile(args(0)).getLines().toList
+
+            val longestLine = lines.reduceLeft(
+                (a, b) => if (a.length > b.length) a else b
+            )
+            val maxWidth = widthOfLength(longestLine)
+
+            for (line <- lines) {
+                val numSpaces = maxWidth - widthOfLength(line)
+                val padding = " " * numSpaces
+                println(padding + line.length + " | " + line)
+            }
+        }
+        else
+            Console.err.println("Please enter filename")
     }
 }
