@@ -3,6 +3,8 @@ package com.sunvalley.study.scala
 import org.junit.{FixMethodOrder, Test}
 
 import java.math.BigInteger
+import scala.collection.immutable.HashMap
+import scala.collection.mutable
 
 
 @FixMethodOrder
@@ -45,7 +47,15 @@ class TestChapter1 {
     }
 
     @Test
-    def TestHasUpper (): Unit = {
+    def testHasUpper (): Unit = {
         println(hasUpper("Tomcat"))
+    }
+
+    @Test
+    def testMap(): Unit = {
+        var x: HashMap[Int, String] = new HashMap[Int, String]();
+        println(x)
+        val xl = new HashMap[Int, String]()
+        println(xl)
     }
 }
