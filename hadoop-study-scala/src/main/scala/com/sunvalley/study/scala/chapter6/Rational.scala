@@ -1,6 +1,6 @@
 package com.sunvalley.study.scala.chapter6
 
-class Rational(n: Int, d: Int) {
+class Rational(n: Int, d: Int) extends Ordered[Rational] {
     require(d != 0)
 
     private val g = gcd(n.abs, d.abs)
@@ -52,4 +52,5 @@ class Rational(n: Int, d: Int) {
 
     private def gcd(a: Int, b: Int): Int = if (b == 0) a else gcd(b, a % b)
 
+    override def compare(that: Rational): Int = (this.numer * that.denom) - (that.numer * this.denom)
 }
