@@ -1,4 +1,4 @@
-package com.sunvalley.study;
+package com.sunvalley.study.chapter1;
 
 /**
  * <B>说明：</B><BR>

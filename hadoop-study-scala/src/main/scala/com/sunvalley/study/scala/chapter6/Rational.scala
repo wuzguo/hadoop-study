@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala
+package com.sunvalley.study.scala.chapter6
 
 class Rational(n: Int, d: Int) {
     require(d != 0)

@@ -1,6 +1,6 @@
 package com.sunvalley.study.scala
 
-import com.sunvalley.study.scala.ChecksumAccumulator.{ChecksumAccumulator, calculate}
+import com.sunvalley.study.scala.chapter4.ChecksumAccumulator.{ChecksumAccumulator, calculate}
 import org.junit.{FixMethodOrder, Test}
 
 

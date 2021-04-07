@@ -1,5 +1,6 @@
 package com.sunvalley.study.scala
 
+import com.sunvalley.study.scala.chapter2.MyClass
 import org.junit.{FixMethodOrder, Test}
 
 import java.math.BigInteger

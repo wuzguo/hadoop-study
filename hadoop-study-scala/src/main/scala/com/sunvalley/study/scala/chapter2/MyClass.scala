@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala
+package com.sunvalley.study.scala.chapter2
 
 class MyClass(index: Int, name: String) {
 

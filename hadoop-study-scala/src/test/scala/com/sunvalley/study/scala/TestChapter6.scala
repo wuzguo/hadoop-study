@@ -1,5 +1,6 @@
 package com.sunvalley.study.scala
 
+import com.sunvalley.study.scala.chapter6.Rational
 import org.junit.{FixMethodOrder, Test}
 
 
@@ -35,7 +36,7 @@ class TestChapter6 {
         //  (x: Char)Int <and>
         //  (x: Short)Int <and>
         //  (x: Byte)Int
-        // cannot be applied to (com.sunvalley.study.scala.Rational)
+        // cannot be applied to (com.sunvalley.study.scala.chapter6.Rational)
         //        println(2 * r)
 
         //  implicit def intToRational(x: Int) = new Rational(x)

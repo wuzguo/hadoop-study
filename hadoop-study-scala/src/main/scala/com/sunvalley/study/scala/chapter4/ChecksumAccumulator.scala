@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala
+package com.sunvalley.study.scala.chapter4
 
 import scala.collection.mutable
 

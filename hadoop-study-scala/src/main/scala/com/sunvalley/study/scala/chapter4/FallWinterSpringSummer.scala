@@ -1,6 +1,4 @@
-package com.sunvalley.study.scala
-
-import com.sunvalley.study.scala.ChecksumAccumulator.calculate
+package com.sunvalley.study.scala.chapter4
 
 object FallWinterSpringSummer extends App {
 
