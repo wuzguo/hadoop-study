@@ -1,8 +1,8 @@
 package com.sunvalley.study.scala
 
 import com.sunvalley.study.scala.chapter18.BankAccount
-import com.sunvalley.study.scala.chapter18.MySimulation.{halfAdder, probe, run, Wire}
-import org.junit.Test
+import com.sunvalley.study.scala.chapter18.MySimulation.{Wire, halfAdder, probe, run}
+import org.junit.{FixMethodOrder, Test}
 
 /**
  * <B>说明：描述</B>
@@ -12,6 +12,7 @@ import org.junit.Test
  * @date 2021/4/8 15:59
  */
 
+@FixMethodOrder
 class TestChapter18 {
 
     @Test
