@@ -1,6 +1,7 @@
 package com.sunvalley.study.scala
 
 import com.sunvalley.study.scala.chapter18.BankAccount
+import com.sunvalley.study.scala.chapter18.MySimulation.{halfAdder, probe, run, Wire}
 import org.junit.Test
 
 /**
@@ -18,8 +19,22 @@ class TestChapter18 {
         val account = new BankAccount
         account deposit 100
         // true
-        println( account withdraw 80)
+        println(account withdraw 80)
         // false
         println(account withdraw 80)
+    }
+
+
+    @Test
+    def testMySimulation(): Unit = {
+        val input1, input2, sum, carry = new Wire
+        probe("sum", sum)
+        probe("carry", carry)
+        halfAdder(input1, input2, sum, carry)
+
+        input1 setSignal true
+        run()
+        input2 setSignal true
+        run()
     }
 }
