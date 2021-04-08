@@ -1,8 +1,9 @@
 package com.sunvalley.study;
 
-import java.math.BigInteger;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+
+import java.math.BigInteger;
 
 /**
  * <B>说明：</B><BR>

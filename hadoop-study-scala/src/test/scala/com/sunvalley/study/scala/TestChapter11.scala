@@ -1,11 +1,10 @@
 package com.sunvalley.study.scala
 
-import com.sunvalley.study.scala.chapter11._
+import com.sunvalley.study.scala.chapter11.{Anchor, Dollars, Html, Style, SwissFrancs, Text}
 import org.junit.{FixMethodOrder, Test}
 
 @FixMethodOrder
 class TestChapter11 {
-
 
     @Test
     def testHierarchy(): Unit = {
@@ -43,12 +42,7 @@ class TestChapter11 {
     @Test
     def testTitle(): Unit = {
         def title(text: Text, anchor: Anchor, style: Style): Html =
-            new Html(
-                s"<a id='${anchor.value}'>" +
-                  s"<h1 class='${style.value}'>" +
-                  text.value +
-                  "</h1></a>"
-            )
+            new Html(s"<a id='${anchor.value}'><h1 class='${style.value}'>" + text.value + "</h1></a>")
 
         val html = title(new Text("Value Classes"), new Anchor("chap:vcls"), new Style("bold"))
         println(html.value)

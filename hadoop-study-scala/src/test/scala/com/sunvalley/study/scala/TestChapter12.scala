@@ -60,7 +60,7 @@ class TestChapter12 {
         // 2
         println(queue2.get())
 
-        var queue3 = new BasicIntQueue with Incrementing with Doubling
+        val queue3 = new BasicIntQueue with Incrementing with Doubling
         println(queue3)
         queue3.put(48)
         println(queue3.get())
