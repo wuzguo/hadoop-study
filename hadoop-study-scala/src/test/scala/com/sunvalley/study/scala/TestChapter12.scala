@@ -1,6 +1,6 @@
 package com.sunvalley.study.scala
 
-import com.sunvalley.study.scala.chapter12.{BasicIntQueue, Doubling, Filtering, Frog, Incrementing, Philosophical, Point, Rectangle}
+import com.sunvalley.study.scala.chapter12._
 import com.sunvalley.study.scala.chapter6.Rational
 import org.junit.{FixMethodOrder, Test}
 
@@ -52,7 +52,9 @@ class TestChapter12 {
         // 叠加特质，越靠右越先起作用
         val queue2 = new BasicIntQueue with Incrementing with Filtering
         println(queue2)
-        queue2.put(-1); queue2.put(0); queue2.put(1)
+        queue2.put(-1);
+        queue2.put(0);
+        queue2.put(1)
         // 1
         println(queue2.get())
         // 2
