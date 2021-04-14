@@ -4,6 +4,7 @@
 
 本项目包含以下模块：
 
+- hadoop-study-docs： 学习过程中的笔记。
 - hadoop-study-kafka： kafka 学习相关代码。
 - hadoop-study-scala： scala 语言学习的代码，这里面的代码包含书籍<<Scala编程 第三版>> 的源代码。
 
