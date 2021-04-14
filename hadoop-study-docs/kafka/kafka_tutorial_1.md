@@ -1,6 +1,6 @@
 ### Kafka工作流程
 
-![](./images/202104/5.png)
+![](../images/202104/5.png)
 
 Kafka中消息是以topic进行分类的，生产者生产消息，消费者消费消息，都是面向topic的。
 
@@ -8,7 +8,7 @@ topic是逻辑上的概念，而partition是物理上的概念，每个partition
 
 ### Kafka文件存储机制
 
-![](./images/202104/6.png)
+![](../images/202104/6.png)
 
 
 
@@ -16,13 +16,13 @@ topic是逻辑上的概念，而partition是物理上的概念，每个partition
 
 假如top-events这个topic有三个分区，则其对应的文件夹为：top-events-0、top-events-1、top-events-2。
 
-![](./images/202104/7.png)
+![](../images/202104/7.png)
 
 
 
 index和log文件以当前segment的第一条消息的offset命名。下图为index文件和log文件的结构示意图。
 
-![](./images/202104/8.png)
+![](../images/202104/8.png)
 
 “.index”文件存储大量的索引信息，“.log”文件存储大量的数据，索引文件中的元数据指向对应数据文件中message的物理偏移地址。
 
@@ -40,7 +40,7 @@ index和log文件以当前segment的第一条消息的offset命名。下图为in
 
 我们需要将producer发送的数据封装成一个ProducerRecord对象。
 
-![](./images/202104/9.png)
+![](../images/202104/9.png)
 
 - 指明 partition 的情况下，直接将指明的值直接作为 partiton 值。
 - 没有指明 partition 值但有 key 的情况下，将 key 的 hash 值与 topic 的 partition 数进行取余得到 partition 值。
@@ -50,7 +50,7 @@ index和log文件以当前segment的第一条消息的offset命名。下图为in
 
 为保证producer发送的数据，能可靠的发送到指定的topic，topic的每个partition收到producer发送的数据后，都需要向producer发送ack（acknowledgement确认收到），如果producer收到ack，就会进行下一轮的发送，否则重新发送数据。
 
-![](./images/202104/10.png)
+![](../images/202104/10.png)
 
 #### 副本数据同步策略
 
@@ -83,11 +83,11 @@ acks参数配置：
 
 1：producer等待broker的ack，partition的leader落盘成功后返回ack，如果在follower同步成功之前leader故障，那么将会丢失数据。
 
-![](./images/202104/11.png)
+![](../images/202104/11.png)
 
 -1（all）：producer等待broker的ack，partition的leader和follower全部落盘成功后才返回ack。但是如果在follower同步完成后，broker发送ack之前，leader发生故障，那么会造成数据重复。
 
-![](./images/202104/12.png)
+![](../images/202104/12.png)
 
 
 
@@ -97,7 +97,7 @@ LEO：每个副本的最后一个offset。
 
 HW：一个分区的所有副本中最小的LEO。
 
-![](./images/202104/13.png)
+![](../images/202104/13.png)
 
 
 
@@ -136,4 +136,4 @@ Kafka有两种分配策略，一是roundrobin，一是range。
 由于consumer在消费过程中可能会出现断电宕机等故障，consumer恢复后，需要从故障前的位置的继续消费，所以consumer需要实时记录自己消费到了哪个offset，以便故障恢复后继续消费。
 Kafka 0.9版本之前，consumer默认将offset保存在Zookeeper中，从0.9版本开始，consumer默认将offset保存在Kafka一个内置的topic中，该topic为__consumer_offsets。
 
-![](./images/202104/14.png)
+![](../images/202104/14.png)

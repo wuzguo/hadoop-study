@@ -8,7 +8,7 @@ hadoop下载地址：[https://downloads.apache.org/hadoop/common/hadoop-2.9.2/ha
 
 使用Xftp、SecureCRT等工具将hadoop安装包上传到服务器。
 
-![](./images/202104_01/1.png)
+![](../images/202104_01/1.png)
 
 #### 3. 解压安装包
 

@@ -4,7 +4,7 @@
 
 Kafka的Producer发送消息采用的是异步发送的方式。在消息发送的过程中，涉及到了两个线程——main线程和Sender线程，以及一个线程共享变量——RecordAccumulator。main线程将消息发送给RecordAccumulator，Sender线程不断从RecordAccumulator中拉取消息发送到Kafka broker。
 
-![](./images/202104/15.png)
+![](../images/202104/15.png)
 
 相关参数：
 

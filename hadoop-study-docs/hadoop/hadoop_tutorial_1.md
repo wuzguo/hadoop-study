@@ -118,7 +118,7 @@ export JAVA_HOME=/opt/module/jdk1.8.0_261
 
 http://hadoop001:50070/dfshealth.html#tab-overview
 
-![](./images/202104_01/3.png)
+![](../images/202104_01/3.png)
 
 - 查看产生的Log日志
 
@@ -195,7 +195,7 @@ yarn	1
 
 - 浏览器查看
 
-![](./images/202104_01/4.png)
+![](../images/202104_01/4.png)
 
 ##### 6. 使用YARN运行MapReduce程序
 
@@ -274,7 +274,7 @@ export JAVA_HOME=/opt/module/jdk1.8.0_261
 
 http://hadoop101:8088/cluster
 
-![](./images/202104_01/5.png)
+![](../images/202104_01/5.png)
 
 - 删除文件系统上的output文件
 
@@ -304,7 +304,7 @@ yarn	1
 
 - 浏览器查看运行结果
 
-![](./images/202104_01/6.png)
+![](../images/202104_01/6.png)
 
 ##### 10. 配置历史服务器
 
@@ -349,7 +349,7 @@ yarn	1
 
 http://hadoop101:19888/jobhistory
 
-![](./images/202104_01/7.png)
+![](../images/202104_01/7.png)
 
 ##### 11. 配置日志的聚集
 
@@ -422,9 +422,9 @@ starting historyserver, logging to /opt/module/hadoop-2.9.2/logs/mapred-zak-hist
 
     http://hadoop001:19888/jobhistory
 
-![](./images/202104_01/8.png)
+![](../images/202104_01/8.png)
 
-![](./images/202104_01/9.png)
+![](../images/202104_01/9.png)
 
 ##### 12. 配置文件说明
 
