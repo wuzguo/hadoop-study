@@ -441,10 +441,10 @@ Hadoop配置文件分两类：默认配置文件和自定义配置文件，只�
 
 - 自定义配置文件
 
-| 文件名称        | 文件存放位置 | 说明            |
-| --------------- | ------------ | --------------- |
-| core-site.xml   | /etc/hadoop  | 基础配置        |
-| hdfs-site.xml   | /etc/hadoop  | HDFS的配置      |
-| yarn-site.xml   | /etc/hadoop  | YARN的配置      |
-| mapred-site.xml | /etc/hadoop  | MapReduce的配置 |
+| 文件名称        | 文件存放位置                | 说明            |
+| --------------- | --------------------------- | --------------- |
+| core-site.xml   | /etc/hadoop/core-site.xml   | 基础配置        |
+| hdfs-site.xml   | /etc/hadoop/hdfs-site.xml   | HDFS的配置      |
+| yarn-site.xml   | /etc/hadoop/yarn-site.xml   | YARN的配置      |
+| mapred-site.xml | /etc/hadoop/mapred-site.xml | MapReduce的配置 |
 
