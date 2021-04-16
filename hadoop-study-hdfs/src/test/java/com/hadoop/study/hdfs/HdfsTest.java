@@ -22,6 +22,7 @@ public class HdfsTest {
     public void crateFileSytem() throws URISyntaxException, IOException, InterruptedException {
         // 1 获取文件系统
         Configuration configuration = new Configuration();
+        configuration.set("dfs.replication", "2");
         fileSystem = FileSystem.get(new URI("hdfs://hadoop001:9000"), configuration, "zak");
     }
 
@@ -45,25 +46,13 @@ public class HdfsTest {
 
     @Test
     public void testCopyFromLocalFile() throws IOException, InterruptedException, URISyntaxException {
-        // 1 获取文件系统
-        Configuration configuration = new Configuration();
-        configuration.set("dfs.replication", "3");
-        FileSystem fs = FileSystem.get(new URI("hdfs://hadoop001:9000"), configuration, "zak");
         // 2 上传文件
-        fs.copyFromLocalFile(new Path("D:/docs/market.sql"), new Path("/user/market.sql"));
-        // 3 关闭资源
-        fs.close();
+        fileSystem.copyFromLocalFile(new Path("D:/docs/market.sql"), new Path("/user/market.sql"));
     }
 
     @Test
     public void testCopyToLocalFile() throws IOException, InterruptedException, URISyntaxException {
-        // 1 获取文件系统
-        Configuration configuration = new Configuration();
-        configuration.set("dfs.replication", "2");
-        FileSystem fs = FileSystem.get(new URI("hdfs://hadoop001:9000"), configuration, "zak");
-        // 2 上传文件
-        fs.copyToLocalFile(new Path("/user/input/1.txt"), new Path("D:/docs/1.txt"));
-        // 3 关闭资源
-        fs.close();
+        // 2 下载文件
+        fileSystem.copyToLocalFile(new Path("/user/input/1.txt"), new Path("D:/docs/1.txt"));
     }
 }
