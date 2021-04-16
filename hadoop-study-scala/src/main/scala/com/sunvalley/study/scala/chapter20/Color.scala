@@ -9,7 +9,10 @@ package com.sunvalley.study.scala.chapter20
  */
 
 object Color extends Enumeration {
+
     val Red = Value
+
     val Green = Value
+
     val Blue = Value
 }

@@ -9,6 +9,7 @@ package com.sunvalley.study.scala.chapter20
  */
 
 abstract class Currency {
+
     val amount: Long
 
     def designation: String

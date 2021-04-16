@@ -9,6 +9,7 @@ package com.sunvalley.study.scala.chapter20
  */
 
 class Concrete extends Abstract {
+
     type T = String
 
     def transform(x: String) = x + x

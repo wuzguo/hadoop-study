@@ -9,23 +9,30 @@ package com.sunvalley.study.scala.chapter20
  */
 
 abstract class CurrencyZone {
+
     type Currency <: AbstractCurrency
+
     def make(x: Long): Currency
 
     abstract class AbstractCurrency {
 
         val amount: Long
+
         def designation: String
 
-        def + (that: Currency): Currency =
+        def +(that: Currency): Currency =
             make(this.amount + that.amount)
-        def * (x: Double): Currency =
+
+        def *(x: Double): Currency =
             make((this.amount * x).toLong)
-        def - (that: Currency): Currency =
+
+        def -(that: Currency): Currency =
             make(this.amount - that.amount)
-        def / (that: Double) =
+
+        def /(that: Double) =
             make((this.amount / that).toLong)
-        def / (that: Currency) =
+
+        def /(that: Currency) =
             this.amount.toDouble / that.amount
 
         def from(other: CurrencyZone#AbstractCurrency): Currency =

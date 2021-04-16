@@ -15,5 +15,6 @@ trait Abstract {
     def transform(x: T): T
 
     val initial: T
+
     var current: T
 }

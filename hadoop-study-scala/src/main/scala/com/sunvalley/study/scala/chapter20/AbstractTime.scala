@@ -9,6 +9,8 @@ package com.sunvalley.study.scala.chapter20
  */
 
 trait AbstractTime {
+
     var hour: Int
+
     var minute: Int
 }
