@@ -279,8 +279,8 @@ public static void main(String[] args) throws ExecutionException, InterruptedExc
 
     // 2 构建拦截链
     List<String> interceptors = Lists.newArrayList();
-    interceptors.add("com.sunvalley.hadoop.kafka.interceptor.TimeInterceptor");
-    interceptors.add("com.sunvalley.hadoop.kafka.interceptor.CounterInterceptor");
+    interceptors.add("TimeInterceptor");
+    interceptors.add("CounterInterceptor");
     props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, interceptors);
     // 发送消息
     try (KafkaProducer<String, String> producer = new KafkaProducer<>(props)) {

@@ -1,0 +1,9 @@
+-------------------------------------------------------------------------------
+Test set: com.hadoop.study.kafka.KafkaControllerTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 62.915 s <<< FAILURE! - in com.hadoop.study.kafka.KafkaControllerTests
+testSend  Time elapsed: 60.234 s  <<< ERROR!
+org.springframework.kafka.KafkaException: Send failed; nested exception is org.apache.kafka.common.errors.TimeoutException: Topic top-events not present in metadata after 60000 ms.
+	at com.hadoop.study.kafka.KafkaControllerTests.testSend(KafkaControllerTests.java:29)
+Caused by: org.apache.kafka.common.errors.TimeoutException: Topic top-events not present in metadata after 60000 ms.
+

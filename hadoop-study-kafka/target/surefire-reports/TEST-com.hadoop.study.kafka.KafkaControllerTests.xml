@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.hadoop.study.kafka.KafkaControllerTests" time="62.915" tests="1" errors="1" skipped="0" failures="0">
+  <properties>
+    <property name="sun.desktop" value="windows"/>
+    <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="java.specification.version" value="1.8"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="GBK"/>
+    <property name="java.class.path" value="D:\github\hadoop-study\hadoop-study-kafka\target\test-classes;D:\github\hadoop-study\hadoop-study-kafka\target\classes;D:\repository\org\apache\kafka\kafka-clients\2.5.0\kafka-clients-2.5.0.jar;D:\repository\com\github\luben\zstd-jni\1.4.4-7\zstd-jni-1.4.4-7.jar;D:\repository\org\lz4\lz4-java\1.7.1\lz4-java-1.7.1.jar;D:\repository\org\xerial\snappy\snappy-java\1.1.7.3\snappy-java-1.1.7.3.jar;D:\repository\org\slf4j\slf4j-api\1.7.30\slf4j-api-1.7.30.jar;D:\repository\org\springframework\kafka\spring-kafka\2.5.4.RELEASE\spring-kafka-2.5.4.RELEASE.jar;D:\repository\org\springframework\spring-context\5.2.8.RELEASE\spring-context-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-aop\5.2.8.RELEASE\spring-aop-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-beans\5.2.8.RELEASE\spring-beans-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-expression\5.2.8.RELEASE\spring-expression-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-messaging\5.2.8.RELEASE\spring-messaging-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-tx\5.2.8.RELEASE\spring-tx-5.2.8.RELEASE.jar;D:\repository\org\springframework\retry\spring-retry\1.2.5.RELEASE\spring-retry-1.2.5.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-starter-web\2.3.2.RELEASE\spring-boot-starter-web-2.3.2.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-starter\2.3.2.RELEASE\spring-boot-starter-2.3.2.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot\2.3.2.RELEASE\spring-boot-2.3.2.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-autoconfigure\2.3.2.RELEASE\spring-boot-autoconfigure-2.3.2.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-starter-logging\2.3.2.RELEASE\spring-boot-starter-logging-2.3.2.RELEASE.jar;D:\repository\ch\qos\logback\logback-classic\1.2.3\logback-classic-1.2.3.jar;D:\repository\ch\qos\logback\logback-core\1.2.3\logback-core-1.2.3.jar;D:\repository\org\apache\logging\log4j\log4j-to-slf4j\2.13.3\log4j-to-slf4j-2.13.3.jar;D:\repository\org\apache\logging\log4j\log4j-api\2.13.3\log4j-api-2.13.3.jar;D:\repository\org\slf4j\jul-to-slf4j\1.7.30\jul-to-slf4j-1.7.30.jar;D:\repository\jakarta\annotation\jakarta.annotation-api\1.3.5\jakarta.annotation-api-1.3.5.jar;D:\repository\org\yaml\snakeyaml\1.26\snakeyaml-1.26.jar;D:\repository\org\springframework\boot\spring-boot-starter-json\2.3.2.RELEASE\spring-boot-starter-json-2.3.2.RELEASE.jar;D:\repository\com\fasterxml\jackson\core\jackson-databind\2.11.1\jackson-databind-2.11.1.jar;D:\repository\com\fasterxml\jackson\core\jackson-annotations\2.11.1\jackson-annotations-2.11.1.jar;D:\repository\com\fasterxml\jackson\core\jackson-core\2.11.1\jackson-core-2.11.1.jar;D:\repository\com\fasterxml\jackson\datatype\jackson-datatype-jdk8\2.11.1\jackson-datatype-jdk8-2.11.1.jar;D:\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.11.1\jackson-datatype-jsr310-2.11.1.jar;D:\repository\com\fasterxml\jackson\module\jackson-module-parameter-names\2.11.1\jackson-module-parameter-names-2.11.1.jar;D:\repository\org\springframework\boot\spring-boot-starter-tomcat\2.3.2.RELEASE\spring-boot-starter-tomcat-2.3.2.RELEASE.jar;D:\repository\org\apache\tomcat\embed\tomcat-embed-core\9.0.37\tomcat-embed-core-9.0.37.jar;D:\repository\org\glassfish\jakarta.el\3.0.3\jakarta.el-3.0.3.jar;D:\repository\org\apache\tomcat\embed\tomcat-embed-websocket\9.0.37\tomcat-embed-websocket-9.0.37.jar;D:\repository\org\springframework\spring-web\5.2.8.RELEASE\spring-web-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-webmvc\5.2.8.RELEASE\spring-webmvc-5.2.8.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-starter-test\2.3.2.RELEASE\spring-boot-starter-test-2.3.2.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-test\2.3.2.RELEASE\spring-boot-test-2.3.2.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-test-autoconfigure\2.3.2.RELEASE\spring-boot-test-autoconfigure-2.3.2.RELEASE.jar;D:\repository\com\jayway\jsonpath\json-path\2.4.0\json-path-2.4.0.jar;D:\repository\net\minidev\json-smart\2.3\json-smart-2.3.jar;D:\repository\net\minidev\accessors-smart\1.2\accessors-smart-1.2.jar;D:\repository\org\ow2\asm\asm\5.0.4\asm-5.0.4.jar;D:\repository\jakarta\xml\bind\jakarta.xml.bind-api\2.3.3\jakarta.xml.bind-api-2.3.3.jar;D:\repository\jakarta\activation\jakarta.activation-api\1.2.2\jakarta.activation-api-1.2.2.jar;D:\repository\org\assertj\assertj-core\3.16.1\assertj-core-3.16.1.jar;D:\repository\org\hamcrest\hamcrest\2.2\hamcrest-2.2.jar;D:\repository\org\junit\jupiter\junit-jupiter\5.6.2\junit-jupiter-5.6.2.jar;D:\repository\org\junit\jupiter\junit-jupiter-api\5.6.2\junit-jupiter-api-5.6.2.jar;D:\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;D:\repository\org\junit\platform\junit-platform-commons\1.6.2\junit-platform-commons-1.6.2.jar;D:\repository\org\junit\jupiter\junit-jupiter-params\5.6.2\junit-jupiter-params-5.6.2.jar;D:\repository\org\junit\jupiter\junit-jupiter-engine\5.6.2\junit-jupiter-engine-5.6.2.jar;D:\repository\org\junit\vintage\junit-vintage-engine\5.6.2\junit-vintage-engine-5.6.2.jar;D:\repository\org\apiguardian\apiguardian-api\1.1.0\apiguardian-api-1.1.0.jar;D:\repository\org\junit\platform\junit-platform-engine\1.6.2\junit-platform-engine-1.6.2.jar;D:\repository\junit\junit\4.13\junit-4.13.jar;D:\repository\org\mockito\mockito-core\3.3.3\mockito-core-3.3.3.jar;D:\repository\net\bytebuddy\byte-buddy\1.10.13\byte-buddy-1.10.13.jar;D:\repository\net\bytebuddy\byte-buddy-agent\1.10.13\byte-buddy-agent-1.10.13.jar;D:\repository\org\objenesis\objenesis\2.6\objenesis-2.6.jar;D:\repository\org\mockito\mockito-junit-jupiter\3.3.3\mockito-junit-jupiter-3.3.3.jar;D:\repository\org\skyscreamer\jsonassert\1.5.0\jsonassert-1.5.0.jar;D:\repository\com\vaadin\external\google\android-json\0.0.20131108.vaadin1\android-json-0.0.20131108.vaadin1.jar;D:\repository\org\springframework\spring-core\5.2.8.RELEASE\spring-core-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-jcl\5.2.8.RELEASE\spring-jcl-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-test\5.2.8.RELEASE\spring-test-5.2.8.RELEASE.jar;D:\repository\org\xmlunit\xmlunit-core\2.7.0\xmlunit-core-2.7.0.jar;D:\repository\com\google\guava\guava\29.0-jre\guava-29.0-jre.jar;D:\repository\com\google\guava\failureaccess\1.0.1\failureaccess-1.0.1.jar;D:\repository\com\google\guava\listenablefuture\9999.0-empty-to-avoid-conflict-with-guava\listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar;D:\repository\com\google\code\findbugs\jsr305\3.0.2\jsr305-3.0.2.jar;D:\repository\org\checkerframework\checker-qual\2.11.1\checker-qual-2.11.1.jar;D:\repository\com\google\errorprone\error_prone_annotations\2.3.4\error_prone_annotations-2.3.4.jar;D:\repository\com\google\j2objc\j2objc-annotations\1.3\j2objc-annotations-1.3.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="user.timezone" value="Asia/Shanghai"/>
+    <property name="java.vm.specification.version" value="1.8"/>
+    <property name="os.name" value="Windows 10"/>
+    <property name="user.country" value="CN"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.boot.library.path" value="C:\Java\jdk1.8.0_261\jre\bin"/>
+    <property name="sun.java.command" value="C:\Users\admin\AppData\Local\Temp\surefire8552545622584852803\surefirebooter6393945991843230078.jar C:\Users\admin\AppData\Local\Temp\surefire8552545622584852803 2021-04-16T22-06-20_859-jvmRun1 surefire8403320884419729937tmp surefire_03456924018655565649tmp"/>
+    <property name="surefire.test.class.path" value="D:\github\hadoop-study\hadoop-study-kafka\target\test-classes;D:\github\hadoop-study\hadoop-study-kafka\target\classes;D:\repository\org\apache\kafka\kafka-clients\2.5.0\kafka-clients-2.5.0.jar;D:\repository\com\github\luben\zstd-jni\1.4.4-7\zstd-jni-1.4.4-7.jar;D:\repository\org\lz4\lz4-java\1.7.1\lz4-java-1.7.1.jar;D:\repository\org\xerial\snappy\snappy-java\1.1.7.3\snappy-java-1.1.7.3.jar;D:\repository\org\slf4j\slf4j-api\1.7.30\slf4j-api-1.7.30.jar;D:\repository\org\springframework\kafka\spring-kafka\2.5.4.RELEASE\spring-kafka-2.5.4.RELEASE.jar;D:\repository\org\springframework\spring-context\5.2.8.RELEASE\spring-context-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-aop\5.2.8.RELEASE\spring-aop-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-beans\5.2.8.RELEASE\spring-beans-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-expression\5.2.8.RELEASE\spring-expression-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-messaging\5.2.8.RELEASE\spring-messaging-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-tx\5.2.8.RELEASE\spring-tx-5.2.8.RELEASE.jar;D:\repository\org\springframework\retry\spring-retry\1.2.5.RELEASE\spring-retry-1.2.5.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-starter-web\2.3.2.RELEASE\spring-boot-starter-web-2.3.2.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-starter\2.3.2.RELEASE\spring-boot-starter-2.3.2.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot\2.3.2.RELEASE\spring-boot-2.3.2.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-autoconfigure\2.3.2.RELEASE\spring-boot-autoconfigure-2.3.2.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-starter-logging\2.3.2.RELEASE\spring-boot-starter-logging-2.3.2.RELEASE.jar;D:\repository\ch\qos\logback\logback-classic\1.2.3\logback-classic-1.2.3.jar;D:\repository\ch\qos\logback\logback-core\1.2.3\logback-core-1.2.3.jar;D:\repository\org\apache\logging\log4j\log4j-to-slf4j\2.13.3\log4j-to-slf4j-2.13.3.jar;D:\repository\org\apache\logging\log4j\log4j-api\2.13.3\log4j-api-2.13.3.jar;D:\repository\org\slf4j\jul-to-slf4j\1.7.30\jul-to-slf4j-1.7.30.jar;D:\repository\jakarta\annotation\jakarta.annotation-api\1.3.5\jakarta.annotation-api-1.3.5.jar;D:\repository\org\yaml\snakeyaml\1.26\snakeyaml-1.26.jar;D:\repository\org\springframework\boot\spring-boot-starter-json\2.3.2.RELEASE\spring-boot-starter-json-2.3.2.RELEASE.jar;D:\repository\com\fasterxml\jackson\core\jackson-databind\2.11.1\jackson-databind-2.11.1.jar;D:\repository\com\fasterxml\jackson\core\jackson-annotations\2.11.1\jackson-annotations-2.11.1.jar;D:\repository\com\fasterxml\jackson\core\jackson-core\2.11.1\jackson-core-2.11.1.jar;D:\repository\com\fasterxml\jackson\datatype\jackson-datatype-jdk8\2.11.1\jackson-datatype-jdk8-2.11.1.jar;D:\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.11.1\jackson-datatype-jsr310-2.11.1.jar;D:\repository\com\fasterxml\jackson\module\jackson-module-parameter-names\2.11.1\jackson-module-parameter-names-2.11.1.jar;D:\repository\org\springframework\boot\spring-boot-starter-tomcat\2.3.2.RELEASE\spring-boot-starter-tomcat-2.3.2.RELEASE.jar;D:\repository\org\apache\tomcat\embed\tomcat-embed-core\9.0.37\tomcat-embed-core-9.0.37.jar;D:\repository\org\glassfish\jakarta.el\3.0.3\jakarta.el-3.0.3.jar;D:\repository\org\apache\tomcat\embed\tomcat-embed-websocket\9.0.37\tomcat-embed-websocket-9.0.37.jar;D:\repository\org\springframework\spring-web\5.2.8.RELEASE\spring-web-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-webmvc\5.2.8.RELEASE\spring-webmvc-5.2.8.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-starter-test\2.3.2.RELEASE\spring-boot-starter-test-2.3.2.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-test\2.3.2.RELEASE\spring-boot-test-2.3.2.RELEASE.jar;D:\repository\org\springframework\boot\spring-boot-test-autoconfigure\2.3.2.RELEASE\spring-boot-test-autoconfigure-2.3.2.RELEASE.jar;D:\repository\com\jayway\jsonpath\json-path\2.4.0\json-path-2.4.0.jar;D:\repository\net\minidev\json-smart\2.3\json-smart-2.3.jar;D:\repository\net\minidev\accessors-smart\1.2\accessors-smart-1.2.jar;D:\repository\org\ow2\asm\asm\5.0.4\asm-5.0.4.jar;D:\repository\jakarta\xml\bind\jakarta.xml.bind-api\2.3.3\jakarta.xml.bind-api-2.3.3.jar;D:\repository\jakarta\activation\jakarta.activation-api\1.2.2\jakarta.activation-api-1.2.2.jar;D:\repository\org\assertj\assertj-core\3.16.1\assertj-core-3.16.1.jar;D:\repository\org\hamcrest\hamcrest\2.2\hamcrest-2.2.jar;D:\repository\org\junit\jupiter\junit-jupiter\5.6.2\junit-jupiter-5.6.2.jar;D:\repository\org\junit\jupiter\junit-jupiter-api\5.6.2\junit-jupiter-api-5.6.2.jar;D:\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;D:\repository\org\junit\platform\junit-platform-commons\1.6.2\junit-platform-commons-1.6.2.jar;D:\repository\org\junit\jupiter\junit-jupiter-params\5.6.2\junit-jupiter-params-5.6.2.jar;D:\repository\org\junit\jupiter\junit-jupiter-engine\5.6.2\junit-jupiter-engine-5.6.2.jar;D:\repository\org\junit\vintage\junit-vintage-engine\5.6.2\junit-vintage-engine-5.6.2.jar;D:\repository\org\apiguardian\apiguardian-api\1.1.0\apiguardian-api-1.1.0.jar;D:\repository\org\junit\platform\junit-platform-engine\1.6.2\junit-platform-engine-1.6.2.jar;D:\repository\junit\junit\4.13\junit-4.13.jar;D:\repository\org\mockito\mockito-core\3.3.3\mockito-core-3.3.3.jar;D:\repository\net\bytebuddy\byte-buddy\1.10.13\byte-buddy-1.10.13.jar;D:\repository\net\bytebuddy\byte-buddy-agent\1.10.13\byte-buddy-agent-1.10.13.jar;D:\repository\org\objenesis\objenesis\2.6\objenesis-2.6.jar;D:\repository\org\mockito\mockito-junit-jupiter\3.3.3\mockito-junit-jupiter-3.3.3.jar;D:\repository\org\skyscreamer\jsonassert\1.5.0\jsonassert-1.5.0.jar;D:\repository\com\vaadin\external\google\android-json\0.0.20131108.vaadin1\android-json-0.0.20131108.vaadin1.jar;D:\repository\org\springframework\spring-core\5.2.8.RELEASE\spring-core-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-jcl\5.2.8.RELEASE\spring-jcl-5.2.8.RELEASE.jar;D:\repository\org\springframework\spring-test\5.2.8.RELEASE\spring-test-5.2.8.RELEASE.jar;D:\repository\org\xmlunit\xmlunit-core\2.7.0\xmlunit-core-2.7.0.jar;D:\repository\com\google\guava\guava\29.0-jre\guava-29.0-jre.jar;D:\repository\com\google\guava\failureaccess\1.0.1\failureaccess-1.0.1.jar;D:\repository\com\google\guava\listenablefuture\9999.0-empty-to-avoid-conflict-with-guava\listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar;D:\repository\com\google\code\findbugs\jsr305\3.0.2\jsr305-3.0.2.jar;D:\repository\org\checkerframework\checker-qual\2.11.1\checker-qual-2.11.1.jar;D:\repository\com\google\errorprone\error_prone_annotations\2.3.4\error_prone_annotations-2.3.4.jar;D:\repository\com\google\j2objc\j2objc-annotations\1.3\j2objc-annotations-1.3.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\admin"/>
+    <property name="user.language" value="zh"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.home" value="C:\Java\jdk1.8.0_261\jre"/>
+    <property name="basedir" value="D:\github\hadoop-study\hadoop-study-kafka"/>
+    <property name="file.separator" value="\"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
+    <property name="surefire.real.class.path" value="C:\Users\admin\AppData\Local\Temp\surefire8552545622584852803\surefirebooter6393945991843230078.jar"/>
+    <property name="sun.boot.class.path" value="C:\Java\jdk1.8.0_261\jre\lib\resources.jar;C:\Java\jdk1.8.0_261\jre\lib\rt.jar;C:\Java\jdk1.8.0_261\jre\lib\sunrsasign.jar;C:\Java\jdk1.8.0_261\jre\lib\jsse.jar;C:\Java\jdk1.8.0_261\jre\lib\jce.jar;C:\Java\jdk1.8.0_261\jre\lib\charsets.jar;C:\Java\jdk1.8.0_261\jre\lib\jfr.jar;C:\Java\jdk1.8.0_261\jre\classes"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="1.8.0_261-b12"/>
+    <property name="user.name" value="admin"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.endorsed.dirs" value="C:\Java\jdk1.8.0_261\jre\lib\endorsed"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="GBK"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="D:\repository"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\admin\AppData\Local\Temp\"/>
+    <property name="idea.version" value="2021.1"/>
+    <property name="java.version" value="1.8.0_261"/>
+    <property name="user.dir" value="D:\github\hadoop-study\hadoop-study-kafka"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="java.library.path" value="C:\Java\jdk1.8.0_261\jre\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;D:\app\NetSarang\Xshell 6\;C:\Program Files\Amazon Corretto\jdk11.0.6_10\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Go\bin;D:\app\hadoop-2.7.2\bin;C:\ProgramData\chocolatey\bin;D:\app\nodejs\;C:\Program Files (x86)\Common Files\Thunder Network\KanKan\Codecs;C:\Users\admin\AppData\Local\Microsoft\WindowsApps;d:\app\JetBrains\IntelliJ IDEA 2019.1\bin;;C:\Go\bin;C:\Users\admin\AppData\Roaming\npm;."/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="25.261-b12"/>
+    <property name="java.ext.dirs" value="C:\Java\jdk1.8.0_261\jre\lib\ext;C:\Windows\Sun\Java\lib\ext"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="52.0"/>
+  </properties>
+  <testcase name="testSend" classname="com.hadoop.study.kafka.KafkaControllerTests" time="60.234">
+    <error message="Send failed; nested exception is org.apache.kafka.common.errors.TimeoutException: Topic top-events not present in metadata after 60000 ms." type="org.springframework.kafka.KafkaException">org.springframework.kafka.KafkaException: Send failed; nested exception is org.apache.kafka.common.errors.TimeoutException: Topic top-events not present in metadata after 60000 ms.
+	at com.hadoop.study.kafka.KafkaControllerTests.testSend(KafkaControllerTests.java:29)
+Caused by: org.apache.kafka.common.errors.TimeoutException: Topic top-events not present in metadata after 60000 ms.
+</error>
+    <system-out><![CDATA[22:06:26.434 [main] DEBUG org.springframework.test.context.junit4.SpringJUnit4ClassRunner - SpringJUnit4ClassRunner constructor called with [class com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.434 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
+22:06:26.449 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
+22:06:26.481 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [com.hadoop.study.kafka.KafkaControllerTests] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
+22:06:26.503 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.hadoop.study.kafka.KafkaControllerTests], using SpringBootContextLoader
+22:06:26.503 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.hadoop.study.kafka.KafkaControllerTests]: class path resource [com/hadoop/study/kafka/KafkaControllerTests-context.xml] does not exist
+22:06:26.503 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.hadoop.study.kafka.KafkaControllerTests]: class path resource [com/hadoop/study/kafka/KafkaControllerTestsContext.groovy] does not exist
+22:06:26.503 [main] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [com.hadoop.study.kafka.KafkaControllerTests]: no resource found for suffixes {-context.xml, Context.groovy}.
+22:06:26.550 [main] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.666 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [com.hadoop.study.kafka.KafkaControllerTests]: using defaults.
+22:06:26.666 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+22:06:26.681 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@157853da, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@71c3b41, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@236e3f4e, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@3cc1435c, org.springframework.test.context.support.DirtiesContextTestExecutionListener@6bf0219d, org.springframework.test.context.transaction.TransactionalTestExecutionListener@dd0c991, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@5f16132a, org.springframework.test.context.event.EventPublishingTestExecutionListener@69fb6037, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@36d585c, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@87a85e1, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@671a5887, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@5552768b, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@3c947bc5, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@609db43b]
+22:06:26.681 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.681 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.681 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.681 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.697 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.697 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.735 [main] DEBUG org.springframework.test.context.junit4.SpringJUnit4ClassRunner - SpringJUnit4ClassRunner constructor called with [class com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.735 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
+22:06:26.735 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
+22:06:26.735 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [com.hadoop.study.kafka.KafkaControllerTests] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
+22:06:26.735 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.hadoop.study.kafka.KafkaControllerTests], using SpringBootContextLoader
+22:06:26.735 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.hadoop.study.kafka.KafkaControllerTests]: class path resource [com/hadoop/study/kafka/KafkaControllerTests-context.xml] does not exist
+22:06:26.735 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.hadoop.study.kafka.KafkaControllerTests]: class path resource [com/hadoop/study/kafka/KafkaControllerTestsContext.groovy] does not exist
+22:06:26.735 [main] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [com.hadoop.study.kafka.KafkaControllerTests]: no resource found for suffixes {-context.xml, Context.groovy}.
+22:06:26.735 [main] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.735 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [com.hadoop.study.kafka.KafkaControllerTests]: using defaults.
+22:06:26.735 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+22:06:26.735 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@20f5239f, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@57af006c, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@6bedbc4d, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@932bc4a, org.springframework.test.context.support.DirtiesContextTestExecutionListener@d29f28, org.springframework.test.context.transaction.TransactionalTestExecutionListener@2fd1433e, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@29d89d5d, org.springframework.test.context.event.EventPublishingTestExecutionListener@3514a4c0, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@212b5695, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@446293d, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@69997e9d, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@793be5ca, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@2df9b86, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@37654521]
+22:06:26.735 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.735 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.735 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.735 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.735 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.735 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.804 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.804 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.804 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.804 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.804 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.804 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.804 [main] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@1ed4ae0f testClass = KafkaControllerTests, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@54c5a2ff testClass = KafkaControllerTests, locations = '{}', classes = '{class com.hadoop.study.kafka.KafkaApplication, class com.hadoop.study.kafka.KafkaApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@3b2da18f, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@3d299e3, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@1a0dcaa, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@1df82230, org.springframework.boot.test.context.SpringBootTestArgs@1], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -> true]], class annotated with @DirtiesContext [false] with mode [null].
+22:06:26.804 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.804 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.hadoop.study.kafka.KafkaControllerTests]
+22:06:26.850 [main] DEBUG org.springframework.test.context.support.TestPropertySourceUtils - Adding inlined properties to environment: {spring.jmx.enabled=false, org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.3.2.RELEASE)
+
+2021-04-16 22:06:27.236  INFO 4364 --- [           main] c.h.study.kafka.KafkaControllerTests     : Starting KafkaControllerTests on Home-PC with PID 4364 (started by admin in D:\github\hadoop-study\hadoop-study-kafka)
+2021-04-16 22:06:27.236  INFO 4364 --- [           main] c.h.study.kafka.KafkaControllerTests     : No active profile set, falling back to default profiles: default
+2021-04-16 22:06:28.623  INFO 4364 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-04-16 22:06:29.166  WARN 4364 --- [           main] s.k.l.ConcurrentMessageListenerContainer : When specific partitions are provided, the concurrency must be less than or equal to the number of partitions; reduced from 2 to 1
+2021-04-16 22:06:29.206  INFO 4364 --- [           main] o.a.k.clients.consumer.ConsumerConfig    : ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.offset.reset = latest
+	bootstrap.servers = [10.50.2.220:9092]
+	check.crcs = true
+	client.dns.lookup = default
+	client.id = 
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = hadoop-study
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.mechanism = GSSAPI
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2]
+	ssl.endpoint.identification.algorithm = https
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.2
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+
+2021-04-16 22:06:29.431  INFO 4364 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 2.5.0
+2021-04-16 22:06:29.431  INFO 4364 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 66563e712b0b9f84
+2021-04-16 22:06:29.431  INFO 4364 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1618581989431
+2021-04-16 22:06:29.447  INFO 4364 --- [           main] o.a.k.clients.consumer.KafkaConsumer     : [Consumer clientId=consumer-hadoop-study-1, groupId=hadoop-study] Subscribed to partition(s): top-events-0
+2021-04-16 22:06:29.447  INFO 4364 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2021-04-16 22:06:29.447  INFO 4364 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.SubscriptionState    : [Consumer clientId=consumer-hadoop-study-1, groupId=hadoop-study] Seeking to LATEST offset of partition top-events-0
+2021-04-16 22:06:29.463  INFO 4364 --- [           main] c.h.study.kafka.KafkaControllerTests     : Started KafkaControllerTests in 2.607 seconds (JVM running for 3.903)
+2021-04-16 22:06:29.632  INFO 4364 --- [           main] o.a.k.clients.producer.ProducerConfig    : ProducerConfig values: 
+	acks = 1
+	batch.size = 16384
+	bootstrap.servers = [10.50.2.220:9092]
+	buffer.memory = 33554432
+	client.dns.lookup = default
+	client.id = producer-1
+	compression.type = none
+	connections.max.idle.ms = 540000
+	delivery.timeout.ms = 120000
+	enable.idempotence = false
+	interceptor.classes = []
+	key.serializer = class org.apache.kafka.common.serialization.StringSerializer
+	linger.ms = 0
+	max.block.ms = 60000
+	max.in.flight.requests.per.connection = 5
+	max.request.size = 1048576
+	metadata.max.age.ms = 300000
+	metadata.max.idle.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partitioner.class = class org.apache.kafka.clients.producer.internals.DefaultPartitioner
+	receive.buffer.bytes = 32768
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.mechanism = GSSAPI
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2]
+	ssl.endpoint.identification.algorithm = https
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.2
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	transaction.timeout.ms = 60000
+	transactional.id = null
+	value.serializer = class org.apache.kafka.common.serialization.StringSerializer
+
+2021-04-16 22:06:29.663  INFO 4364 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 2.5.0
+2021-04-16 22:06:29.663  INFO 4364 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 66563e712b0b9f84
+2021-04-16 22:06:29.663  INFO 4364 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1618581989663
+2021-04-16 22:06:50.506  WARN 4364 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-hadoop-study-1, groupId=hadoop-study] Connection to node -1 (/10.50.2.220:9092) could not be established. Broker may not be available.
+2021-04-16 22:06:50.506  WARN 4364 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-hadoop-study-1, groupId=hadoop-study] Bootstrap broker 10.50.2.220:9092 (id: -1 rack: null) disconnected
+2021-04-16 22:06:50.691  WARN 4364 --- [ad | producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=producer-1] Connection to node -1 (/10.50.2.220:9092) could not be established. Broker may not be available.
+2021-04-16 22:06:50.691  WARN 4364 --- [ad | producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=producer-1] Bootstrap broker 10.50.2.220:9092 (id: -1 rack: null) disconnected
+2021-04-16 22:07:11.631  WARN 4364 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-hadoop-study-1, groupId=hadoop-study] Connection to node -1 (/10.50.2.220:9092) could not be established. Broker may not be available.
+2021-04-16 22:07:11.631  WARN 4364 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-hadoop-study-1, groupId=hadoop-study] Bootstrap broker 10.50.2.220:9092 (id: -1 rack: null) disconnected
+2021-04-16 22:07:11.816  WARN 4364 --- [ad | producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=producer-1] Connection to node -1 (/10.50.2.220:9092) could not be established. Broker may not be available.
+2021-04-16 22:07:11.816  WARN 4364 --- [ad | producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=producer-1] Bootstrap broker 10.50.2.220:9092 (id: -1 rack: null) disconnected
+2021-04-16 22:07:29.450 ERROR 4364 --- [ntainer#0-0-C-1] essageListenerContainer$ListenerConsumer : Failed to set initial offsets
+
+org.apache.kafka.common.errors.TimeoutException: Timeout of 60000ms expired before the position for partition top-events-0 could be determined
+
+2021-04-16 22:07:29.666 ERROR 4364 --- [           main] o.s.k.support.LoggingProducerListener    : Exception thrown when sending a message with key='null' and payload='Hello, Value。' to topic top-events:
+
+org.apache.kafka.common.errors.TimeoutException: Topic top-events not present in metadata after 60000 ms.
+
+]]></system-out>
+  </testcase>
+</testsuite>
