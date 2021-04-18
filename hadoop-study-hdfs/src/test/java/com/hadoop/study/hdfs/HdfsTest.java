@@ -25,13 +25,11 @@ public class HdfsTest {
         Configuration configuration = new Configuration();
         configuration.set("dfs.replication", "2");
         fileSystem = FileSystem.get(new URI("hdfs://hadoop001:9000"), configuration, "zak");
-        log.info("启动成功");
     }
 
     @After
     public void closeFileSystem() throws IOException {
         fileSystem.close();
-        log.info("完成关闭");
     }
 
     @Test
