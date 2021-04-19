@@ -16,7 +16,7 @@
 
 
 
-#### 3. 创建Maven工程，并引入对应的客户的包。
+#### 3. 创建Maven工程，并引入对应的客户的包
 
 ````xml
 <dependencies>
@@ -46,8 +46,6 @@
         </dependency>
     </dependencies>
 ````
-
-
 
 #### 4. 创建客户端类，开始测试
 
@@ -94,13 +92,12 @@ public class HdfsTest {
         // 创建目录
         fileSystem.mkdirs(new Path("/user/client/dir"));
     }
-
+    
     @Test
     public void testDelete() throws IOException {
         // 执行删除
         fileSystem.delete(new Path("/user/client/dir"), true);
     }
-
 
     @Test
     public void testCopyFromLocalFile() throws IOException {
@@ -246,4 +243,3 @@ public class HdfsTest {
         fileSystem.close();
     }
 ```
-

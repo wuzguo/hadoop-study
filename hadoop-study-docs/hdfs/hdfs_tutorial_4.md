@@ -2,214 +2,233 @@
 
 #### 1. HDFS HA高可用
 
-1）所谓HA（High Available），即高可用（7*24小时不中断服务）。
+1. 所谓HA（High Available），即高可用（7*24小时不中断服务）。
 
-2）实现高可用最关键的策略是消除单点故障。HA严格来说应该分成各个组件的HA机制：HDFS的HA和YARN的HA。
+2. 实现高可用最关键的策略是消除单点故障。HA严格来说应该分成各个组件的HA机制：HDFS的HA和YARN的HA。
 
-3）Hadoop2.0之前，在HDFS集群中NameNode存在单点故障（SPOF）。
+3. Hadoop2.0之前，在HDFS集群中NameNode存在单点故障（SPOF）。
 
-4）NameNode主要在以下两个方面影响HDFS集群
+4. NameNode主要在以下两个方面影响HDFS集群
 
-​    NameNode机器发生意外，如宕机，集群将无法使用，直到管理员重启
+- NameNode机器发生意外，如宕机，集群将无法使用，直到管理员重启
 
-​    NameNode机器需要升级，包括软件、硬件升级，此时集群也将无法使用
+- NameNode机器需要升级，包括软件、硬件升级，此时集群也将无法使用
 
 HDFS HA功能通过配置Active/Standby两个NameNodes实现在集群中对NameNode的热备来解决上述问题。如果出现故障，如机器崩溃或机器需要升级维护，这时可通过此种方式将NameNode很快的切换到另外一台机器。
 
-## 8.2 HDFS-HA工作机制
+#### 2. HDFS HA工作机制
 
 通过双NameNode消除单点故障
 
-### 8.2.1 HDFS-HA工作要点
+#### 3. HDFS HA工作要点
 
-\1.  元数据管理方式需要改变
+1. 元数据管理方式需要改变
 
-内存中各自保存一份元数据；
+- 内存中各自保存一份元数据。
 
-Edits日志只有Active状态的NameNode节点可以做写操作；
+- Edits日志只有Active状态的NameNode节点可以做写操作。
 
-两个NameNode都可以读取Edits；
+- 两个NameNode都可以读取Edits。
 
-共享的Edits放在一个共享存储中管理（qjournal和NFS两个主流实现）；
+- 共享的Edits放在一个共享存储中管理（qjournal和NFS两个主流实现）。
 
-\2.  需要一个状态管理功能模块
+2. 需要一个状态管理功能模块
 
-实现了一个zkfailover，常驻在每一个namenode所在的节点，每一个zkfailover负责监控自己所在NameNode节点，利用zk进行状态标识，当需要进行状态切换时，由zkfailover来负责切换，切换时需要防止brain split现象的发生。
+- 实现了一个zkfailover，常驻在每一个namenode所在的节点，每一个zkfailover负责监控自己所在NameNode节点，利用zk进行状态标识，当需要进行状态切换时，由zkfailover来负责切换，切换时需要防止brain split（脑裂）现象的发生。
 
-\3.  必须保证两个NameNode之间能够ssh无密码登录
+3. 必须保证两个NameNode之间能够ssh无密码登录
 
-\4.  隔离（Fence），即同一时刻仅仅有一个NameNode对外提供服务
+4. 隔离（Fence），即同一时刻仅仅有一个NameNode对外提供服务
 
-### 8.2.2 HDFS-HA自动故障转移工作机制
+#### 4. HDFS HA自动故障转移工作机制
 
-前面学习了使用命令hdfs haadmin -failover手动进行故障转移，在该模式下，即使现役NameNode已经失效，系统也不会自动从现役NameNode转移到待机NameNode，下面学习如何配置部署HA自动进行故障转移。自动故障转移为HDFS部署增加了两个新组件：ZooKeeper和ZKFailoverController（ZKFC）进程，如图3-20所示。ZooKeeper是维护少量协调数据，通知客户端这些数据的改变和监视客户端故障的高可用服务。HA的自动故障转移依赖于ZooKeeper的以下功能：
+我们知道可以使用命令hdfs haadmin -failover手动进行故障转移，在该模式下，即使现役NameNode已经失效，系统也不会自动从现役NameNode转移到待机NameNode。
 
-**1****）故障检测：**集群中的每个NameNode在ZooKeeper中维护了一个持久会话，如果机器崩溃，ZooKeeper中的会话将终止，ZooKeeper通知另一个NameNode需要触发故障转移。
+下面学习如何配置部署HA自动进行故障转移。
 
-**2****）现役NameNode****选择：**ZooKeeper提供了一个简单的机制用于唯一的选择一个节点为active状态。如果目前现役NameNode崩溃，另一个节点可能从ZooKeeper获得特殊的排外锁以表明它应该成为现役NameNode。
+自动故障转移为HDFS部署增加了两个新组件：ZooKeeper和ZKFailoverController（ZKFC）进程。
 
-ZKFC是自动故障转移中的另一个新组件，是ZooKeeper的客户端，也监视和管理NameNode的状态。每个运行NameNode的主机也运行了一个ZKFC进程，ZKFC负责：
+```shell
+[zak@hadoop001 hadoop-2.9.2]$ jps
+25699 DFSZKFailoverController
+15660 QuorumPeerMain
+```
 
-**1****）健康监测：**ZKFC使用一个健康检查命令定期地ping与之在相同主机的NameNode，只要该NameNode及时地回复健康状态，ZKFC认为该节点是健康的。如果该节点崩溃，冻结或进入不健康状态，健康监测器标识该节点为非健康的。
+ZooKeeper是维护少量协调数据，通知客户端这些数据的改变和监视客户端故障的高可用服务。
 
-**2****）ZooKeeper****会话管理：**当本地NameNode是健康的，ZKFC保持一个在ZooKeeper中打开的会话。如果本地NameNode处于active状态，ZKFC也保持一个特殊的znode锁，该锁使用了ZooKeeper对短暂节点的支持，如果会话终止，锁节点将自动删除。
+##### HA 的自动故障转移依赖于ZooKeeper的以下功能：
 
-**3****）基于ZooKeeper****的选择：**如果本地NameNode是健康的，且ZKFC发现没有其它的节点当前持有znode锁，它将为自己获取该锁。如果成功，则它已经赢得了选择，并负责运行故障转移进程以使它的本地NameNode为Active。故障转移进程与前面描述的手动故障转移相似，首先如果必要保护之前的现役NameNode，然后本地NameNode转换为Active状态。
+1. 故障检测： 集群中的每个NameNode在ZooKeeper中维护了一个持久会话，如果机器崩溃，ZooKeeper中的会话将终止，ZooKeeper通知另一个NameNode需要触发故障转移。
 
+2. 现役NameNode选择：ZooKeeper提供了一个简单的机制用于唯一的选择一个节点为active状态。如果目前现役NameNode崩溃，另一个节点可能从ZooKeeper获得特殊的排外锁以表明它应该成为现役NameNode。
 
+##### ZKFC是自动故障转移中的另一个新组件，是ZooKeeper的客户端，也监视和管理NameNode的状态。每个运行NameNode的主机也运行了一个ZKFC进程，ZKFC负责：
 
-## 8.3 HDFS-HA集群配置
+1. 健康监测：ZKFC使用一个健康检查命令定期地ping与之在相同主机的NameNode，只要该NameNode及时地回复健康状态，ZKFC认为该节点是健康的。如果该节点崩溃，冻结或进入不健康状态，健康监测器标识该节点为非健康的。
 
-### 8.3.1 环境准备
+2. ZooKeeper会话管理：当本地NameNode是健康的，ZKFC保持一个在ZooKeeper中打开的会话。如果本地NameNode处于active状态，ZKFC也保持一个特殊的znode锁，该锁使用了ZooKeeper对短暂节点的支持，如果会话终止，锁节点将自动删除。
 
-\1.  修改IP
+3. 基于ZooKeeper的选择：如果本地NameNode是健康的，且ZKFC发现没有其它的节点当前持有znode锁，它将为自己获取该锁。如果成功，则它已经赢得了选择，并负责运行故障转移进程以使它的本地NameNode为Active。故障转移进程与前面描述的手动故障转移相似，首先如果必要保护之前的现役NameNode，然后本地NameNode转换为Active状态。
 
-\2.  修改主机名及主机名和IP地址的映射
+#### 5. HDFS HA集群配置
 
-\3.  关闭防火墙
+##### 环境准备
 
-\4.  ssh免密登录
+1. 修改IP
+2. 修改主机名及主机名和IP地址的映射
+3. 关闭防火墙
+4. SSH免密登录
+5. 安装JDK，配置环境变量等
 
-\5.  安装JDK，配置环境变量等
+##### 规划集群
 
-### 8.3.2 规划集群
+| hadoop001               | hadoop002               | hadoop003      |
+| ----------------------- | ----------------------- | -------------- |
+| NameNode                | NameNode                |                |
+| JournalNode             | JournalNode             | JournalNode    |
+| DataNode                | DataNode                | DataNode       |
+| QuorumPeerMain          | QuorumPeerMain          | QuorumPeerMain |
+| DFSZKFailoverController | DFSZKFailoverController |                |
 
-表3-1
+##### 配置Zookeeper集群
 
-| hadoop102   | hadoop103       | hadoop104   |
-| ----------- | --------------- | ----------- |
-| NameNode    | NameNode        |             |
-| JournalNode | JournalNode     | JournalNode |
-| DataNode    | DataNode        | DataNode    |
-| ZK          | ZK              | ZK          |
-|             | ResourceManager |             |
-| NodeManager | NodeManager     | NodeManager |
+1. 集群规划
 
-### 8.3.3 配置Zookeeper集群
+在hadoop001、hadoop002和hadoop003三个节点上部署Zookeeper。
 
-\1.  集群规划
+2. 解压安装
 
-在hadoop102、hadoop103和hadoop104三个节点上部署Zookeeper。
+- 解压Zookeeper安装包到/opt/module/目录下
 
-\2.  解压安装
+```shell
+[zak@hadoop001 software]$ tar -zxvf apache-zookeeper-3.6.1.tar.gz -C /opt/module/
+```
 
-（1）解压Zookeeper安装包到/opt/module/目录下
+- 在/opt/module/zookeeper-3.6.1/这个目录下创建zkData
 
-[atguigu@hadoop102 software]$ tar -zxvf zookeeper-3.4.10.tar.gz -C /opt/module/
-
-（2）在/opt/module/zookeeper-3.4.10/这个目录下创建zkData
-
+```shell
 mkdir -p zkData
+```
 
-（3）重命名/opt/module/zookeeper-3.4.10/conf这个目录下的zoo_sample.cfg为zoo.cfg
+- 重命名/opt/module/apache-zookeeper-3.6.1/conf这个目录下的zoo_sample.cfg为zoo.cfg
 
-mv zoo_sample.cfg zoo.cfg
+```shell
+mv conf/zoo_sample.cfg zoo.cfg
+```
 
-\3.  配置zoo.cfg文件
+- 配置zoo.cfg文件
 
-​    （1）具体配置
+具体配置
 
-dataDir=/opt/module/zookeeper-3.4.10/zkData
+```shell
+dataDir=/opt/module/zookeeper-3.6.1/zkData
+```
 
-​    增加如下配置
+增加如下配置
 
-\#######################cluster##########################
+```shell
+server.1=hadoop001:2888:3888
+server.2=hadoop002:2888:3888
+server.3=hadoop003:2888:3888
+```
 
-server.2=hadoop102:2888:3888
+配置参数解读
 
-server.3=hadoop103:2888:3888
+```shell
+Server.A=B:C:D
+```
 
-server.4=hadoop104:2888:3888
+A 是一个数字，表示这个是第几号服务器；
 
-（2）配置参数解读
+B 是这个服务器的IP地址；
 
-Server.A=B:C:D。
+C 是这个服务器与集群中的Leader服务器交换信息的端口；
 
-A是一个数字，表示这个是第几号服务器；
-
-B是这个服务器的IP地址；
-
-C是这个服务器与集群中的Leader服务器交换信息的端口；
-
-D是万一集群中的Leader服务器挂了，需要一个端口来重新进行选举，选出一个新的Leader，而这个端口就是用来执行选举时服务器相互通信的端口。
+D 是万一集群中的Leader服务器挂了，需要一个端口来重新进行选举，选出一个新的Leader，而这个端口就是用来执行选举时服务器相互通信的端口。
 
 集群模式下配置一个文件myid，这个文件在dataDir目录下，这个文件里面有一个数据就是A的值，Zookeeper启动时读取此文件，拿到里面的数据与zoo.cfg里面的配置信息比较从而判断到底是哪个server。
 
-\4.  集群操作
+3. 集群操作
 
-（1）在/opt/module/zookeeper-3.4.10/zkData目录下创建一个myid的文件
+- 在/opt/module/zookeeper-3.6.1/zkData目录下创建一个myid的文件
 
+```shell
 touch myid
-
-添加myid文件，注意一定要在linux里面创建，在notepad++里面很可能乱码
-
-（2）编辑myid文件
-
-vi myid
-
-​    在文件中添加与server对应的编号：如2
-
-（3）拷贝配置好的zookeeper到其他机器上
-
-scp -r zookeeper-3.4.10/ [root@hadoop103.atguigu.com:/opt/app/](mailto:root@hadoop103.atguigu.com:/opt/app/)
-
-scp -r zookeeper-3.4.10/ [root@hadoop104.atguigu.com:/opt/app/](mailto:root@hadoop104.atguigu.com:/opt/app/)
-
-​    并分别修改myid文件中内容为3、4
-
-（4）分别启动zookeeper
-
-[root@hadoop102 zookeeper-3.4.10]# bin/zkServer.sh start
-
-[root@hadoop103 zookeeper-3.4.10]# bin/zkServer.sh start
-
-[root@hadoop104 zookeeper-3.4.10]# bin/zkServer.sh start
-
-（5）查看状态
-
-[root@hadoop102 zookeeper-3.4.10]# bin/zkServer.sh status
-
-JMX enabled by default
-
-Using config: /opt/module/zookeeper-3.4.10/bin/../conf/zoo.cfg
-
-Mode: follower
-
-[root@hadoop103 zookeeper-3.4.10]# bin/zkServer.sh status
-
-JMX enabled by default
-
-Using config: /opt/module/zookeeper-3.4.10/bin/../conf/zoo.cfg
-
-Mode: leader
-
-[root@hadoop104 zookeeper-3.4.5]# bin/zkServer.sh status
-
-JMX enabled by default
-
-Using config: /opt/module/zookeeper-3.4.10/bin/../conf/zoo.cfg
-
-Mode: follower
-
-### 8.3.4 配置HDFS-HA集群
-
-\1.  官方地址：http://hadoop.apache.org/
-
-\2.  在opt目录下创建一个ha文件夹
-
-mkdir ha
-
-\3.  将/opt/app/下的 hadoop-2.7.2拷贝到/opt/ha目录下
-
-cp -r hadoop-2.7.2/ /opt/ha/
-
-\4.  配置hadoop-env.sh
-
-  export  JAVA_HOME=/opt/module/jdk1.8.0_144  
-
-\5.  配置core-site.xml
-
 ```
+
+- 编辑myid文件
+
+```shell
+vi myid
+```
+
+ 在文件中添加与server对应的编号： 1
+
+```shell
+[zak@hadoop001 module]$ cat apache-zookeeper-3.6.1/zkData/myid 
+1
+```
+
+- 贝配置好的zookeeper到其他机器上
+
+```sh
+[zak@hadoop001 module]$ scp -r apache-zookeeper-3.6.1/ hadoop002:/opt/module/
+[zak@hadoop001 module]$ scp -r apache-zookeeper-3.6.1/ hadoop003:/opt/module/
+```
+
+并分别修改myid文件中内容为2、3
+
+- 分别启动zookeeper
+
+```shell
+[zak@hadoop001 apache-zookeeper-3.6.1]# bin/zkServer.sh start
+[zak@hadoop001 apache-zookeeper-3.6.1]# bin/zkServer.sh start
+[zak@hadoop001 apache-zookeeper-3.6.1]# bin/zkServer.sh start
+```
+
+- 查看状态
+
+```shell
+[zak@hadoop001 apache-zookeeper-3.6.1]$ bin/zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /opt/module/apache-zookeeper-3.6.1/bin/../conf/zoo.cfg
+Client port found: 2181. Client address: localhost.
+Mode: follower
+```
+
+```shell
+[zak@hadoop002 apache-zookeeper-3.6.1]$ bin/zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /opt/module/apache-zookeeper-3.6.1/bin/../conf/zoo.cfg
+Client port found: 2181. Client address: localhost.
+Mode: leader
+```
+
+```shell
+[zak@hadoop003 apache-zookeeper-3.6.1]$ bin/zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /opt/module/apache-zookeeper-3.6.1/bin/../conf/zoo.cfg
+Client port found: 2181. Client address: localhost.
+Mode: follower
+```
+
+##### 配置HDFS HA集群
+
+1. 在opt目录下创建一个ha文件夹
+
+```shell
+mkdir ha
+```
+
+2. 将/opt/moudle/下的 hadoop-2.9.2拷贝到/opt/ha目录下
+
+```shell
+[zak@hadoop003 module]$ cp -r hadoop-2.9.2/ /opt/ha/
+```
+
+3. 配置core-site.xml
+
+```xml
 <configuration>
   <!-- 指定HDFS中NameNode的地址 -->
   <property>
@@ -253,11 +272,9 @@ cp -r hadoop-2.7.2/ /opt/ha/
 </configuration>
 ```
 
+4. 配置hdfs-site.xml
 
-
-\6.  配置hdfs-site.xml
-
-```
+```xml
 <configuration>
   <property>
     <name>dfs.replication</name>
@@ -355,158 +372,164 @@ cp -r hadoop-2.7.2/ /opt/ha/
 </configuration>
 ```
 
+5. 拷贝配置好的hadoop环境到其他节点
 
+##### 启动HDFS HA集群
 
-\7.  拷贝配置好的hadoop环境到其他节点
+1. 在各个JournalNode节点上，输入以下命令启动journalnode服务
 
-### 8.3.5 启动HDFS-HA集群
-
-\1.  在各个JournalNode节点上，输入以下命令启动journalnode服务
-
- sbin/hadoop-daemon.sh start journalnode
-
-\2.  在[nn1]上，对其进行格式化，并启动
-
- bin/hdfs namenode -format
-
- sbin/hadoop-daemon.sh start namenode
-
-\3.  在[nn2]上，同步nn1的元数据信息
-
- bin/hdfs namenode -bootstrapStandby
-
-\4.  启动[nn2]
-
- sbin/hadoop-daemon.sh start namenode
-
-\5.  查看web页面显示，如图3-21，3-22所示
-
-
-
-\6.  在[nn1]上，启动所有datanode
-
- sbin/hadoop-daemons.sh start datanode
-
-\7.  将[nn1]切换为Active
-
- bin/hdfs haadmin -transitionToActive nn1
-
-\5.  查看是否Active
-
- bin/hdfs haadmin -getServiceState nn1
-
-
-
-### 8.3.6 配置HDFS-HA自动故障转移
-
-\1.  具体配置
-
-​    （1）在hdfs-site.xml中增加
-
+```shell
+sbin/hadoop-daemon.sh start journalnode
 ```
+
+2. 在[nn1]上，对其进行格式化，并启动
+
+```shell
+bin/hdfs namenode -format
+sbin/hadoop-daemon.sh start namenode
+```
+
+3. 在[nn2]上，同步nn1的元数据信息
+
+ ```shell
+bin/hdfs namenode -bootstrapStandby
+ ```
+
+4. 启动[nn2]
+
+ ```shell
+sbin/hadoop-daemon.sh start namenode
+ ```
+
+5. 查看web页面显示，如图所示
+
+![](../images/202104_01/27.png)
+
+
+
+![](../images/202104_01/28.png)
+
+
+
+6. 在[nn1]上，启动所有datanode
+
+```shell
+sbin/hadoop-daemons.sh start datanode
+```
+
+7. 将[nn1]切换为Active
+
+```shell
+bin/hdfs haadmin -transitionToActive nn1
+```
+
+8. 查看是否Active
+
+```shell
+bin/hdfs haadmin -getServiceState nn1
+```
+
+##### 配置HDFS HA自动故障转移
+
+1. 增加配置
+
+- 在hdfs-site.xml中增加
+
+```xml
 <property>
-
- <name>dfs.ha.automatic-failover.enabled</name>
-
- <value>true</value>
-
+  <name>dfs.ha.automatic-failover.enabled</name>
+  <value>true</value>
 </property>
 ```
 
+- 在core-site.xml文件中增加
 
-
-​    （2）在core-site.xml文件中增加
-
-```
+```xml
 <property>
-
- <name>ha.zookeeper.quorum</name>
-
- <value>hadoop102:2181,hadoop103:2181,hadoop104:2181</value>
-
+  <name>ha.zookeeper.quorum</name>
+  <value>hadoop001:2181,hadoop002:2181,hadoop003:2181</value>
 </property>
 ```
 
+2. 启动Zookeeper
 
+- 关闭所有HDFS服务：
 
-\2.  启动
-
-​    （1）关闭所有HDFS服务：
-
+```shell
 sbin/stop-dfs.sh
-
-​    （2）启动Zookeeper集群：
-
-bin/zkServer.sh start
-
-​    （3）初始化HA在Zookeeper中状态：
-
-bin/hdfs zkfc -formatZK
-
-​    （4）启动HDFS服务：
-
-sbin/start-dfs.sh
-
-​    （5）在各个NameNode节点上启动DFSZK Failover Controller，先在哪台机器启动，哪个机器的NameNode就是Active NameNode
-
-sbin/hadoop-daemin.sh start zkfc
-
-\3.  验证
-
-​    （1）将Active NameNode进程kill
-
-kill -9 namenode的进程id
-
-​    （2）将Active NameNode机器断开网络
-
-service network stop
-
-
-
-
-
-
-
-#### 2. YARN-HA配置
-
-##### YARN-HA工作机制
-
-![](../images/202104_01/26.png) 
-
-### 8.4.2 配置YARN-HA集群
-
-\1.  环境准备
-
-（1）修改IP
-
-（2）修改主机名及主机名和IP地址的映射
-
-（3）关闭防火墙
-
-（4）ssh免密登录
-
-（5）安装JDK，配置环境变量等
-
-​    （6）配置Zookeeper集群
-
-\2.  规划集群
-
-表3-2
-
-| hadoop102       | hadoop103       | hadoop104   |
-| --------------- | --------------- | ----------- |
-| NameNode        | NameNode        |             |
-| JournalNode     | JournalNode     | JournalNode |
-| DataNode        | DataNode        | DataNode    |
-| ZK              | ZK              | ZK          |
-| ResourceManager | ResourceManager |             |
-| NodeManager     | NodeManager     | NodeManager |
-
-\3.  具体配置
-
-（1）yarn-site.xml
-
 ```
+
+- 启动Zookeeper集群：
+
+```shell
+bin/zkServer.sh start
+```
+
+- 初始化HA在Zookeeper中状态：
+
+```shell
+bin/hdfs zkfc -formatZK
+```
+
+- 启动HDFS服务：
+
+```shell
+sbin/start-dfs.sh
+```
+
+- 在各个NameNode节点上启动DFSZK Failover Controller，先在哪台机器启动，哪个机器的NameNode就是Active NameNode
+
+```shell
+sbin/hadoop-daemin.sh start zkfc
+```
+
+3. 验证HA
+
+- 将Active NameNode进程kill
+
+```shell
+kill -9 namenode id
+```
+
+- 将Active NameNode机器断开网络
+
+```shell
+service network stop
+```
+
+#### 6. YARN HA集群配置
+
+##### 环境准备
+
+1. 修改IP
+
+2. 修改主机名及主机名和IP地址的映射
+
+3. 关闭防火墙
+
+4. SSH免密登录
+
+5. 安装JDK，配置环境变量等
+
+6. 配置Zookeeper集群
+
+##### 规划集群
+
+| hadoop001               | hadoop002               | hadoop003        |
+| ----------------------- | ----------------------- | ---------------- |
+| NameNode                | NameNode                |                  |
+| JournalNode             | JournalNode             | JournalNode      |
+| DataNode                | DataNode                | DataNode         |
+| QuorumPeerMain          | QuorumPeerMain          | QuorumPeerMain   |
+| DFSZKFailoverController | DFSZKFailoverController |                  |
+| ResourceManager         | ResourceManager         | JobHistoryServer |
+| NodeManager             | NodeManager             | NodeManager      |
+
+##### 具体配置
+
+1. 修改 yarn-site.xml
+
+```xml
 <configuration>
 
 <!-- Site specific YARN configuration properties -->
@@ -576,46 +599,83 @@ service network stop
 
 ```
 
-​    （2）同步更新其他节点的配置信息
+2. 同步更新其他节点的配置信息
 
-\4.  启动hdfs 
+##### 启动HDFS
 
-（1）在各个JournalNode节点上，输入以下命令启动journalnode服务：
+1. 在[nn1]上执行节点格式
 
-sbin/hadoop-daemon.sh start journalnode
-
-（2）在[nn1]上，对其进行格式化，并启动：
-
+```shell
 bin/hdfs namenode -format
+```
 
-sbin/hadoop-daemon.sh start namenode
+2. 在hadoop001上执行
 
-（3）在[nn2]上，同步nn1的元数据信息：
+```shell
+sbin/start-dfs.sh
+```
 
+3. 在[nn2]上，同步nn1的元数据信息：
+
+```shell
 bin/hdfs namenode -bootstrapStandby
+```
 
-（4）启动[nn2]：
+4. 启动[nn2]：
 
+```shell
 sbin/hadoop-daemon.sh start namenode
+```
 
-（5）启动所有DataNode
+5. 将[nn1]切换为Active
 
-sbin/hadoop-daemons.sh start datanode
-
-（6）将[nn1]切换为Active
-
+```shell
 bin/hdfs haadmin -transitionToActive nn1
+```
 
-\5.  启动YARN 
+##### 启动YARN
 
-（1）在hadoop102中执行：
+1. 在hadoop001中执行：
 
+```shell
 sbin/start-yarn.sh
+```
 
-（2）在hadoop103中执行：
+2. 在hadoop002中执行：
 
+```shell
 sbin/yarn-daemon.sh start resourcemanager
+```
 
-（3）查看服务状态，如图3-24所示
+3. 查看服务状态，如图所示
 
-bin/yarn rmadmin -getServiceState rm1
+```shell
+[zak@hadoop001 hadoop-2.9.2]$ bin/yarn rmadmin -getServiceState rm1
+standby
+[zak@hadoop001 hadoop-2.9.2]$ bin/yarn rmadmin -getServiceState rm2
+active
+```
+
+##### 功能验证
+
+1. 执行wordcount程序。
+
+```shell
+[zak@hadoop001 hadoop-2.9.2]$ bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.9.2.jar wordcount /user/input /user/output
+```
+
+2. 查看执行结果
+
+```shell
+[zak@hadoop001 hadoop-2.9.2]$ bin/hadoop fs -cat /user/output/*
+Flink	1
+Hadoop	1
+Hello	1
+Hue	1
+Impala	1
+......
+```
+
+3. Web查看
+
+![](../images/202104_01/29.png)

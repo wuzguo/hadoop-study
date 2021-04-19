@@ -40,75 +40,65 @@ HDFS（Hadoop Distributed File System），它是一个文件系统，用于存�
 
 ![](../images/202104_01/12.png)
 
-1）NameNode（nn）：就是Master，它是一个主管、管理者。
+##### NameNode（nn）：就是Master，它是一个主管、管理者。
 
-（1）管理HDFS的名称空间；
+- 管理HDFS的名称空间。
 
-（2）配置副本策略；
+- 配置副本策略。
 
-（3）管理数据块（Block）映射信息；
+- 管理数据块（Block）映射信息。
 
-（4）处理客户端读写请求。
+- 处理客户端读写请求。
 
-2）DataNode：就是Slave。NameNode下达命令，DataNode执行实际的操作。
+##### DataNode：就是Slave，NameNode下达命令，DataNode执行实际的操作。
 
-（1）存储实际的数据块；
+- 存储实际的数据块。
 
-（2）执行数据块的读/写操作。
+- 执行数据块的读/写操作。
 
-3）Client：就是客户端。
+##### Client：就是客户端。
 
-（1）文件切分。文件上传HDFS的时候，Client将文件切分成一个一个的Block，然后进行上传；
+- 文件切分。文件上传HDFS的时候，Client将文件切分成一个一个的Block，然后进行上传。
 
-（2）与NameNode交互，获取文件的位置信息；
+- 与NameNode交互，获取文件的位置信息。
 
-（3）与DataNode交互，读取或者写入数据；
+- 与DataNode交互，读取或者写入数据。
 
-（4）Client提供一些命令来管理HDFS，比如NameNode格式化；
+- Client提供一些命令来管理HDFS，比如NameNode格式化。
 
-（5）Client可以通过一些命令来访问HDFS，比如对HDFS增删查改操作；
+- Client可以通过一些命令来访问HDFS，比如对HDFS增删查改操作。
 
-4）Secondary NameNode：并非NameNode的热备。当NameNode挂掉的时候，它并不能马上替换NameNode并提供服务。
+##### Secondary NameNode：并非NameNode的热备。当NameNode挂掉的时候，它并不能马上替换NameNode并提供服务。
 
-（1）辅助NameNode，分担其工作量，比如定期合并Fsimage和Edits，并推送给NameNode ；
+- 辅助NameNode，分担其工作量，比如定期合并Fsimage和Edits，并推送给NameNode。
 
-（2）在紧急情况下，可辅助恢复NameNode。
-
-
+- 在紧急情况下，可辅助恢复NameNode。
 
 #### 6. HDFS文件块大小
 
-HDFS中的文件在物理上是分块存储（Block），块的大小可以通过配置参数( dfs.blocksize)来规定，默认大小在Hadoop2.x版本中是128M，老版本中是64M。
+HDFS中的文件在物理上是分块存储（Block），块的大小可以通过配置参数(dfs.blocksize)来规定，默认大小在 Hadoop2.x 版本中是128M，老版本中是64M。
 
-一般情况下建议设置：Block大小 = 磁盘的传输速率 * 寻址时间
+一般情况下建议设置：
 
-2 如果寻址时间约为10ms，即查找到目标block的时间为10ms。
+Block大小 = 磁盘的传输速率 * 寻址时间。
 
-3 寻址时间为传输时间的1%时，则为最佳状态。因此，传输时间=10ms/0.01=1000ms=1s
-
-4 而目前磁盘的传输速率普遍为100MB/s。
-
-5 block大小=1s*100MB/s=100MB
+如果寻址时间约为10ms，即查找到目标block的时间为10ms。寻址时间为传输时间的1%时，则为最佳状态。因此，传输时间=10ms/0.01=1000ms=1s。而目前磁盘的传输速率普遍为100MB/s。那么 block大小 = 1s*100MB/s=100MB
 
 
 
 为什么块的大小不能设置太小，也不能设置太大？
 
-HDFS的块设置太小，会增加寻址时间，程序一直在找块的开始位置
+- HDFS的块设置太小，会增加寻址时间，程序一直在找块的开始位置。
 
-2）如果块设置的太大，从磁盘传输数据的时间会明显大于定位这个块开始位置所需的时间。导致程序在处理这块数据时，会非常慢。
-
-
+- 如果块设置的太大，从磁盘传输数据的时间会明显大于定位这个块开始位置所需的时间。导致程序在处理这块数据时，会非常慢。
 
 总结：HDFS块的大小设置主要取决于磁盘传输速率。
-
-#### 
 
 ### 二、HDFS的Shell操作
 
 #### 1．基本语法
 
-bin/hadoop fs 具体命令  OR bin/hdfs dfs 具体命令
+bin/hadoop fs 具体命令 或 bin/hdfs dfs 具体命令
 
 #### 2．命令大全
 
@@ -160,7 +150,7 @@ Usage: hadoop fs [generic options]
 
 #### 4. 常用命令实操
 
-（1）-help：输出这个命令参数
+- -help：输出这个命令参数
 
 ```shell
 [zak@hadoop001 hadoop-2.9.2]$ hadoop fs -help rm
@@ -179,9 +169,7 @@ Usage: hadoop fs [generic options]
               files to be deleted before the confirmation.        
 ```
 
-
-
-（2）-ls: 显示目录信息
+- -ls: 显示目录信息
 
 ```shell
 [zak@hadoop001 hadoop-2.9.2]$ hadoop fs -ls /
@@ -190,17 +178,13 @@ drwxr--r--   - zak supergroup          0 2021-04-16 20:17 /tmp
 drwxr-xr-x   - zak supergroup          0 2021-04-17 12:00 /user
 ```
 
-
-
-（3）-mkdir：在HDFS上创建目录
+- -mkdir：在HDFS上创建目录
 
 ```shell
 [zak@hadoop001 hadoop-2.9.2]$ hadoop fs -mkdir -p /user/shuguo
 ```
 
-
-
-（4）-moveFromLocal：从本地移动到HDFS
+- -moveFromLocal：从本地移动到HDFS
 
 ```shell
 [zak@hadoop001 input]$ ll
@@ -222,7 +206,7 @@ total 12
 
 ![](../images/202104_01/13.png)
 
-（5）-appendToFile：追加一个文件到已经存在的文件末尾
+- -appendToFile：追加一个文件到已经存在的文件末尾
 
 ```shell
 [zak@hadoop001 hadoop-2.9.2]$ vi input/5.txt
@@ -237,4 +221,3 @@ hello
 Hello World
 [zak@hadoop001 hadoop-2.9.2]$
 ```
-
