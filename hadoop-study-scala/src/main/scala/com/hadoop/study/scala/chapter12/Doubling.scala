@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala.chapter12
+package com.hadoop.study.scala.chapter12
 
 trait Doubling extends IntQueue {
     abstract override def put(x: Int) = {

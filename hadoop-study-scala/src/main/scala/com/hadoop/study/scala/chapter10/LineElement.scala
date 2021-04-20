@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala.chapter10
+package com.hadoop.study.scala.chapter10
 
 class LineElement(str: String) extends ArrayElement(Array(str)) {
 

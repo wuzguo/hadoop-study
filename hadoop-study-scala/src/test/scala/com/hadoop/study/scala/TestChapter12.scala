@@ -1,7 +1,7 @@
-package com.sunvalley.study.scala
+package com.hadoop.study.scala
 
-import com.sunvalley.study.scala.chapter12._
-import com.sunvalley.study.scala.chapter6.Rational
+import com.hadoop.study.scala.chapter12._
+import com.hadoop.study.scala.chapter6.Rational
 import org.junit.{FixMethodOrder, Test}
 
 @FixMethodOrder

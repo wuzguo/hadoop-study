@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala
+package com.hadoop.study.scala
 
 /**
  * <B>说明：描述</B>

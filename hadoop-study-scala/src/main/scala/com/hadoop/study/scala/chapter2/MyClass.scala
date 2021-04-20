@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala.chapter2
+package com.hadoop.study.scala.chapter2
 
 class MyClass(index: Int, name: String) {
 

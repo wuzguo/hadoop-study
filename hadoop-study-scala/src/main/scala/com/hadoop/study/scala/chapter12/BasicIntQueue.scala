@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala.chapter12
+package com.hadoop.study.scala.chapter12
 
 import scala.collection.mutable.ArrayBuffer
 

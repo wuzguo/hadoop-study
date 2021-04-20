@@ -1,6 +1,6 @@
-package com.sunvalley.study.scala.chapter4
+package com.hadoop.study.scala.chapter4
 
-import com.sunvalley.study.scala.chapter4.ChecksumAccumulator.calculate
+import com.hadoop.study.scala.chapter4.ChecksumAccumulator.calculate
 
 object Summer {
 

@@ -1,7 +1,7 @@
-package com.sunvalley.study.scala
+package com.hadoop.study.scala
 
-import com.sunvalley.study.scala.chapter18.BankAccount
-import com.sunvalley.study.scala.chapter18.MySimulation.{Wire, halfAdder, probe, run}
+import com.hadoop.study.scala.chapter18.BankAccount
+import com.hadoop.study.scala.chapter18.MySimulation.{Wire, halfAdder, probe, run}
 import org.junit.{FixMethodOrder, Test}
 
 /**

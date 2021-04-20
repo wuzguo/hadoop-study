@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala.chapter11
+package com.hadoop.study.scala.chapter11
 
 class SwissFrancs(val amount: Int) extends AnyVal {
 

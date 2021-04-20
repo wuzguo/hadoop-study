@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala.chapter9
+package com.hadoop.study.scala.chapter9
 
 import java.io.File
 

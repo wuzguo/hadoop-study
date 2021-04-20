@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala.chapter12
+package com.hadoop.study.scala.chapter12
 
 abstract class IntQueue {
     def get(): Int

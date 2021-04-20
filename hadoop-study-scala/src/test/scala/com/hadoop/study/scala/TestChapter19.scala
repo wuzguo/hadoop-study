@@ -1,6 +1,6 @@
-package com.sunvalley.study.scala
+package com.hadoop.study.scala
 
-import com.sunvalley.study.scala.chapter19.Person
+import com.hadoop.study.scala.chapter19.Person
 import org.junit.{FixMethodOrder, Test}
 
 /**

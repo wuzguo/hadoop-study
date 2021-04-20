@@ -1,6 +1,6 @@
-package com.sunvalley.study.scala
+package com.hadoop.study.scala
 
-import com.sunvalley.study.scala.chapter11.{Anchor, Dollars, Html, Style, SwissFrancs, Text}
+import com.hadoop.study.scala.chapter11.{Anchor, Dollars, Html, Style, SwissFrancs, Text}
 import org.junit.{FixMethodOrder, Test}
 
 @FixMethodOrder

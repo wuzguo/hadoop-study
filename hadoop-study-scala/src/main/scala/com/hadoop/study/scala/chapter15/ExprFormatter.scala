@@ -1,7 +1,7 @@
-package com.sunvalley.study.scala.chapter15
+package com.hadoop.study.scala.chapter15
 
-import com.sunvalley.study.scala.chapter10.Element
-import com.sunvalley.study.scala.chapter10.factory.Element.elem
+import com.hadoop.study.scala.chapter10.Element
+import com.hadoop.study.scala.chapter10.factory.Element.elem
 
 /**
  * <B>说明：描述</B>

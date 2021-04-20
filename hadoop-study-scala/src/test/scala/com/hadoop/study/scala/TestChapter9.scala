@@ -1,6 +1,6 @@
-package com.sunvalley.study.scala
+package com.hadoop.study.scala
 
-import com.sunvalley.study.scala.chapter9.{FileMatcher, FileMatcher2, FileMatcher3, FileMatcher4, FileMatcher5}
+import com.hadoop.study.scala.chapter9.{FileMatcher, FileMatcher2, FileMatcher3, FileMatcher4, FileMatcher5}
 import org.junit.{FixMethodOrder, Test}
 
 import java.io.{File, PrintWriter}

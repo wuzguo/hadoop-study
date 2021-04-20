@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala
+package com.hadoop.study.scala
 
 import org.junit.{FixMethodOrder, Test}
 

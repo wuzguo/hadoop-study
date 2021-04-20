@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala.chapter3
+package com.hadoop.study.scala.chapter3
 
 import scala.io.Source
 

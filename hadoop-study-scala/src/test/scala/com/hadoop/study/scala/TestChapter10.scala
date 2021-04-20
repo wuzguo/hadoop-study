@@ -1,7 +1,7 @@
-package com.sunvalley.study.scala
+package com.hadoop.study.scala
 
-import com.sunvalley.study.scala.chapter10._
-import com.sunvalley.study.scala.chapter10.factory.Spiral
+import com.hadoop.study.scala.chapter10._
+import com.hadoop.study.scala.chapter10.factory.Spiral
 import org.junit.{FixMethodOrder, Test}
 
 @FixMethodOrder

@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala.chapter18
+package com.hadoop.study.scala.chapter18
 
 /**
  * <B>说明：描述</B>

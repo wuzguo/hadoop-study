@@ -1,6 +1,6 @@
-package com.sunvalley.study.scala.chapter10
+package com.hadoop.study.scala.chapter10
 
-import com.sunvalley.study.scala.chapter10.factory.Element.elem
+import com.hadoop.study.scala.chapter10.factory.Element.elem
 
 abstract class Element {
 

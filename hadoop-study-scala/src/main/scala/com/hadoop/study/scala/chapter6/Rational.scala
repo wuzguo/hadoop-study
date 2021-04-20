@@ -1,4 +1,4 @@
-package com.sunvalley.study.scala.chapter6
+package com.hadoop.study.scala.chapter6
 
 class Rational(n: Int, d: Int) extends Ordered[Rational] {
     require(d != 0)
