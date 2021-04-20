@@ -8,8 +8,7 @@ package com.hadoop.study.scala.chapter29.recipe
  * @date 2021/4/20 20:26
  */
 
-class Recipe(
-              val name: String,
+class Recipe(val name: String,
               val ingredients: List[Food],
               val instructions: String
             ) {
