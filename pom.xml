@@ -19,6 +19,7 @@
         <module>hadoop-study-scala</module>
         <module>hadoop-study-hdfs</module>
         <module>hadoop-study-reactor</module>
+        <module>hadoop-study-zookeeper</module>
     </modules>
 
     <properties>
