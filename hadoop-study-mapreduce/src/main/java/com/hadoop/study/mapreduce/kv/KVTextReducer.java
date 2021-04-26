@@ -16,7 +16,7 @@ import java.io.IOException;
 
 public class KVTextReducer extends Reducer<Text, LongWritable, Text, LongWritable> {
 
-    LongWritable value = new LongWritable();
+    private final LongWritable value = new LongWritable();
 
     @Override
     protected void reduce(Text key, Iterable<LongWritable> values,	Context context) throws IOException, InterruptedException {
@@ -26,7 +26,6 @@ public class KVTextReducer extends Reducer<Text, LongWritable, Text, LongWritabl
         for (LongWritable value : values) {
             sum += value.get();
         }
-
         value.set(sum);
         // 2 输出
         context.write(key, value);

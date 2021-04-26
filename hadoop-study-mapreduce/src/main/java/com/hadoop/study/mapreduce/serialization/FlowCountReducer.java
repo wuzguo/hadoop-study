@@ -18,7 +18,6 @@ public class FlowCountReducer extends Reducer<Text, FlowBean, Text, FlowBean> {
 
     @Override
     protected void reduce(Text key, Iterable<FlowBean> values, Context context) throws IOException, InterruptedException {
-
         long sumUpFlow = 0;
         long sumDownFlow = 0;
 
@@ -27,10 +26,8 @@ public class FlowCountReducer extends Reducer<Text, FlowBean, Text, FlowBean> {
             sumUpFlow += flowBean.getUpFlow();
             sumDownFlow += flowBean.getDownFlow();
         }
-
         // 2 封装对象
         FlowBean resultBean = new FlowBean(sumUpFlow, sumDownFlow);
-
         // 3 写出
         context.write(key, resultBean);
     }

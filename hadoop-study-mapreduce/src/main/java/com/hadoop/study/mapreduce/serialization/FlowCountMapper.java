@@ -19,9 +19,9 @@ import java.io.IOException;
 @Slf4j
 public class FlowCountMapper extends Mapper<LongWritable, Text, Text, FlowBean> {
 
-   private FlowBean flowBean = new FlowBean();
+   private final FlowBean flowBean = new FlowBean();
 
-   private Text text = new Text();
+   private final Text text = new Text();
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
@@ -44,6 +44,5 @@ public class FlowCountMapper extends Mapper<LongWritable, Text, Text, FlowBean> 
         flowBean.set(downFlow, upFlow);
         // 4 写出
         context.write(text, flowBean);
-
     }
 }

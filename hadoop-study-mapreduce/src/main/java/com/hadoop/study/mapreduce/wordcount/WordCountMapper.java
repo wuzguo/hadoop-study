@@ -15,9 +15,9 @@ import org.apache.hadoop.mapreduce.Mapper;
  */
 public class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 
-    private Text text = new Text();
+    private final Text text = new Text();
 
-    private static final IntWritable intValue = new IntWritable(1);
+    private final IntWritable intValue = new IntWritable(1);
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {

@@ -14,7 +14,7 @@ import org.apache.hadoop.mapreduce.Reducer;
  */
 public class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
 
-    private IntWritable intValue = new IntWritable(0);
+    private final IntWritable intValue = new IntWritable(0);
 
     @Override
     protected void reduce(Text key, Iterable<IntWritable> values, Context context)
@@ -25,7 +25,6 @@ public class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritab
         for (IntWritable count : values) {
             sum += count.get();
         }
-
         // 2 输出
         intValue.set(sum);
         context.write(key, intValue);

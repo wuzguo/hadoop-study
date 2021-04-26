@@ -19,7 +19,7 @@ import java.io.IOException;
 public class KVTextMapper extends Mapper<Text, Text, Text, LongWritable> {
 
     // 1 设置value
-    private LongWritable values = new LongWritable(1);
+    private final LongWritable values = new LongWritable(1);
 
     @Override
     protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
