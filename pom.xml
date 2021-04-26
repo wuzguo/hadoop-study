@@ -20,6 +20,7 @@
         <module>hadoop-study-hdfs</module>
         <module>hadoop-study-reactor</module>
         <module>hadoop-study-zookeeper</module>
+        <module>hadoop-study-mapreduce</module>
     </modules>
 
     <properties>
