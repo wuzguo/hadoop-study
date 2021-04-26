@@ -1,6 +1,5 @@
 package com.hadoop.study.mapreduce.wordcount;
 
-import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -9,6 +8,8 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.CombineTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+import java.io.IOException;
 
 /**
  * <B>说明：</B><BR>
@@ -23,7 +24,8 @@ public class WordCountDriver {
         // 1 获取配置信息以及封装任务
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf);
-
+        // 任务名称，默认为包名
+        job.setJobName("自定义Hadoop WordCount Examples");
         // 2 设置jar加载路径
         job.setJarByClass(WordCountDriver.class);
 
@@ -41,10 +43,9 @@ public class WordCountDriver {
 
         // 如果不设置InputFormat，它默认用的是TextInputFormat.class
         job.setInputFormatClass(CombineTextInputFormat.class);
-        //虚拟存储切片最大值设置4m
+        //虚拟存储切片最大值设置4m，直接关系MapTask的数量
         CombineTextInputFormat.setMaxInputSplitSize(job, 4194304);
-
-        // 设置reduce task 数量
+        // 设置ReduceTask 数量
         job.setNumReduceTasks(3);
 
         // 6 设置输入和输出路径
