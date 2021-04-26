@@ -21,6 +21,7 @@
         <module>hadoop-study-reactor</module>
         <module>hadoop-study-zookeeper</module>
         <module>hadoop-study-mapreduce</module>
+        <module>hadoop-study-hbase</module>
     </modules>
 
     <properties>
