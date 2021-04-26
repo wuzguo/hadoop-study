@@ -62,7 +62,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.hadoop.study.mapreduce.wordcount.WordCountDriver</mainClass>
+                            <mainClass>com.hadoop.study.mapreduce.combiner.WordCountDriver</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -1,11 +1,10 @@
-package com.hadoop.study.mapreduce.wordcount;
+package com.hadoop.study.mapreduce.combiner;
 
+import java.io.IOException;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-
-import java.io.IOException;
 
 /**
  * <B>说明：</B><BR>
