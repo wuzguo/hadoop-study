@@ -1,4 +1,4 @@
-package com.hadoop.study.mapreduce.inputformat;
+package com.hadoop.study.mapreduce.sequence;
 
 import java.io.IOException;
 import org.apache.hadoop.io.BytesWritable;

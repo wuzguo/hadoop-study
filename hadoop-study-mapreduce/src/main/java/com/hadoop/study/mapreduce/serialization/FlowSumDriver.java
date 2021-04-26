@@ -6,6 +6,8 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueLineRecordReader;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
@@ -23,7 +25,11 @@ public class FlowSumDriver {
     public static void main(String[] args) throws IllegalArgumentException, IOException, ClassNotFoundException, InterruptedException {
         // 1 获取配置信息，或者job对象实例
         Configuration configuration = new Configuration();
+        configuration.set(KeyValueLineRecordReader.KEY_VALUE_SEPERATOR, "\t");
+
         Job job = Job.getInstance(configuration);
+        // 设置输入格式
+        job.setInputFormatClass(KeyValueTextInputFormat.class);
 
         // 6 指定本程序的jar包所在的本地路径
         job.setJarByClass(FlowSumDriver.class);

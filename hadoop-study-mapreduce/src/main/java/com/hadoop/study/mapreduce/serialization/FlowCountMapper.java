@@ -1,6 +1,7 @@
 package com.hadoop.study.mapreduce.serialization;
 
 import com.hadoop.study.mapreduce.domain.FlowBean;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -15,6 +16,7 @@ import java.io.IOException;
  * @date 2021/4/26 17:01
  */
 
+@Slf4j
 public class FlowCountMapper extends Mapper<LongWritable, Text, Text, FlowBean> {
 
    private FlowBean flowBean = new FlowBean();
@@ -23,6 +25,7 @@ public class FlowCountMapper extends Mapper<LongWritable, Text, Text, FlowBean> 
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        log.info("{} , {}", key, value);
         // 1 获取一行
         String line = value.toString();
 
