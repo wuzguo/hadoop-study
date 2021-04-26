@@ -17,7 +17,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
  * @version 1.0.0
  * @date 2020/7/3 16:58
  */
-public class WholeFileInputformat extends FileInputFormat<Text, BytesWritable> {
+public class WholeFileInputFormat extends FileInputFormat<Text, BytesWritable> {
 
 
     @Override

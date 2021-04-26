@@ -31,7 +31,7 @@ public class SequenceFileDriver {
         job.setReducerClass(SequenceFileReducer.class);
 
         // 7 设置输入的inputFormat
-        job.setInputFormatClass(WholeFileInputformat.class);
+        job.setInputFormatClass(WholeFileInputFormat.class);
 
         // 8 设置输出的outputFormat
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
