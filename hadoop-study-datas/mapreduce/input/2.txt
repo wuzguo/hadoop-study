@@ -1,0 +1,11 @@
+git flume hive CDH
+redis git Ambari
+linux ELK
+shell scala
+hadoop ambari
+flume hive kafka flume sqoop oozie CDH
+
+Impala
+Hue
+Kettle
+
