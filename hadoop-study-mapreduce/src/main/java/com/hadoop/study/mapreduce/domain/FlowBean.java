@@ -2,6 +2,7 @@ package com.hadoop.study.mapreduce.domain;
 
 import lombok.Data;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -16,7 +17,7 @@ import java.io.IOException;
  */
 
 @Data
-public class FlowBean implements Writable {
+public class FlowBean implements Writable, WritableComparable<FlowBean> {
 
     /**
      * 上行流量
@@ -69,5 +70,17 @@ public class FlowBean implements Writable {
                 ", downFlow=" + downFlow +
                 ", sumFlow=" + sumFlow +
                 '}';
+    }
+
+    @Override
+    public int compareTo(FlowBean flowBean) {
+        // 按照总流量大小，倒序排列
+        if (sumFlow > flowBean.getSumFlow()) {
+            return -1;
+        } else if (sumFlow < flowBean.getSumFlow()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

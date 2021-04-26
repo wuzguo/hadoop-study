@@ -1,8 +1,7 @@
-package com.hadoop.study.mapreduce.serialization;
+package com.hadoop.study.mapreduce.sort;
 
 import com.hadoop.study.mapreduce.domain.FlowBean;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
@@ -17,15 +16,15 @@ import java.io.IOException;
  */
 
 @Slf4j
-public class FlowCountMapper extends Mapper<LongWritable, Text, Text, FlowBean> {
+public class FlowSortMapper extends Mapper<Text, Text, FlowBean,Text> {
 
    private final FlowBean flowBean = new FlowBean();
 
    private final Text text = new Text();
 
     @Override
-    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        log.info("{} , {}", key, value);
+    protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
+        log.info("{}, {}", key, value);
         // 1 获取一行
         String line = value.toString();
 
@@ -43,6 +42,6 @@ public class FlowCountMapper extends Mapper<LongWritable, Text, Text, FlowBean> 
         text.set(phoneNum);
         flowBean.set(downFlow, upFlow);
         // 4 写出
-        context.write(text, flowBean);
+        context.write(flowBean, text);
     }
 }

@@ -1,4 +1,4 @@
-package com.hadoop.study.mapreduce.serialization;
+package com.hadoop.study.mapreduce.sort;
 
 import com.hadoop.study.mapreduce.domain.FlowBean;
 import org.apache.hadoop.conf.Configuration;
@@ -20,7 +20,7 @@ import java.io.IOException;
  * @date 2021/4/26 17:08
  */
 
-public class FlowSumDriver {
+public class FlowSortDriver {
 
     public static void main(String[] args) throws IllegalArgumentException, IOException, ClassNotFoundException, InterruptedException {
         // 1 获取配置信息，或者job对象实例
@@ -32,19 +32,23 @@ public class FlowSumDriver {
         job.setInputFormatClass(KeyValueTextInputFormat.class);
 
         // 6 指定本程序的jar包所在的本地路径
-        job.setJarByClass(FlowSumDriver.class);
+        job.setJarByClass(FlowSortDriver.class);
 
         // 2 指定本业务job要使用的mapper/Reducer业务类
-        job.setMapperClass(FlowCountMapper.class);
-        job.setReducerClass(FlowCountReducer.class);
+        job.setMapperClass(FlowSortMapper.class);
+        job.setReducerClass(FlowSortReducer.class);
 
         // 3 指定mapper输出数据的kv类型
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(FlowBean.class);
+        job.setMapOutputKeyClass(FlowBean.class);
+        job.setMapOutputValueClass(Text.class);
 
         // 4 指定最终输出的数据的kv类型
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(FlowBean.class);
+
+        // 设置Reduce数量
+        job.setNumReduceTasks(3);
+        job.setPartitionerClass(FlowPartitioner.class);
 
         // 5 指定job的输入原始文件所在目录
         FileInputFormat.setInputPaths(job, new Path(args[0]));
