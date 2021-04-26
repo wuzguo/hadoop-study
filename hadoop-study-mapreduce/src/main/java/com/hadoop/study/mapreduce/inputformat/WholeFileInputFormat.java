@@ -1,4 +1,4 @@
-package com.hadoop.study.mapreduce.sequence;
+package com.hadoop.study.mapreduce.inputformat;
 
 import java.io.IOException;
 import org.apache.hadoop.fs.Path;
