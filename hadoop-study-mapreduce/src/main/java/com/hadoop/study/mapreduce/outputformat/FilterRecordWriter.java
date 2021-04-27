@@ -9,6 +9,7 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -16,15 +17,17 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class FilterRecordWriter extends RecordWriter<Text, NullWritable> {
 
-    FSDataOutputStream blackAddr = null;
-    FSDataOutputStream whiteAddr = null;
+    private FSDataOutputStream blackAddr = null;
+
+    private FSDataOutputStream whiteAddr = null;
 
     public FilterRecordWriter(TaskAttemptContext job) {
         // 1 获取文件系统
         try (FileSystem fs = FileSystem.get(job.getConfiguration())) {
+            String outPath = job.getConfiguration().get(FileOutputFormat.OUTDIR);
             // 3 创建输出流
-            blackAddr = fs.create(new Path("D:/github/hadoop-study/hadoop-study-datas/mapreduce/output4/black.log"));
-            whiteAddr = fs.create(new Path("D:/github/hadoop-study/hadoop-study-datas/mapreduce/output4/white.log"));
+            blackAddr = fs.create(new Path(String.format("%s/black.log", outPath)));
+            whiteAddr = fs.create(new Path(String.format("%s/white.log", outPath)));
         } catch (IOException e) {
             log.error("异常信息： {}", e.getMessage());
         }
