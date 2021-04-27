@@ -14,7 +14,6 @@ public class OrderGroupingComparator extends WritableComparator {
     public int compare(WritableComparable a, WritableComparable b) {
         OrderBean aBean = (OrderBean) a;
         OrderBean bBean = (OrderBean) b;
-
         if (aBean.getOrderId() > bBean.getOrderId()) {
             return 1;
         } else if (aBean.getOrderId() < bBean.getOrderId()) {
