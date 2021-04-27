@@ -1,4 +1,4 @@
-package com.hadoop.study.mapreduce.join;
+package com.hadoop.study.mapreduce.join.reduce;
 
 import com.hadoop.study.mapreduce.domain.TableBean;
 import com.hadoop.study.mapreduce.enums.TypeEnum;
@@ -21,7 +21,7 @@ import java.io.IOException;
 @Slf4j
 public class TableMapper extends Mapper<LongWritable, Text, Text, TableBean> {
     // 文件名称
-    private String name;
+    private String fileName;
 
     // 对象
     private final TableBean bean = new TableBean();
@@ -32,9 +32,9 @@ public class TableMapper extends Mapper<LongWritable, Text, Text, TableBean> {
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
         // 1 获取输入文件切片
-        FileSplit split = (FileSplit) context.getInputSplit();
+        FileSplit fileSplit = (FileSplit) context.getInputSplit();
         // 2 获取输入文件名称
-        name = split.getPath().getName();
+        fileName = fileSplit.getPath().getName();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class TableMapper extends Mapper<LongWritable, Text, Text, TableBean> {
         log.info("split name: {}", split.getPath().getName());
 
         String[] fields = value.toString().split("\t");
-        if (name.startsWith(TypeEnum.PRODUCT.getValue())) {
+        if (fileName.startsWith(TypeEnum.PRODUCT.getValue())) {
             bean.setFlag(TypeEnum.PRODUCT.getCode());
             bean.setPId(fields[0]);
             bean.setPName(fields[1]);

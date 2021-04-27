@@ -1,27 +1,32 @@
-package com.hadoop.study.mapreduce.join;
+package com.hadoop.study.mapreduce.join.map;
 
 import com.hadoop.study.mapreduce.domain.TableBean;
+import com.hadoop.study.mapreduce.join.reduce.TableDriver;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * <B>说明：描述</B>
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/4/27 14:51
+ * @date 2021/4/27 15:43
  */
 
-public class TableDriver {
+@Slf4j
+public class TableCacheDriver {
 
-    public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, URISyntaxException {
         // 1 获取配置信息，或者job对象实例
         Configuration configuration = new Configuration();
         Job job = Job.getInstance(configuration);
@@ -30,23 +35,23 @@ public class TableDriver {
         job.setJarByClass(TableDriver.class);
 
         // 3 指定本业务job要使用的Mapper/Reducer业务类
-        job.setMapperClass(TableMapper.class);
-        job.setReducerClass(TableReducer.class);
+        job.setMapperClass(TableCacheMapper.class);
 
         // 4 指定Mapper输出数据的kv类型
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(TableBean.class);
+        job.setMapOutputKeyClass(TableBean.class);
+        job.setMapOutputValueClass(NullWritable.class);
 
-        // 5 指定最终输出的数据的kv类型
-        job.setOutputKeyClass(TableBean.class);
-        job.setOutputValueClass(NullWritable.class);
-
-        // 6 指定job的输入原始文件所在目录
+        // 5 指定job的输入原始文件所在目录
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-        // 7 设置输出的ReducerTask文件
-        job.setNumReduceTasks(3);
+        // 设置缓存文件
+        String filePath = StringUtils.replace("file:///" + args[0] + "/product.txt", "\\", "/");
+        log.info("cache file path: {}", filePath);
+        job.setCacheFiles(new URI[]{new URI(filePath)});
+
+        // 7 设置输出的ReducerTask文件，这样不需要Reduce
+        job.setNumReduceTasks(0);
 
         // 8 将job中配置的相关参数，以及job所用的java类所在的jar包， 提交给yarn去运行
         boolean result = job.waitForCompletion(true);

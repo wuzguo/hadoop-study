@@ -1,4 +1,4 @@
-package com.hadoop.study.mapreduce.join;
+package com.hadoop.study.mapreduce.join.reduce;
 
 import com.google.common.collect.Lists;
 import com.hadoop.study.mapreduce.domain.TableBean;
