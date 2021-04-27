@@ -30,8 +30,10 @@ public class TableReducer extends Reducer<Text, TableBean, TableBean, NullWritab
         // 获取产品名称
         String pName = "";
 
+        // values 都是以产品ID进行聚合的Bean对象
         for (TableBean bean : values) {
             if (bean.getFlag().equals(TypeEnum.ORDER.getCode())) {
+                // 这里要自己新New一个对象，否则会重复
                 orders.add(TableBean.builder()
                         .orderId(bean.getOrderId())
                         .pId(bean.getPId())
