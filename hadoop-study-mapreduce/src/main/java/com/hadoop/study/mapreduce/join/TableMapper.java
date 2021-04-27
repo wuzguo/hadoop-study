@@ -51,13 +51,18 @@ public class TableMapper extends Mapper<LongWritable, Text, Text, TableBean> {
             bean.setPName(fields[1]);
             bean.setOrderId("");
             bean.setCount(0);
+            // 产品ID
+            text.set(fields[0]);
         } else {
             bean.setFlag(TypeEnum.ORDER.getCode());
             bean.setOrderId(fields[0]);
             bean.setCount(Integer.valueOf(fields[2]));
-            bean.setPId("");
+            bean.setPId(fields[1]);
             bean.setPName("");
+            // 产品ID
+            text.set(fields[1]);
         }
-        context.write(value, bean);
+        // Mapper 以产品ID为键
+        context.write(text, bean);
     }
 }

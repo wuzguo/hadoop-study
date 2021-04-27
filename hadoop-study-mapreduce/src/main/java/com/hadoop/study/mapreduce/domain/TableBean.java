@@ -1,5 +1,6 @@
 package com.hadoop.study.mapreduce.domain;
 
+import lombok.Builder;
 import lombok.Data;
 import org.apache.hadoop.io.Writable;
 
@@ -15,6 +16,7 @@ import java.io.IOException;
  * @date 2021/4/27 14:42
  */
 
+@Builder
 @Data
 public class TableBean implements Writable {
 
@@ -74,12 +76,6 @@ public class TableBean implements Writable {
 
     @Override
     public String toString() {
-        return "TableBean{" +
-                "orderId='" + orderId + '\'' +
-                ", pId='" + pId + '\'' +
-                ", count=" + count +
-                ", pName='" + pName + '\'' +
-                ", flag=" + flag +
-                '}';
+        return orderId + '\t' + pId + '\t' + pName + '\t' + count;
     }
 }

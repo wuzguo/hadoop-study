@@ -22,30 +22,30 @@ import java.util.List;
 @Slf4j
 public class TableReducer extends Reducer<Text, TableBean, TableBean, NullWritable> {
 
-    // 产品
-    private final TableBean product = new TableBean();
-
     @Override
     protected void reduce(Text key, Iterable<TableBean> values, Context context) throws IOException, InterruptedException {
         // 1准备存储订单的集合
         List<TableBean> orders = Lists.newArrayList();
 
+        // 获取产品名称
+        String pName = "";
 
         for (TableBean bean : values) {
             if (bean.getFlag().equals(TypeEnum.ORDER.getCode())) {
-                orders.add(bean);
+                orders.add(TableBean.builder()
+                        .orderId(bean.getOrderId())
+                        .pId(bean.getPId())
+                        .count(bean.getCount())
+                        .pName(bean.getPName())
+                        .flag(bean.getFlag()).build());
             } else {
-                product.setPId(bean.getPId());
-                product.setPName(bean.getPName());
-                product.setOrderId(bean.getOrderId());
-                product.setCount(bean.getCount());
-                product.setFlag(bean.getFlag());
+                pName = bean.getPName();
             }
         }
 
         // 3 表的拼接
         for (TableBean bean : orders) {
-            bean.setPName(product.getPName());
+            bean.setPName(pName);
             // 4 数据写出去
             context.write(bean, NullWritable.get());
         }

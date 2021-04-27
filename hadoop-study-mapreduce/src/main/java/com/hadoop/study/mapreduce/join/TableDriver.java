@@ -45,7 +45,10 @@ public class TableDriver {
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-        // 7 将job中配置的相关参数，以及job所用的java类所在的jar包， 提交给yarn去运行
+        // 7 设置输出的ReducerTask文件
+        job.setNumReduceTasks(3);
+
+        // 8 将job中配置的相关参数，以及job所用的java类所在的jar包， 提交给yarn去运行
         boolean result = job.waitForCompletion(true);
         System.exit(result ? 0 : 1);
     }
