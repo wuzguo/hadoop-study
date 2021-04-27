@@ -32,7 +32,7 @@ public class TableCacheDriver {
         Job job = Job.getInstance(configuration);
 
         // 2 指定本程序的jar包所在的本地路径
-        job.setJarByClass(TableDriver.class);
+        job.setJarByClass(TableCacheDriver.class);
 
         // 3 指定本业务job要使用的Mapper/Reducer业务类
         job.setMapperClass(TableCacheMapper.class);
@@ -45,12 +45,11 @@ public class TableCacheDriver {
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-        // 设置缓存文件
+        // 6 设置缓存文件
         String filePath = StringUtils.replace("file:///" + args[0] + "/product.txt", "\\", "/");
-        log.info("cache file path: {}", filePath);
         job.setCacheFiles(new URI[]{new URI(filePath)});
 
-        // 7 设置输出的ReducerTask文件，这样不需要Reduce
+        // 7 设置输出的ReducerTask文件，这样不需要ReduceTask阶段
         job.setNumReduceTasks(0);
 
         // 8 将job中配置的相关参数，以及job所用的java类所在的jar包， 提交给yarn去运行
