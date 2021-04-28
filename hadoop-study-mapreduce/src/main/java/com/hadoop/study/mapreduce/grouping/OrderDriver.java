@@ -32,7 +32,7 @@ public class OrderDriver {
         job.setOutputKeyClass(OrderBean.class);
         job.setOutputValueClass(NullWritable.class);
 
-        // 6 设置输入数据和输出数据路径
+        // 6 设置输入数据和输出数据路径  // input3
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 

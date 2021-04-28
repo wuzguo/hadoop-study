@@ -41,7 +41,7 @@ public class TableDriver {
         job.setOutputKeyClass(TableBean.class);
         job.setOutputValueClass(NullWritable.class);
 
-        // 6 指定job的输入原始文件所在目录
+        // 6 指定job的输入原始文件所在目录  // input5
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 

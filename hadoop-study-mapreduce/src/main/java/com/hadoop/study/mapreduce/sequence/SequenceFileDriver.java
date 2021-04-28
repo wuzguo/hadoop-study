@@ -46,7 +46,7 @@ public class SequenceFileDriver {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(BytesWritable.class);
 
-        // 5 设置输入输出路径
+        // 5 设置输入输出路径  // input
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 

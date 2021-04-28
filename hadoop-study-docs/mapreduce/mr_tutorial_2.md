@@ -1,4 +1,4 @@
-### Hadoop数据压缩
+### 四、Hadoop数据压缩
 
 #### 压缩概述
 
@@ -17,8 +17,6 @@
 ##### 压缩基本原则：
 1. 运算密集型的job，少用压缩
 2. IO密集型的job，多用压缩
-
-
 
 #### MR支持的压缩编码
 
@@ -44,8 +42,8 @@
 
 | 压缩算法 | 优点                                                         | 缺点                                                         | 应用场景                                                     |
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| gzip     | 压缩率比较高，而且压缩/解压速度也比较快；Hadoop本身支持，在应用中处理Gzip格式的文件就和直接处理文本一样；大部分Linux系统都自带Gzip命令，使用方便。 | 不支持Split。                                                | 当每个文件压缩之后在130M以内的（1个块大小内），都可以考虑用Gzip压缩格式。例如说一天或者一个小时的日志压缩成一个Gzip文件。 |
-| bzip2    | 支持Split；具有很高的压缩率，比Gzip压缩率都高；Hadoop本身自带，使用方便。 | 压缩/解压速度慢。                                            | 适合对速度要求不高，但需要较高的压缩率的时候；或者输出之后的数据比较大，处理之后的数据需要压缩存档减少磁盘空间并且以后数据用得比较少的情况；或者对单个很大的文本文件想压缩减少存储空间，同时又需要支持Split，而且兼容之前的应用程序的情况。 |
+| gzip     | 压缩率比较高，而且压缩/解压速度也比较快。Hadoop本身支持，在应用中处理Gzip格式的文件就和直接处理文本一样；大部分Linux系统都自带Gzip命令，使用方便。 | 不支持Split。                                                | 当每个文件压缩之后在130M以内的（1个块大小内），都可以考虑用Gzip压缩格式。例如说一天或者一个小时的日志压缩成一个Gzip文件。 |
+| bzip2    | 支持Split。具有很高的压缩率，比Gzip压缩率都高；Hadoop本身自带，使用方便。 | 压缩/解压速度慢。                                            | 适合对速度要求不高，但需要较高的压缩率的时候；或者输出之后的数据比较大，处理之后的数据需要压缩存档减少磁盘空间并且以后数据用得比较少的情况；或者对单个很大的文本文件想压缩减少存储空间，同时又需要支持Split，而且兼容之前的应用程序的情况。 |
 | LZO      | 压缩/解压速度也比较快，合理的压缩率；支持Split，是Hadoop中最流行的压缩格式；可以在Linux系统下安装lzop命令，使用方便。 | 压缩率比Gzip要低一些；Hadoop本身不支持，需要安装；在应用中对Lzo格式的文件需要做一些特殊处理（为了支持Split需要建索引，还需要指定InputFormat为Lzo格式）。 | 一个很大的文本文件，压缩之后还大于200M以上的可以考虑，而且单个文件越大，Lzo优点越越明显。 |
 | Snappy   | 高速压缩速度和合理的压缩率。                                 | 不支持Split；压缩率比Gzip要低；Hadoop本身不支持，需要安装。  | 当MapReduce作业的Map输出的数据比较大的时候，作为Map到Reduce的中间数据的压缩格式；或者作为一个MapReduce作业的输出和另外一个MapReduce作业的输入。 |
 
@@ -57,7 +55,7 @@
 
 | 参数                                             | 配置文件位置    | 默认值                                                       | 阶段        | 建议                                          |
 | ------------------------------------------------ | --------------- | ------------------------------------------------------------ | ----------- | --------------------------------------------- |
-| io.compression.codecs                            | core-site.xml   | org.apache.hadoop.io.compress.DefaultCodec,  org.apache.hadoop.io.compress.GzipCodec, org.apache.hadoop.io.compress.BZip2Codec | 输入压缩    | Hadoop使用文件扩展名判断是否支持某种编解码器  |
+| io.compression.codecs                            | core-site.xml   | org.apache.hadoop.io.compress.DefaultCodec, org.apache.hadoop.io.compress.GzipCodec, org.apache.hadoop.io.compress.BZip2Codec | 输入压缩    | Hadoop使用文件扩展名判断是否支持某种编解码器  |
 | mapreduce.map.output.compress                    | mapred-site.xml | false                                                        | mapper输出  | 这个参数设为true启用压缩                      |
 | mapreduce.map.output.compress.codec              | mapred-site.xml | org.apache.hadoop.io.compress.DefaultCodec                   | mapper输出  | 企业多使用LZO或Snappy编解码器在此阶段压缩数据 |
 | mapreduce.output.fileoutputformat.compress       | mapred-site.xml | false                                                        | reducer输出 | 这个参数设为true启用压缩                      |

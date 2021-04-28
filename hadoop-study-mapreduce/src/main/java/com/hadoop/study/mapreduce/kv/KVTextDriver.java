@@ -44,9 +44,8 @@ public class KVTextDriver {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(LongWritable.class);
 
-        // 5 设置输入输出数据路径
+        // 5 设置输入输出数据路径   // input2
         FileInputFormat.setInputPaths(job, new Path(args[0]));
-        // 6 设置输出数据路径
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
         // 7 提交job

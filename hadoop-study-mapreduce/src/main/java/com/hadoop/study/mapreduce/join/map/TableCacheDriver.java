@@ -41,7 +41,7 @@ public class TableCacheDriver {
         job.setMapOutputKeyClass(TableBean.class);
         job.setMapOutputValueClass(NullWritable.class);
 
-        // 5 指定job的输入原始文件所在目录
+        // 5 指定job的输入原始文件所在目录   // input5
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 

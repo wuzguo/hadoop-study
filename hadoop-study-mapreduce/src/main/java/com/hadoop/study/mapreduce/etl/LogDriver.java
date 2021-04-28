@@ -35,7 +35,7 @@ public class LogDriver {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(NullWritable.class);
 
-        // 5 设置输入和输出路径
+        // 5 设置输入和输出路径  // input6
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 

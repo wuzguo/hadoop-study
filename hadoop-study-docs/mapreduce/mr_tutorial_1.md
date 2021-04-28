@@ -1,4 +1,4 @@
-### MapReduce框架原理
+### 三、MapReduce框架原理
 
 #### InputFormat数据输入
 
@@ -28,13 +28,13 @@
 
 2. 经过FileInputFormat的切片机制运算后，形成的切片信息如下：
 
-    file1.txt.split1-- 0~128
+    file1.txt.split1 -- 0~128M
 
-    file1.txt.split2-- 128~256
+    file1.txt.split2 -- 128~256M
 
-    file1.txt.split3-- 256~320
+    file1.txt.split3 -- 256~320M
 
-    file2.txt.split1-- 0~10M
+    file2.txt.split1 -- 0~10M
 
 ##### FileInputFormat切片大小的参数配置
 
@@ -173,7 +173,7 @@ Map方法之后，Reduce方法之前的数据处理过程称之为Shuffle。
 
 Shuffle中的缓冲区大小会影响到MapReduce程序的执行效率，原则上说，缓冲区越大，磁盘io的次数越少，执行速度就越快。
 
-缓冲区的大小可以通过参数调整，参数：io.sort.mb 默认100M。
+缓冲区的大小可以通过参数调整，参数：**io.sort.mb** 默认100M。
 
 ![](../images/202104_01/35.png)
 
@@ -204,7 +204,7 @@ public class CustomPartitioner extends Partitioner<Text, FlowBean> {
  	@Override
 	public int getPartition(Text key, FlowBean value, int numPartitions) {
         // 控制分区代码逻辑
-        … …
+        // … …
         return partition;
 	}
 }
@@ -224,9 +224,9 @@ job.setNumReduceTasks(5);
 
 ##### 分区总结
 
-1. 如果ReduceTask的数量 > getPartition的结果数，则会多产生几个空的输出文件part-r-000xx。
-2. 如果 1 < ReduceTask的数量 < getPartition的结果数，则有一部分分区数据无处安放，会Exception。
-3. 如果 ReduceTask的数量 =1，则不管MapTask端输出多少个分区文件，最终结果都交给这一个ReduceTask，最终也就只会产生一个结果文件 part-r-00000。
+1. **如果ReduceTask的数量 > getPartition的结果数**，则会多产生几个空的输出文件part-r-000xx。
+2. **如果 1 < ReduceTask的数量 < getPartition的结果数**，则有一部分分区数据无处安放，会Exception。
+3. **如果 ReduceTask的数量 = 1**，则不管MapTask端输出多少个分区文件，最终结果都交给这一个ReduceTask，最终也就只会产生一个结果文件 part-r-00000。
 4. 分区号必须从零开始，逐一累加。
 
 ##### 案例分析

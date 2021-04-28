@@ -33,7 +33,7 @@ public class FilterDriver {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(NullWritable.class);
 
-        // 5 设置输入输出路径
+        // 5 设置输入输出路径   // input4
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 

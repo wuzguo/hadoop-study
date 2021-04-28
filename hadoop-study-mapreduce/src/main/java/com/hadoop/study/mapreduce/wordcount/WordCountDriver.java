@@ -48,7 +48,7 @@ public class WordCountDriver {
         // 设置ReduceTask 数量
         job.setNumReduceTasks(3);
 
-        // 6 设置输入和输出路径
+        // 6 设置输入和输出路径  // input
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
