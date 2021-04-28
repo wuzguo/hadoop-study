@@ -1,0 +1,91 @@
+A	D, E, F
+A - B	E, E
+A - C	F, D, D, F
+A - E	D
+A - F	E, D, D, E
+A - G	F, F
+A - K	D, D
+A - M	E, F
+B	E, C, A
+B - C	A, A
+B - F	A, C, E
+B - G	C, A, C, A
+B - K	A, A, C, C
+B - O	A, A
+C	F, I, A, D
+C - G	F, A
+C - K	A, D
+C - O	A
+D	E, F, A
+D - A	F, F, E, E
+D - B	A, E, A, E
+D - C	A, F, F, A
+D - F	A, A, E, E
+D - G	A, F, F, A
+D - H	A, E
+D - K	A, A
+D - L	E
+D - M	E, E, F, F
+D - O	A, A
+E	D, L, C, B
+E - A	D
+E - B	C, C
+E - C	D, D
+E - F	C, D, D, B, B, C
+E - G	C, C
+E - J	B, B
+E - K	D, C, D, C
+F	C, M, B, D, O, A, E
+F - B	E, A, C
+F - C	A, D, A, D
+F - G	C, C, A, A
+F - J	O, B
+F - K	A, D, D, C, A, C
+F - O	A, A
+G	F, A, C
+G - C	A, F
+G - K	A, C
+G - O	A
+H	E, O, A, D, C
+H - A	D, D, E, E
+H - B	A, E, A, C, E, C
+H - C	D, D, A, A
+H - D	A, E
+H - E	C, D, C, D
+H - F	A, E, O, C, D, D, O, C, A, E
+H - G	A, C, C, A
+H - I	O, O
+H - J	O, O
+H - K	D, C, D, C, A, A
+H - L	D, E
+H - M	E, E
+H - O	A, A
+I	O
+I - F	O, O
+I - J	O, O
+J	O, B
+J - F	B, O
+K	A, C, D
+K - C	A, D
+K - G	A, C
+K - O	A
+L	D, E
+L - A	D, E, E, D
+L - B	E, E
+L - C	D, D
+L - D	E
+L - E	D, D
+L - F	E, D, E, D
+L - H	E, D
+L - K	D, D
+L - M	E, E
+M	F, E
+M - A	F, E
+M - B	E, E
+M - C	F, F
+M - F	E, E
+M - G	F, F
+O	A
+O - C	A
+O - G	A
+O - K	A
