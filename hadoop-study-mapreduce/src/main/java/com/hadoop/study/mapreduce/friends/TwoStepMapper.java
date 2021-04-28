@@ -28,6 +28,7 @@ public class TwoStepMapper extends Mapper<LongWritable, Text, Text, Text> {
 
         String friend = friendPersons[0];
         String[] persons = friendPersons[1].split(",");
+        // 对人，人，人排序
         Arrays.sort(persons);
 
         for (int i = 0; i < persons.length - 1; i++) {
