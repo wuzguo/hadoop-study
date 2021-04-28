@@ -1,5 +1,6 @@
 package com.hadoop.study.mapreduce.friends;
 
+import com.hadoop.study.mapreduce.domain.DisorderPair;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -39,7 +40,7 @@ public class TwoStepDriver {
         job.setMapperClass(TwoStepMapper.class);
         job.setReducerClass(TwoStepReducer.class);
 
-        // 5 指定job的输入原始文件所在目录   // input
+        // 5 指定job的输入原始文件所在目录   // output8
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 

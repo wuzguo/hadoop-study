@@ -1,10 +1,13 @@
 package com.hadoop.study.mapreduce.friends;
 
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <B>说明：描述</B>
@@ -17,16 +20,14 @@ import java.io.IOException;
 @Slf4j
 public class TwoStepReducer extends Reducer<Text, Text, Text, Text> {
 
-    private final Text text = new Text();
-
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-        StringBuilder builder = new StringBuilder();
+        List<String> friends = Lists.newLinkedList();
         for (Text value : values) {
-            builder.append(value.toString()).append(", ");
+            friends.add(value.toString());
         }
-        String friend = builder.substring(0, builder.lastIndexOf(","));
-        text.set(friend.trim());
+        String friend = friends.stream().sorted(String::compareTo).collect(Collectors.joining(" , "));
+        Text text = new Text(String.format("( %s )", friend.trim()));
         // 人-人 友，友，友
         context.write(key, text);
     }
