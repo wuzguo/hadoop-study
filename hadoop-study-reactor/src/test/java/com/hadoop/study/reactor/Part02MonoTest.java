@@ -14,13 +14,13 @@ import java.time.Duration;
  */
 public class Part02MonoTest {
 
-	Part02Mono workshop = new Part02Mono();
+	Part02Mono reactor = new Part02Mono();
 
 //========================================================================================
 
 	@Test
 	public void empty() {
-		Mono<String> mono = workshop.emptyMono();
+		Mono<String> mono = reactor.emptyMono();
 		StepVerifier.create(mono)
 				.verifyComplete();
 	}
@@ -29,7 +29,7 @@ public class Part02MonoTest {
 
 	@Test
 	public void noSignal() {
-		Mono<String> mono = workshop.monoWithNoSignal();
+		Mono<String> mono = reactor.monoWithNoSignal();
 		StepVerifier
 				.create(mono)
 				.expectSubscription()
@@ -41,7 +41,7 @@ public class Part02MonoTest {
 
 	@Test
 	public void fromValue() {
-		Mono<String> mono = workshop.fooMono();
+		Mono<String> mono = reactor.fooMono();
 		StepVerifier.create(mono)
 				.expectNext("foo")
 				.verifyComplete();
@@ -51,7 +51,7 @@ public class Part02MonoTest {
 
 	@Test
 	public void error() {
-		Mono<String> mono = workshop.errorMono();
+		Mono<String> mono = reactor.errorMono();
 		StepVerifier.create(mono)
 				.verifyError(IllegalStateException.class);
 	}

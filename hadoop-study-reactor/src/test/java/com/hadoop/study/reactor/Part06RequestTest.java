@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class Part06RequestTest {
 
-	Part06Request workshop = new Part06Request();
+	Part06Request reactor = new Part06Request();
 	ReactiveRepository<User> repository = new ReactiveUserRepository();
 
 	PrintStream originalConsole = System.out;
@@ -45,7 +45,7 @@ public class Part06RequestTest {
 	@Test
 	public void requestAll() {
 		Flux<User> flux = repository.findAll();
-		StepVerifier verifier = workshop.requestAllExpectFour(flux);
+		StepVerifier verifier = reactor.requestAllExpectFour(flux);
 		verifier.verify();
 	}
 
@@ -54,7 +54,7 @@ public class Part06RequestTest {
 	@Test
 	public void requestOneByOne() {
 		Flux<User> flux = repository.findAll();
-		StepVerifier verifier = workshop.requestOneExpectSkylerThenRequestOneExpectJesse(flux);
+		StepVerifier verifier = reactor.requestOneExpectSkylerThenRequestOneExpectJesse(flux);
 		verifier.verify();
 	}
 
@@ -65,7 +65,7 @@ public class Part06RequestTest {
 		logConsole = new ByteArrayOutputStream();
 		System.setOut(new PrintStream(logConsole));
 
-		Flux<User> flux = workshop.fluxWithLog();
+		Flux<User> flux = reactor.fluxWithLog();
 
 		StepVerifier.create(flux, 0)
 		            .thenRequest(1)
@@ -98,7 +98,7 @@ public class Part06RequestTest {
 
 	@Test
 	public void experimentWithDoOn() {
-		Flux<User> flux = workshop.fluxWithDoOnPrintln();
+		Flux<User> flux = reactor.fluxWithDoOnPrintln();
 
 		//setting up the logConsole here should ensure we only capture console logs from the Flux
 		logConsole = new ByteArrayOutputStream();

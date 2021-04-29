@@ -15,7 +15,7 @@ import reactor.test.StepVerifier;
  */
 public class Part05MergeTest {
 
-	Part05Merge workshop = new Part05Merge();
+	Part05Merge reactor = new Part05Merge();
 
 	final static User MARIE = new User("mschrader", "Marie", "Schrader");
 	final static User MIKE = new User("mehrmantraut", "Mike", "Ehrmantraut");
@@ -27,7 +27,7 @@ public class Part05MergeTest {
 
 	@Test
 	public void mergeWithInterleave() {
-		Flux<User> flux = workshop.mergeFluxWithInterleave(repositoryWithDelay.findAll(), repository.findAll());
+		Flux<User> flux = reactor.mergeFluxWithInterleave(repositoryWithDelay.findAll(), repository.findAll());
 		StepVerifier.create(flux)
 				.expectNext(MARIE, MIKE, User.SKYLER, User.JESSE, User.WALTER, User.SAUL)
 				.verifyComplete();
@@ -37,7 +37,7 @@ public class Part05MergeTest {
 
 	@Test
 	public void mergeWithNoInterleave() {
-		Flux<User> flux = workshop.mergeFluxWithNoInterleave(repositoryWithDelay.findAll(), repository.findAll());
+		Flux<User> flux = reactor.mergeFluxWithNoInterleave(repositoryWithDelay.findAll(), repository.findAll());
 		StepVerifier.create(flux)
 				.expectNext(User.SKYLER, User.JESSE, User.WALTER, User.SAUL, MARIE, MIKE)
 				.verifyComplete();
@@ -49,7 +49,7 @@ public class Part05MergeTest {
 	public void multipleMonoToFlux() {
 		Mono<User> skylerMono = repositoryWithDelay.findFirst();
 		Mono<User> marieMono = repository.findFirst();
-		Flux<User> flux = workshop.createFluxFromMultipleMono(skylerMono, marieMono);
+		Flux<User> flux = reactor.createFluxFromMultipleMono(skylerMono, marieMono);
 		StepVerifier.create(flux)
 				.expectNext(User.SKYLER, MARIE)
 				.verifyComplete();

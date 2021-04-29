@@ -53,8 +53,8 @@ public class Part03StepVerifier {
     // and another one with "jpinkman" then completes successfully.
     void expectSkylerJesseComplete(Flux<User> flux) {
         StepVerifier.create(flux).expectNextMatches(user -> user.getUsername().equals("swhite"))
-            .assertNext(user -> Assertions.assertThat(user.getUsername()).isEqualToIgnoringCase("jpinkman"))
-            .verifyComplete(); // TO BE REMOVED
+                .assertNext(user -> Assertions.assertThat(user.getUsername()).isEqualToIgnoringCase("jpinkman"))
+                .verifyComplete(); // TO BE REMOVED
     }
 
 //========================================================================================
@@ -70,13 +70,13 @@ public class Part03StepVerifier {
     // by manipulating virtual time thanks to StepVerifier#withVirtualTime, notice how long the test takes
     void expect3600Elements(Supplier<Flux<Long>> supplier) {
         StepVerifier.withVirtualTime(supplier)
-            .thenAwait(Duration.ofHours(1))
-            .expectNextCount(3600)
-            .verifyComplete(); // TO BE REMOVED
+                .thenAwait(Duration.ofHours(1))
+                .expectNextCount(3600)
+                .verifyComplete(); // TO BE REMOVED
     }
 
     private void fail() {
-        throw new AssertionError("workshop not implemented");
+        throw new AssertionError("reactor not implemented");
     }
 
 }

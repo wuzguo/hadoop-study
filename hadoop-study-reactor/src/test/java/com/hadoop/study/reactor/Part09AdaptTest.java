@@ -43,7 +43,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class Part09AdaptTest {
 
-	Part09Adapt workshop = new Part09Adapt();
+	Part09Adapt reactor = new Part09Adapt();
 	ReactiveRepository<User> repository = new ReactiveUserRepository();
 
 //========================================================================================
@@ -51,8 +51,8 @@ public class Part09AdaptTest {
 	@Test
 	public void adaptToFlowable() {
 		Flux<User> flux = repository.findAll();
-		Flowable<User> flowable = workshop.fromFluxToFlowable(flux);
-		StepVerifier.create(workshop.fromFlowableToFlux(flowable))
+		Flowable<User> flowable = reactor.fromFluxToFlowable(flux);
+		StepVerifier.create(reactor.fromFlowableToFlux(flowable))
 				.expectNext(User.SKYLER, User.JESSE, User.WALTER, User.SAUL)
 				.verifyComplete();
 	}
@@ -62,8 +62,8 @@ public class Part09AdaptTest {
 	@Test
 	public void adaptToObservable() {
 		Flux<User> flux = repository.findAll();
-		Observable<User> observable = workshop.fromFluxToObservable(flux);
-		StepVerifier.create(workshop.fromObservableToFlux(observable))
+		Observable<User> observable = reactor.fromFluxToObservable(flux);
+		StepVerifier.create(reactor.fromObservableToFlux(observable))
 				.expectNext(User.SKYLER, User.JESSE, User.WALTER, User.SAUL)
 				.verifyComplete();
 	}
@@ -73,8 +73,8 @@ public class Part09AdaptTest {
 	@Test
 	public void adaptToSingle() {
 		Mono<User> mono = repository.findFirst();
-		Single<User> single = workshop.fromMonoToSingle(mono);
-		StepVerifier.create(workshop.fromSingleToMono(single))
+		Single<User> single = reactor.fromMonoToSingle(mono);
+		StepVerifier.create(reactor.fromSingleToMono(single))
 				.expectNext(User.SKYLER)
 				.verifyComplete();
 	}
@@ -84,8 +84,8 @@ public class Part09AdaptTest {
 	@Test
 	public void adaptToCompletableFuture() {
 		Mono<User> mono = repository.findFirst();
-		CompletableFuture<User> future = workshop.fromMonoToCompletableFuture(mono);
-		StepVerifier.create(workshop.fromCompletableFutureToMono(future))
+		CompletableFuture<User> future = reactor.fromMonoToCompletableFuture(mono);
+		StepVerifier.create(reactor.fromCompletableFutureToMono(future))
 				.expectNext(User.SKYLER)
 				.verifyComplete();
 	}
