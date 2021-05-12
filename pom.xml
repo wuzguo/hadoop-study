@@ -22,6 +22,7 @@
         <module>hadoop-study-zookeeper</module>
         <module>hadoop-study-mapreduce</module>
         <module>hadoop-study-hbase</module>
+        <module>hadoop-study-spark</module>
     </modules>
 
     <properties>
