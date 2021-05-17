@@ -24,7 +24,7 @@ object WordCount {
           .map((_, 1))
           .reduceByKey(_ + _, 1)
           .sortBy(_._2, false)
-          .saveAsTextFile("./data/output")
+          .saveAsTextFile("hdfs://hadoop001:9000/user/output3")
         //4.关闭连接
         sc.stop()
     }
