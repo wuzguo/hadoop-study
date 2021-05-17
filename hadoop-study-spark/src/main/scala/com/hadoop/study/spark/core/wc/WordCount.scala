@@ -19,12 +19,12 @@ object WordCount {
         // 创建SparkContext，该对象是提交Spark APP的入口
         val sc = new SparkContext(conf)
         //3.使用sc创建RDD并执行相应的transform和action
-        sc.textFile(args(0)).flatMap(_.split(" "))
+        sc.textFile("hdfs://hadoop001:9000/user/input/1.txt").flatMap(_.split(" "))
           .filter(str => StringUtils.isNotBlank(str))
           .map((_, 1))
           .reduceByKey(_ + _, 1)
           .sortBy(_._2, false)
-          .saveAsTextFile(args(1))
+          .saveAsTextFile("./data/output")
         //4.关闭连接
         sc.stop()
     }
