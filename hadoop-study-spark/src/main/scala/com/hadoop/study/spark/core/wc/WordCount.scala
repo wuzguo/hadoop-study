@@ -18,8 +18,9 @@ object WordCount {
         val conf = new SparkConf().setAppName("WordCount").setMaster("local[*]")
         // 创建SparkContext，该对象是提交Spark APP的入口
         val sc = new SparkContext(conf)
-        //3.使用sc创建RDD并执行相应的transformation和action
-        sc.textFile(args(0)).flatMap(_.split(" ")).filter(str => StringUtils.isNotBlank(str))
+        //3.使用sc创建RDD并执行相应的transform和action
+        sc.textFile(args(0)).flatMap(_.split(" "))
+          .filter(str => StringUtils.isNotBlank(str))
           .map((_, 1))
           .reduceByKey(_ + _, 1)
           .sortBy(_._2, false)
