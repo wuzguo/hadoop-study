@@ -15,16 +15,16 @@ object WordCount {
 
     def main(args: Array[String]): Unit = {
         // 创建SparkConf并设置APP名称
-        val conf = new SparkConf().setAppName("WordCount").setMaster("local[*]")
+        val conf = new SparkConf().setAppName("WordCount")
         // 创建SparkContext，该对象是提交Spark APP的入口
         val sc = new SparkContext(conf)
         //3.使用sc创建RDD并执行相应的transform和action
-        sc.textFile("hdfs://hadoop001:9000/user/input/1.txt").flatMap(_.split(" "))
+        sc.textFile(args(0)).flatMap(_.split(" "))
           .filter(str => StringUtils.isNotBlank(str))
           .map((_, 1))
           .reduceByKey(_ + _, 1)
-          .sortBy(_._2, false)
-          .saveAsTextFile("hdfs://hadoop001:9000/user/output3")
+          .sortBy(_._2, ascending = false)
+          .saveAsTextFile(args(1))
         //4.关闭连接
         sc.stop()
     }
