@@ -26,6 +26,34 @@ object WordCount2 {
 
     }
 
+    // reduce, aggregate, fold
+    def wordcount91011(sc: SparkContext): Unit = {
+        val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+        val words = rdd.flatMap(_.split(" "))
+
+        // 【（word, count）,(word, count)】
+        // word => Map[(word,1)]
+        val mapWord = words.map(
+            word => {
+                mutable.Map[String, Long]((word, 1))
+            }
+        )
+
+        val wordCount = mapWord.reduce(
+            (map1, map2) => {
+                map2.foreach {
+                    case (word, count) => {
+                        val newCount = map1.getOrElse(word, 0L) + count
+                        map1.update(word, newCount)
+                    }
+                }
+                map1
+            }
+        )
+
+        println(wordCount)
+    }
+
     // groupBy
     def wordcount1(sc: SparkContext): Unit = {
 
@@ -93,34 +121,6 @@ object WordCount2 {
         val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
         val words = rdd.flatMap(_.split(" "))
         val wordCount: collection.Map[String, Long] = words.countByValue()
-    }
-
-    // reduce, aggregate, fold
-    def wordcount91011(sc: SparkContext): Unit = {
-        val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
-        val words = rdd.flatMap(_.split(" "))
-
-        // 【（word, count）,(word, count)】
-        // word => Map[(word,1)]
-        val mapWord = words.map(
-            word => {
-                mutable.Map[String, Long]((word, 1))
-            }
-        )
-
-        val wordCount = mapWord.reduce(
-            (map1, map2) => {
-                map2.foreach {
-                    case (word, count) => {
-                        val newCount = map1.getOrElse(word, 0L) + count
-                        map1.update(word, newCount)
-                    }
-                }
-                map1
-            }
-        )
-
-        println(wordCount)
     }
 
 }
