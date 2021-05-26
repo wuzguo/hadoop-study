@@ -43,7 +43,7 @@ object RDD23_Operator_Case_Agent {
 
         // 打印结果
         mapValues.collect().sortBy(_._1).foreach(println)
-        
+
         sc.stop()
     }
 }
