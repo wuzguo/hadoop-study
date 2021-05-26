@@ -26,6 +26,5 @@ object RDD_Dep1 {
         array.foreach(println)
 
         sc.stop()
-
     }
 }

@@ -98,7 +98,7 @@ object HotCategoryTop10Analysis {
             }
         }
 
-        val resultRDD = analysisRDD.sortBy(_._2, false).take(10)
+        val resultRDD = analysisRDD.sortBy(_._2, ascending = false).take(10)
 
         // 6. 将结果采集到控制台打印出来
         resultRDD.foreach(println)
