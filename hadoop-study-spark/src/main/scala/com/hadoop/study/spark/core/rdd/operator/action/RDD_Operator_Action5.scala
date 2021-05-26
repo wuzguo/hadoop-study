@@ -23,7 +23,6 @@ object RDD_Operator_Action5 {
         //         RDD的方法可以将计算逻辑发送到Executor端（分布式节点）执行
         //         为了区分不同的处理效果，所以将RDD的方法称之为算子。
         //        RDD的方法外部的操作都是在Driver端执行的，而方法内部的逻辑代码是在Executor端执行。
-
         sc.stop()
     }
 }

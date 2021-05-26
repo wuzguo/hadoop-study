@@ -10,11 +10,10 @@ object RDD_Operator_Action6 {
         val sc = new SparkContext(sparkConf)
 
         val rdd = sc.makeRDD(List[Int]())
-
         val user = new User()
 
         // SparkException: Task not serializable
-        // NotSerializableException: com.atguigu.bigdata.spark.core.rdd.operator.action.Spark07_RDD_Operator_Action$User
+        // java.io.NotSerializableException: com.hadoop.study.spark.core.rdd.operator.action.RDD_Operator_Action6$User
 
         // RDD算子中传递的函数是会包含闭包操作，那么就会进行检测功能
         // 闭包检测

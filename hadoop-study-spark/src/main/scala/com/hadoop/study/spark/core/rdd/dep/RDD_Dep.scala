@@ -10,7 +10,7 @@ object RDD_Dep {
         val sparConf = new SparkConf().setMaster("local").setAppName("WordCount")
         val sc = new SparkContext(sparConf)
 
-        val lines: RDD[String] = sc.textFile("datas/word.txt")
+        val lines: RDD[String] = sc.textFile("./hadoop-study-datas/spark/data/1.txt")
         println(lines.toDebugString)
         println("*************************")
         val words: RDD[String] = lines.flatMap(_.split(" "))
