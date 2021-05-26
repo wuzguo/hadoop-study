@@ -10,7 +10,7 @@ import org.apache.spark.{SparkConf, SparkContext}
  * @date 2021/5/26 16:26
  */
 
-object UserVisitActionExample {
+object UserVisitActionExample1 {
 
     def main(args: Array[String]): Unit = {
         val conf = new SparkConf().setMaster("local").setAppName("UserActionAnalysis")
@@ -44,49 +44,36 @@ object UserVisitActionExample {
         val clickCategoryRDD = actionRDD.filter(action => action.clickCategoryId != -1)
           .map(action => (action.clickCategoryId, 1))
           .reduceByKey(_ + _)
+          .map {
+              case (category, count) => (category, (count, 0, 0))
+          }
 
         val orderCategoryRDD = actionRDD.filter(action => action.orderCategoryIds != "null")
           .flatMap(action => {
               val categoryIds = action.orderCategoryIds.split(",")
               categoryIds.map(categoryId => (categoryId.toLong, 1))
           }).reduceByKey(_ + _)
+          .map {
+              case (category, count) => (category, (0, count, 0))
+          }
 
         val payCategoryRDD = actionRDD.filter(action => action.payCategoryIds != "null")
           .flatMap(action => {
               val categoryIds = action.payCategoryIds.split(",")
               categoryIds.map(categoryId => (categoryId.toLong, 1))
           }).reduceByKey(_ + _)
+          .map {
+              case (category, count) => (category, (0, 0, count))
+          }
 
         // 5. 合并 connect + group
-        val categoryRDD = clickCategoryRDD.cogroup(orderCategoryRDD, payCategoryRDD)
+        val categoryRDD = clickCategoryRDD.union(orderCategoryRDD).union(payCategoryRDD)
 
-        // 6. 转换结构
-        val categoryRDD2 = categoryRDD.mapValues {
-            case (clickIter, orderIter, payIter) =>
-                // 点击数量
-                var clickCount = 0
-                if (clickIter.iterator.hasNext) {
-                    clickCount = clickIter.iterator.next()
-                }
-                // 订单数量
-                var orderCount = 0
-                if (orderIter.iterator.hasNext) {
-                    orderCount = orderIter.iterator.next()
-                }
-                // 支付数量
-                var payCount = 0
-                if (payIter.iterator.hasNext) {
-                    payCount = payIter.iterator.next()
-                }
-                (clickCount, orderCount, payCount)
-            case _ => (0, 0, 0)
-        }
-
-        // 7. 排序，取前10
-        val tupleRDD = categoryRDD2.sortBy(_._2, ascending = false).take(10)
+        // 6. 排序，取前10
+        val tupleRDD = categoryRDD.sortBy(_._2, ascending = false).take(10)
         tupleRDD.foreach(println)
 
-        // 8. 停止
+        // 7. 停止
         sc.stop()
     }
 
