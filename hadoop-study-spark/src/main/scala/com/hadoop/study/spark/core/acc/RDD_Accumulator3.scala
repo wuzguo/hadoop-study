@@ -25,10 +25,9 @@ object RDD_Accumulator3 {
         // (a, 1),    (b, 2),    (c, 3)
         // (a, (1,4)),(b, (2,5)),(c, (3,6))
         rdd1.map {
-            case (w, c) => {
+            case (w, c) =>
                 val l: Int = map.getOrElse(w, 0)
                 (w, (c, l))
-            }
         }.collect().foreach(println)
 
         sc.stop()

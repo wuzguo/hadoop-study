@@ -20,12 +20,11 @@ object RDD_Accumulator4 {
         // 封装广播变量
         val bc: Broadcast[mutable.Map[String, Int]] = sc.broadcast(map)
 
+        // 方法广播变量
         rdd1.map {
-            case (w, c) => {
-                // 方法广播变量
+            case (w, c) =>
                 val l: Int = bc.value.getOrElse(w, 0)
                 (w, (c, l))
-            }
         }.collect().foreach(println)
 
         sc.stop()
