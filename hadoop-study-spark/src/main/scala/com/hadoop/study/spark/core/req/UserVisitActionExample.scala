@@ -41,31 +41,83 @@ object UserVisitActionExample {
         actionRDD.cache()
 
         // 4. 统计每个品类点击的次数、下单的次数和支付的次数
-        val clickCategoryRDD = actionRDD.filter(action => action.clickCategoryId != -1).map(action => (action
-          .clickCategoryId, 1))
+        val clickCategoryRDD = actionRDD.filter(action => action.clickCategoryId != -1)
+          .map(action => (action.clickCategoryId, 1))
+          .reduceByKey(_ + _)
 
-        val orderCategoryRDD = actionRDD.filter(action => action.orderCategoryIds != "null").flatMap(action => {
-            val categoryIds = action.orderCategoryIds.split(",")
-            categoryIds.map(categoryId => (categoryId.toLong, 1))
-        })
+        val orderCategoryRDD = actionRDD.filter(action => action.orderCategoryIds != "null")
+          .flatMap(action => {
+              val categoryIds = action.orderCategoryIds.split(",")
+              categoryIds.map(categoryId => (categoryId.toLong, 1))
+          }).reduceByKey(_ + _)
 
-        val payCategoryRDD = actionRDD.filter(action => action.payCategoryIds != "null").flatMap(action => {
-            val categoryIds = action.payCategoryIds.split(",")
-            categoryIds.map(categoryId => (categoryId.toLong, 1))
-        })
+        val payCategoryRDD = actionRDD.filter(action => action.payCategoryIds != "null")
+          .flatMap(action => {
+              val categoryIds = action.payCategoryIds.split(",")
+              categoryIds.map(categoryId => (categoryId.toLong, 1))
+          }).reduceByKey(_ + _)
+
+        // 5. 合并 connect + group
+        val categoryRDD = clickCategoryRDD.cogroup(orderCategoryRDD, payCategoryRDD)
+
+        // 6. 转换结构
+        val categoryRDD2 = categoryRDD.mapValues {
+            case (clickIter, orderIter, payIter) =>
+                // 点击数量
+                var clickCount = 0
+                if (clickIter.iterator.hasNext) {
+                    clickCount = clickIter.iterator.next()
+                }
+                // 订单数量
+                var orderCount = 0
+                if (orderIter.iterator.hasNext) {
+                    orderCount = orderIter.iterator.next()
+                }
+                // 支付数量
+                var payCount = 0
+                if (payIter.iterator.hasNext) {
+                    payCount = payIter.iterator.next()
+                }
+                (clickCount, orderCount, payCount)
+            case _ => (0, 0, 0)
+        }
+
+        // 6. 排序，取前10
+        val tupleRDD = categoryRDD2.sortBy(_._2, ascending = false).take(10)
+        tupleRDD.foreach(println)
+
+        // 7. 停止
+        sc.stop()
     }
 
-    case class UserAction(time: String, // 日期
-                          userId: Long, // 用户ID
-                          sessionId: String, // Session ID
-                          pageId: Long, // 页面ID
-                          actionTime: String, // 动作时间
-                          search: String, // 搜索关键字
-                          clickCategoryId: Long, // 点击的品类ID
-                          clickProductId: Long, // 点击的产品ID
-                          orderCategoryIds: String, // 下单的品类ID
-                          orderProductIds: String, // 下单的产品ID
-                          payCategoryIds: String, // 支付的品类ID
-                          payProductIds: String, // 支付的产品ID
-                          cityId: Long) // 城市ID
+    /**
+     * 构造函数
+     *
+     * @param time             日期
+     * @param userId           用户ID
+     * @param sessionId        Session ID
+     * @param pageId           页面ID
+     * @param actionTime       动作时间
+     * @param search           搜索关键字
+     * @param clickCategoryId  点击的品类ID
+     * @param clickProductId   点击的产品ID
+     * @param orderCategoryIds 下单的品类ID
+     * @param orderProductIds  下单的产品ID
+     * @param payCategoryIds   支付的品类ID
+     * @param payProductIds    支付的产品ID
+     * @param cityId           城市ID
+     */
+    case class UserAction(time: String,
+                          userId: Long,
+                          sessionId: String,
+                          pageId: Long,
+                          actionTime: String,
+                          search: String,
+                          clickCategoryId: Long,
+                          clickProductId: Long,
+                          orderCategoryIds: String,
+                          orderProductIds: String,
+                          payCategoryIds: String,
+                          payProductIds: String,
+                          cityId: Long)
 }
