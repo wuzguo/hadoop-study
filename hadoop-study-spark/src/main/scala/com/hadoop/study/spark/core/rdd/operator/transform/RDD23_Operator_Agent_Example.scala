@@ -10,7 +10,7 @@ import org.apache.spark.{SparkConf, SparkContext}
  * @date 2021/5/25 16:57
  */
 
-object RDD23_Operator_Case_Agent {
+object RDD23_Operator_Agent_Example {
 
     def main(args: Array[String]): Unit = {
         val conf = new SparkConf().setMaster("local[*]").setAppName("Agent")

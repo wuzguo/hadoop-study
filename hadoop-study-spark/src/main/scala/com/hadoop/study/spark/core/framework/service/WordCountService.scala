@@ -9,16 +9,14 @@ import org.apache.spark.rdd.RDD
  */
 class WordCountService extends Service {
 
-    private val wordCountDao = new WordCountMapper()
+    private val wcMapper = new WordCountMapper()
 
     // 数据分析
-    def dataAnalysis() = {
-
-        val lines = wordCountDao.readFile("datas/word.txt")
-        val words: RDD[String] = lines.flatMap(_.split(" "))
+    def dataAnalysis(): Array[(String, Int)] = {
+        val lines = wcMapper.readFile("./hadoop-study-datas/spark/data/1.txt")
+        val words = lines.flatMap(_.split(" "))
         val wordToOne = words.map(word => (word, 1))
-        val wordToSum: RDD[(String, Int)] = wordToOne.reduceByKey(_ + _)
-        val array: Array[(String, Int)] = wordToSum.collect()
-        array
+        val wordToSum = wordToOne.reduceByKey(_ + _)
+        wordToSum.collect()
     }
 }
