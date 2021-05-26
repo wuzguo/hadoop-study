@@ -26,7 +26,7 @@ object RDD2_File_Par2 {
          */
 
         // 如果数据源为多个文件，那么计算分区时以文件为单位进行分区
-        val rdd = sc.textFile("datas/word.txt", 2)
+        val rdd = sc.textFile("./hadoop-study-datas/spark/data/word.txt", 2)
 
         rdd.saveAsTextFile("./hadoop-study-datas/spark/output")
 

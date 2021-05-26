@@ -27,10 +27,9 @@ object RDD2_File_Par1 {
         // 2 => [6, 7]  =>
 
         // 【1,2】，【3】，【】
-        val rdd = sc.textFile("datas/1.txt", 2)
+        val rdd = sc.textFile("./hadoop-study-datas/spark/data/1.txt", 2)
 
         rdd.saveAsTextFile("./hadoop-study-datas/spark/output")
-
 
         // TODO 关闭环境
         sc.stop()

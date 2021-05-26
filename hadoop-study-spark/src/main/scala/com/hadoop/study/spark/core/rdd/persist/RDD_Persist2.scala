@@ -21,7 +21,7 @@ object RDD_Persist2 {
             (word, 1)
         })
         // cache默认持久化的操作，只能将数据保存到内存中，如果想要保存到磁盘文件，需要更改存储级别
-        //mapRDD.cache()
+        // mapRDD.cache()
 
         // 持久化操作必须在行动算子执行时完成的。
         mapRDD.persist(StorageLevel.DISK_ONLY)

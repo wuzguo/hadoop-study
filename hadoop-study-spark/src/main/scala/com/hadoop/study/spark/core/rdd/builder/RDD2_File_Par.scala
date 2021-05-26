@@ -24,10 +24,9 @@ object RDD2_File_Par {
         //    7 / 3 = 2...1 (1.1) + 1 = 3(分区)
 
         //
-        val rdd = sc.textFile("datas/1.txt", 2)
+        val rdd = sc.textFile("./hadoop-study-datas/spark/data/1.txt", 2)
 
         rdd.saveAsTextFile("./hadoop-study-datas/spark/output")
-
 
         // TODO 关闭环境
         sc.stop()
