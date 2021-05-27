@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableComparable;
 
 /**
  * <B>说明：描述</B>
@@ -22,7 +22,7 @@ import org.apache.hadoop.io.Writable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class HotCategory implements Writable {
+public class HotCategory implements WritableComparable<HotCategory> {
 
     /**
      * 品类ID
@@ -98,5 +98,22 @@ public class HotCategory implements Writable {
     @Override
     public int hashCode() {
         return Objects.hash(categoryId, clickCount, orderCount, payCount);
+    }
+
+    @Override
+    public int compareTo(HotCategory category) {
+        if (this.clickCount > category.getClickCount()) {
+            return 1;
+        } else if (this.clickCount.equals(category.getClickCount())) {
+            if (this.orderCount > category.getOrderCount()) {
+                return 1;
+            } else if (this.orderCount.equals(category.getOrderCount())) {
+                return this.payCount.compareTo(category.getPayCount());
+            } else {
+                return -1;
+            }
+        } else {
+            return -1;
+        }
     }
 }

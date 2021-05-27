@@ -24,7 +24,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 @Slf4j
 public class Top10CategoryMapper extends Mapper<LongWritable, Text, LongWritable, HotCategory> {
 
-    private LongWritable text = new LongWritable(0);
+    private final LongWritable text = new LongWritable(0);
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
