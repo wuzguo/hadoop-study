@@ -11,7 +11,7 @@ object PageFlowAnalysis {
         val sparConf = new SparkConf().setMaster("local[*]").setAppName("HotCategoryTop10Analysis")
         val sc = new SparkContext(sparConf)
 
-        val actionRDD = sc.textFile("datas/user_visit_action.txt")
+        val actionRDD = sc.textFile("./hadoop-study-datas/spark/core/user_visit_action.txt")
 
         val actionDataRDD = actionRDD.map(
             action => {
@@ -92,7 +92,7 @@ object PageFlowAnalysis {
         // 分子除以分母
         dataRDD.foreach {
             case ((pageid1, pageid2), sum) => {
-                val lon: Long = pageidToCountMap.getOrElse(pageid1, 0L)
+                val lon = pageidToCountMap.getOrElse(pageid1, 0L)
 
                 println(s"页面${pageid1}跳转到页面${pageid2}单跳转换率为:" + (sum.toDouble / lon))
             }
