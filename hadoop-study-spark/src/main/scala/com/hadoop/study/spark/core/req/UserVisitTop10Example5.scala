@@ -21,36 +21,37 @@ object UserVisitTop10Example5 {
 
         // 1. 读取文件
         val fileRDD = sc.textFile("./hadoop-study-datas/spark/core/user_visit_action.txt")
+        fileRDD.cache()
 
         // 2. 页面跳转顺序定义, 取前10的页面
         val pages = fileRDD.flatMap(lines => {
             val datas = lines.split("_")
             List(datas(3).toInt)
-        }).distinct().sortBy(page => page).take(10)
+        }).distinct().sortBy(page => page).take(100)
 
         // 页面链条
         val pageZip = pages.zip(pages.tail)
 
-        // 3. 遍历（sessionId, pageId）
-        val groupRDD = fileRDD.flatMap(lines => {
-            val datas = lines.split("_")
-            List((datas(2), (datas(3).toInt, datas(4))))
-        }).groupByKey()
-
-        // 4. 统计每个页面的访问数量
+        // 3. 注册累加器，统计每个页面的访问数量
         val pageAccumulator = new PageAccumulator
         sc.register(pageAccumulator, "pageAccumulator")
 
+        // 4. 遍历（sessionId, pageId）
+        val groupRDD = fileRDD.flatMap(lines => {
+            val datas = lines.split("_")
+            val pageId = datas(3).toInt
+            pageAccumulator.add(pageId)
+            List((datas(2), (pageId, datas(4))))
+        }).groupByKey()
+
         // 5. 拉链拉一下，累加器计数
         val pageZipRDD = groupRDD.map {
-            case (sessionId, pageIter) =>
-                pageIter.foreach(page => pageAccumulator.add(page._1))
+            case (_, pageIter) =>
                 val pageIds = pageIter.toList.sortBy(f => f._2).map(f => f._1)
-                val tuples = pageIds.zip(pageIds.tail)
-
-                tuples.filter(f => pageZip.contains(f)).map {
-                    case (pre, next) => ((pre, next), 1)
-                }
+                val pageIdZip = pageIds.zip(pageIds.tail)
+                pageIdZip.filter(f => pageZip.contains(f)).map(f => {
+                    (f, 1)
+                })
         }
 
         // 6. 压扁
@@ -61,11 +62,12 @@ object UserVisitTop10Example5 {
         val value = pageFlatRDD.map {
             case ((pre, next), sum) =>
                 val count = mapPage.value.getOrElse(pre, 0)
-                ((pre, next), (sum.toDouble / count).formatted("%.4f"))
+                ((pre, next), "%s%%".format((sum.toDouble * 100 / count).formatted("%.2f")))
         }
 
         // 8. 打印
-        value.sortBy(f => f._2, ascending = false).collect().foreach(f => println(s"${f._1._1} => ${f._1._2} 跳转率：${f._2}"))
+        value.sortBy(f => f._2, ascending = false).collect()
+          .foreach(f => println(s"页面（${f._1._1} => ${f._1._2}）， 跳转率：${f._2}"))
 
         // 9. 关闭
         sc.stop()
@@ -93,7 +95,7 @@ object UserVisitTop10Example5 {
                 case (page, count) =>
                     var i = mapPages.getOrElse(page, 0)
                     i += count
-                    mapPages.put(page, count)
+                    mapPages.put(page, i)
             }
         }
 
