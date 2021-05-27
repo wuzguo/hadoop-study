@@ -13,7 +13,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 object UserVisitTop10Example2 {
 
     def main(args: Array[String]): Unit = {
-        val conf = new SparkConf().setMaster("local").setAppName("UserVisitTop10Example2")
+        val conf = new SparkConf().setMaster("local[*]").setAppName("UserVisitTop10Example2")
         val sc = new SparkContext(conf)
 
         // 1. 读取文件

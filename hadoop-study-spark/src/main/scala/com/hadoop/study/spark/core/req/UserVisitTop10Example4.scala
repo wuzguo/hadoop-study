@@ -18,7 +18,7 @@ object UserVisitTop10Example4 {
 
     // Top 10 Session
     def main(args: Array[String]): Unit = {
-        val conf = new SparkConf().setMaster("local").setAppName("UserVisitTop10Example4")
+        val conf = new SparkConf().setMaster("local[*]").setAppName("UserVisitTop10Example4")
         val sc = new SparkContext(conf)
 
         // 1. 读取文件
