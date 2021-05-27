@@ -10,7 +10,7 @@ import org.apache.spark.{SparkConf, SparkContext}
  * @date 2021/5/26 16:26
  */
 
-object UserVisitActionExample1 {
+object UserVisitTop10Example1 {
 
     def main(args: Array[String]): Unit = {
         val conf = new SparkConf().setMaster("local").setAppName("UserActionAnalysis")
