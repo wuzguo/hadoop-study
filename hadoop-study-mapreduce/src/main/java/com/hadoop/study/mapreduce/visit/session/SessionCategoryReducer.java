@@ -28,9 +28,7 @@ public class SessionCategoryReducer extends Reducer<LongWritable, Text, LongWrit
     private final Text value = new Text();
 
     @Override
-    protected void reduce(LongWritable key, Iterable<Text> values, Context context)
-        throws IOException, InterruptedException {
-
+    protected void reduce(LongWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         // SessionID
         List<String> sessions = Lists.newArrayList();
         for (Text value : values) {
@@ -53,17 +51,17 @@ public class SessionCategoryReducer extends Reducer<LongWritable, Text, LongWrit
             });
 
         //Map排序，这里将map.entrySet()转换成list
-        List<Map.Entry<String, Long>> list = new ArrayList<>(mapSessions.entrySet());
+        List<Map.Entry<String, Long>> sessionSums = new ArrayList<>(mapSessions.entrySet());
         //然后通过比较器来实现排序
+        Collections.sort(sessionSums, Entry.comparingByValue());
         //升序排序
-        Collections.sort(list, Entry.comparingByValue());
-        Collections.reverse(list);
+        Collections.reverse(sessionSums);
 
         // 取前10名
-        List<Entry<String, Long>> collect = list.stream().limit(10).collect(Collectors.toList());
+        List<Entry<String, Long>> top10Sessions = sessionSums.stream().limit(10).collect(Collectors.toList());
         StringBuilder builder = new StringBuilder();
-        for (Entry<String, Long> stringLongEntry : collect) {
-            builder.append("(").append(stringLongEntry.getKey()).append(", ").append(stringLongEntry.getValue())
+        for (Entry<String, Long> sessionSum : top10Sessions) {
+            builder.append("(").append(sessionSum.getKey()).append(", ").append(sessionSum.getValue())
                 .append("),");
         }
 
