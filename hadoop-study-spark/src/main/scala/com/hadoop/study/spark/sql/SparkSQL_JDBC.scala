@@ -35,5 +35,8 @@ object SparkSQL_JDBC {
 
         // 3. SQL
         spark.sql("select * from columns where CD_ID = 22").show()
+
+        // 关闭
+        spark.stop()
     }
 }
