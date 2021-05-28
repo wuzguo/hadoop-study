@@ -11,7 +11,7 @@ import org.apache.spark.sql.SparkSession
  * @date 2021/5/28 14:48
  */
 
-object SparkSQL_UDF {
+object SparkSQL_UDAF0 {
 
     def main(args: Array[String]): Unit = {
         val conf = new SparkConf().setMaster("local[*]").setAppName("SparkSQL_UDF")

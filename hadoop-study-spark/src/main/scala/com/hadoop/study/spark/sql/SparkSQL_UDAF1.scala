@@ -1,8 +1,9 @@
 package com.hadoop.study.spark.sql
 
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.expressions.Aggregator
-import org.apache.spark.sql.{Encoder, Encoders, SparkSession, functions}
+import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
+import org.apache.spark.sql.types._
+import org.apache.spark.sql.{Row, SparkSession}
 
 /**
  * <B>说明：描述</B>
@@ -25,50 +26,63 @@ object SparkSQL_UDAF1 {
         df.createOrReplaceTempView("user")
 
         // 2. 注册聚合函数
-        spark.udf.register("avg", functions.udaf(new AvgAggFunction))
+        spark.udf.register("avg", new AvgAggFunction())
 
         // 3. 使用聚合函数
         spark.sql("select avg(age) as avgValue from user").show
 
+
         // 4. 关闭环境
         spark.close()
     }
-
-    case class Buffer(var total: Long, var count: Long)
 
     /*
      自定义聚合函数类：计算年龄的平均值
      1. 继承 UserDefinedAggregateFunction
      2. 重写方法(8)
      */
-    class AvgAggFunction extends Aggregator[Long, Buffer, Double] {
-        // z & zero : 初始值或零值
-        // 缓冲区的初始化
-        override def zero: Buffer = Buffer(0L, 0L)
-
-        // 根据输入的数据更新缓冲区的数据
-        override def reduce(buf: Buffer, age: Long): Buffer = {
-            buf.total += age
-            buf.count += 1
-            buf
+    class AvgAggFunction extends UserDefinedAggregateFunction {
+        // 输入数据类型
+        override def inputSchema: StructType = StructType {
+            // 名称跟字段名称无关
+            Array(StructField("age", LongType))
         }
 
-        // 合并缓冲区
-        override def merge(pre: Buffer, next: Buffer): Buffer = {
-            pre.total += next.total
-            pre.count += next.count
-            pre
+        // 缓冲区类型
+        override def bufferSchema: StructType = StructType {
+            StructType(
+                Array(
+                    StructField("total", LongType),
+                    StructField("count", LongType)
+                )
+            )
         }
 
-        //计算结果
-        override def finish(reduction: Buffer): Double = {
-            reduction.total.toDouble / reduction.count
+        // 函数计算结果的数据类型：Out
+        override def dataType: DataType = DoubleType
+
+        // 函数的稳定性
+        override def deterministic: Boolean = true
+
+        // 初始化
+        override def initialize(buffer: MutableAggregationBuffer): Unit = {
+            buffer.update(0, 0L)
+            buffer.update(1, 0L)
         }
 
-        // 缓冲区的编码操作
-        override def bufferEncoder: Encoder[Buffer] = Encoders.product
+        // 更新
+        override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
+            buffer.update(0, buffer.getLong(0) + input.getLong(0))
+            buffer.update(1, buffer.getLong(1) + 1)
+        }
 
-        // 输出的编码操作
-        override def outputEncoder: Encoder[Double] = Encoders.scalaDouble
+        // 合并
+        override def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = {
+            buffer1.update(0, buffer1.getLong(0) + buffer2.getLong(0))
+            buffer1.update(1, buffer1.getLong(1) + buffer2.getLong(1))
+        }
+
+        // 计算平均值
+        override def evaluate(buffer: Row): Any = buffer.getLong(0).toDouble / buffer.getLong(1)
     }
 }
