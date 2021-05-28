@@ -78,7 +78,7 @@ public class PageConversionReducer extends Reducer<Text, PageAction, NullWritabl
         }
 
         List<Integer> next = pages.subList(1, pages.size());
-        mapPages = zip(pages, next).stream().map(pair -> String.format("%s->%s", pair.getFirst(), pair.getSecond()))
+        mapPages = zip(pages, next).stream().map(pair -> String.format("%s%s", pair.getFirst(), pair.getSecond()))
             .collect(Collectors.toList());
     }
 
@@ -92,11 +92,8 @@ public class PageConversionReducer extends Reducer<Text, PageAction, NullWritabl
             PageAction action = PageAction.builder().pageId(value.getPageId()).time(value.getTime()).build();
             actions.add(action);
         }
-
         // 排序
         Collections.sort(actions);
-        // 倒序
-        Collections.reverse(actions);
         // 获取页面ID
         List<Integer> pages = actions.stream().map(PageAction::getPageId).collect(Collectors.toList());
 
@@ -106,14 +103,14 @@ public class PageConversionReducer extends Reducer<Text, PageAction, NullWritabl
         // 写出字符串
         StringBuilder builder = new StringBuilder();
         for (Pair<Integer, Integer> zip : zips) {
-            String zipStr = String.format("%s->%s",zip.getFirst(), zip.getSecond());
+            String zipStr = String.format("%s%s",zip.getFirst(), zip.getSecond());
             if (mapPages.contains(zipStr)) {
                 builder.append(zip.getFirst()).append("->").append(zip.getSecond()).append(",");
             }
         }
 
         // 如果不为空
-        if (StringUtils.isNotEmpty(builder)) {
+        if (StringUtils.isNotEmpty(builder.toString())) {
             value.set(builder.toString());
             context.write(NullWritable.get(), value);
         }

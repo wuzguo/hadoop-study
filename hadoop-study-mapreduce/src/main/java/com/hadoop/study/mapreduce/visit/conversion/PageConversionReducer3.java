@@ -61,8 +61,8 @@ public class PageConversionReducer3 extends Reducer<Text, LongWritable, NullWrit
         String pages = key.toString();
         int page = Integer.parseInt(pages.trim().split("->")[0]);
 
-        double rate = (sum * 1.0) / mapPageSum.get(page);
-        String value = String.format("页面 %s 转化率： %s，访问数量： %s, %s", key, rate, sum, mapPageSum.get(page));
+        double rate = (sum * 100.0) / mapPageSum.get(page);
+        String value = String.format("页面( %s ) 跳转率： %.2f%%，访问数量： %s , %s", key, rate, mapPageSum.get(page), sum);
         text.set(value);
         context.write(NullWritable.get(), text);
     }

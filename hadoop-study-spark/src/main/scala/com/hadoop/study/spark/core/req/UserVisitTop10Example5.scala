@@ -67,7 +67,7 @@ object UserVisitTop10Example5 {
 
         // 8. 打印
         value.sortBy(f => f._2, ascending = false).collect()
-          .foreach(f => println(s"页面（${f._1._1} => ${f._1._2}）， 跳转率：${f._2}， 访问数量： ${f._3} , ${f._4}"))
+          .foreach(f => println(s"页面（${f._1._1} => ${f._1._2}） 跳转率：${f._2}， 访问数量： ${f._3} , ${f._4}"))
 
         // 9. 关闭
         sc.stop()

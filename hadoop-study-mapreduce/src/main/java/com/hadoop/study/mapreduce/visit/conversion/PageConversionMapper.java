@@ -1,12 +1,7 @@
 package com.hadoop.study.mapreduce.visit.conversion;
 
-import com.google.common.collect.Lists;
 import com.hadoop.study.mapreduce.domain.PageAction;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import org.apache.commons.math3.util.Pair;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -29,7 +24,6 @@ public class PageConversionMapper extends Mapper<LongWritable, Text, Text, PageA
         String[] values = lines.split("_");
 
         session.set(values[2]);
-
         PageAction action = PageAction.builder().pageId(Integer.valueOf(values[3])).time(values[4]).build();
         context.write(session, action);
     }

@@ -42,6 +42,7 @@ public class Top10CategoryDriver2 {
         job.setOutputValueClass(Text.class);
 
         // 5 指定job的输入原始文件所在目录
+        // 输入参数依赖 Top10CategoryDriver 的输出文件
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 

@@ -43,10 +43,11 @@ public class PageConversionDriver3 {
         job.setJobName("pageConversionRate");
 
         // 5 指定job的输入原始文件所在目录
+        // 输入参数依赖 PageConversionDriver1 的输出文件
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-        // 6 设置缓存文件
+        // 6 设置缓存文件 // 依赖 PageConversionDriver2 的输出文件
         job.setCacheFiles(new URI[]{new URI("./hadoop-study-datas/spark/output5/part-r-00000")});
 
         // 7 将job中配置的相关参数，以及job所用的java类所在的jar包， 提交给yarn去运行

@@ -46,7 +46,7 @@ public class PageConversionDriver {
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-        // 6 设置缓存文件
+        // 6 设置缓存文件 // 依赖 PageConversionDriver2 的输出文件
         job.setCacheFiles(new URI[]{new URI("./hadoop-study-datas/spark/output5/part-r-00000")});
 
         // 7 将job中配置的相关参数，以及job所用的java类所在的jar包， 提交给yarn去运行
