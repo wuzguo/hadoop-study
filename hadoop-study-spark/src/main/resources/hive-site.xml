@@ -1,33 +1,53 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
-	<property>
-	  <name>javax.jdo.option.ConnectionURL</name>
-	  <value>jdbc:mysql://hadoop003:3306/metastore?createDatabaseIfNotExist=true</value>
-	  <description>JDBC connect string for a JDBC metastore</description>
-	</property>
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:mysql://hadoop003:3306/metastore?createDatabaseIfNotExist=true&amp;useSSL=true</value>
+        <description>JDBC connect string for a JDBC metastore</description>
+    </property>
 
-	<property>
-	  <name>javax.jdo.option.ConnectionDriverName</name>
-	  <value>com.mysql.cj.jdbc.Driver</value>
-	  <description>Driver class name for a JDBC metastore</description>
-	</property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>com.mysql.cj.jdbc.Driver</value>
+        <description>Driver class name for a JDBC metastore</description>
+    </property>
 
-	<property>
-	  <name>javax.jdo.option.ConnectionUserName</name>
-	  <value>root</value>
-	  <description>username to use against metastore database</description>
-	</property>
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>root</value>
+        <description>username to use against metastore database</description>
+    </property>
 
-	<property>
-	  <name>javax.jdo.option.ConnectionPassword</name>
-	  <value>136501412</value>
-	  <description>password to use against metastore database</description>
-	</property>
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>136501412</value>
+        <description>password to use against metastore database</description>
+    </property>
 
-	<property>
-	  <name>hive.metastore.schema.verification</name>
-          <value>false</value>
-	</property>
+    <property>
+        <name>hive.exec.local.scratchdir</name>
+        <value>/opt/module/apache-hive-2.3.7/addDir/scratchdir</value>
+        <description>Local scratch space for Hive jobs</description>
+    </property>
+
+    <property>
+        <name>hive.downloaded.resources.dir</name>
+        <value>/opt/module/apache-hive-2.3.7/addDir/downloaded/</value>
+        <description>Temporary local directory for added resources in the remote file system.</description>
+    </property>
+
+    <property>
+        <name>hive.querylog.location</name>
+        <value>/opt/module/apache-hive-2.3.7/addDir/querylog-location/</value>
+        <description>Location of Hive run time structured log file</description>
+    </property>
+
+    <property>
+        <name>hive.server2.logging.operation.log.location</name>
+        <value>/opt/module/apache-hive-2.3.7/addDir/hive-logging-operation-log/</value>
+        <description>Top level directory where operation logs are stored if logging functionality is enabled
+        </description>
+    </property>
 </configuration>
 
