@@ -11,7 +11,7 @@ import org.apache.spark.sql.SparkSession
  * @date 2021/5/28 16:35
  */
 
-class SparkSQL_Hive1 {
+object SparkSQL_Hive1 {
 
     def main(args: Array[String]): Unit = {
         // 设置环境变量

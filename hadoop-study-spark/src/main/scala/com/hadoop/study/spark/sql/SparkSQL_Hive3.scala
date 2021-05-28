@@ -15,7 +15,7 @@ import scala.collection.mutable.ListBuffer
  * @date 2021/5/28 16:35
  */
 
-class SparkSQL_Hive3 {
+object SparkSQL_Hive3 {
 
     def main(args: Array[String]): Unit = {
         // 设置环境变量
