@@ -62,12 +62,12 @@ object UserVisitTop10Example5 {
         val value = pageFlatRDD.map {
             case ((pre, next), sum) =>
                 val count = mapPage.value.getOrElse(pre, 0)
-                ((pre, next), "%s%%".format((sum.toDouble * 100 / count).formatted("%.2f")))
+                ((pre, next), "%s%%".format((sum.toDouble * 100 / count).formatted("%.2f")), count, sum)
         }
 
         // 8. 打印
         value.sortBy(f => f._2, ascending = false).collect()
-          .foreach(f => println(s"页面（${f._1._1} => ${f._1._2}）， 跳转率：${f._2}"))
+          .foreach(f => println(s"页面（${f._1._1} => ${f._1._2}）， 跳转率：${f._2}， 访问数量： ${f._3} , ${f._4}"))
 
         // 9. 关闭
         sc.stop()

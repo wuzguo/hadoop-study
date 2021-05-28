@@ -21,26 +21,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 public class PageConversionMapper extends Mapper<LongWritable, Text, Text, PageAction> {
 
-    /**
-     * 拉链
-     *
-     * @param as  集合A
-     * @param bs  集合B
-     * @param <A> 泛型A
-     * @param <B> 泛型B
-     * @return {@link List<Pair>}
-     */
-    public static <A, B> List<Pair<A, B>> zip(List<A> as, List<B> bs) {
-        return IntStream.range(0, Math.min(as.size(), bs.size()))
-            .mapToObj(i -> new Pair<>(as.get(i), bs.get(i)))
-            .collect(Collectors.toList());
-    }
-
-    public static void main(String[] args) {
-        List<Pair<Integer, Integer>> zip = zip(Lists.newArrayList(1, 2, 3), Lists.newArrayList(2, 3));
-        System.out.println(zip);
-    }
-
     private final Text session = new Text();
 
     @Override
