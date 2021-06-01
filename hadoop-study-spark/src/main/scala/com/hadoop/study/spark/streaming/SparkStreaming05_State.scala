@@ -16,7 +16,7 @@ object SparkStreaming05_State {
     def main(args: Array[String]): Unit = {
         // StreamingContext创建时，需要传递两个参数
         // 第一个参数表示环境配置
-        val conf = new SparkConf().setMaster("local[*]").setAppName("SparkStreaming05_State$")
+        val conf = new SparkConf().setMaster("local[*]").setAppName("SparkStreaming05_State")
 
         val ssc = new StreamingContext(conf, Seconds(3))
         // 设置检查点
