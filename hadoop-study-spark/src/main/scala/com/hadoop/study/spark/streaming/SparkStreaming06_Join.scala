@@ -12,12 +12,12 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
  * @date 2021/6/1 15:12
  */
 
-object SparkStreaming05_State_Join {
+object SparkStreaming06_Join {
 
     def main(args: Array[String]): Unit = {
         // StreamingContext创建时，需要传递两个参数
         // 第一个参数表示环境配置
-        val conf = new SparkConf().setMaster("local[*]").setAppName("SparkStreaming05_State_Join")
+        val conf = new SparkConf().setMaster("local[*]").setAppName("SparkStreaming06_Join")
 
         val ssc = new StreamingContext(conf, Seconds(5))
 

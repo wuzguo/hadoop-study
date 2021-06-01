@@ -61,6 +61,11 @@
             <artifactId>hive-exec</artifactId>
             <version>3.1.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.2.6</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -64,5 +64,4 @@ object SparkStreaming04_Kafka_Mock {
         }
         list
     }
-
 }
