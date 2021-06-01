@@ -34,5 +34,9 @@ object SparkSQL_Hive {
         spark.sql("show tables").show
         // 2. 关闭环境
         spark.close()
+
+        // 3. 异常处理
+        // 如果出现： java.lang.UnsatisfiedLinkError: 'org.apache.hadoop.io.nativeio.NativeIO$POSIX$Stat
+        // 删除本地Hadoop_Home/bin 目录下的 hadoop.dll 文件
     }
 }
