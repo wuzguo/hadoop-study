@@ -14,6 +14,9 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 object SparkStreaming05_State {
 
     def main(args: Array[String]): Unit = {
+        // 设置环境变量
+        System.setProperty("HADOOP_USER_NAME", "zak")
+
         // StreamingContext创建时，需要传递两个参数
         // 第一个参数表示环境配置
         val conf = new SparkConf().setMaster("local[*]").setAppName("SparkStreaming05_State")
@@ -23,7 +26,8 @@ object SparkStreaming05_State {
         // 3. 异常处理
         // 如果出现： boolean org.apache.hadoop.io.nativeio.NativeIO$Windows.access0(java.lang.String, int)
         // 本地Hadoop_Home/bin 目录下的 hadoop.dll 文件缺失
-         ssc.checkpoint("streaming_cp")
+
+        ssc.checkpoint("hdfs://hadoop001:9000/user/spark/streaming/cp")
 
         // 无状态数据操作，只对当前的采集周期内的数据进行处理
         // 在某些场合下，需要保留数据统计结果（状态），实现数据的汇总
