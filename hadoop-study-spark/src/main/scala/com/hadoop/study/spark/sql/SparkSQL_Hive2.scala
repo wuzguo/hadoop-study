@@ -15,13 +15,13 @@ object SparkSQL_Hive2 {
 
     def main(args: Array[String]): Unit = {
         // 设置环境变量
-        System.setProperty("HADOOP_USER_NAME", "root")
+        System.setProperty("HADOOP_USER_NAME", "zak")
 
         //  创建SparkSQL的运行环境
         val sparkConf = new SparkConf().setMaster("local[*]").setAppName("SparkSQL_Hive2")
         val spark = SparkSession.builder().enableHiveSupport().config(sparkConf).getOrCreate()
 
-        spark.sql("use spark-sql")
+        spark.sql("use spark_sql")
         
         // 准备数据
         spark.sql(
@@ -39,14 +39,14 @@ object SparkSQL_Hive2 {
               |           count(*) as clickCnt
               |        from (
               |            select
-              |               a.*,
-              |               p.product_name,
-              |               c.area,
-              |               c.city_name
-              |            from user_visit_action a
-              |            join product_info p on a.click_product_id = p.product_id
-              |            join city_info c on a.city_id = c.city_id
-              |            where a.click_product_id > -1
+              |               action.*,
+              |               info.product_name,
+              |               city.area,
+              |               city.city_name
+              |            from user_visit_action action
+              |            join product_info info on action.click_product_id = info.product_id
+              |            join city_info city on action.city_id = city.city_id
+              |            where action.click_product_id > -1
               |        ) t1 group by area, product_name
               |    ) t2
               |) t3 where rank <= 3

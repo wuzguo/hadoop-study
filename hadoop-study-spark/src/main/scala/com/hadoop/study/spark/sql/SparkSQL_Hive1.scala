@@ -15,18 +15,18 @@ object SparkSQL_Hive1 {
 
     def main(args: Array[String]): Unit = {
         // 设置环境变量
-        System.setProperty("HADOOP_USER_NAME", "root")
+         System.setProperty("HADOOP_USER_NAME", "zak")
 
         //  创建SparkSQL的运行环境
         val sparkConf = new SparkConf().setMaster("local[*]").setAppName("SparkSQL_Hive1")
         val spark = SparkSession.builder().enableHiveSupport().config(sparkConf).getOrCreate()
 
-        spark.sql("use spark-sql")
+        spark.sql("use spark_sql")
 
         // 准备数据
         spark.sql(
             """
-              |CREATE TABLE `user_visit_action`(
+              |CREATE TABLE IF NOT EXISTS `user_visit_action` (
               |  `date` string,
               |  `user_id` bigint,
               |  `session_id` string,
@@ -45,13 +45,13 @@ object SparkSQL_Hive1 {
 
         spark.sql(
             """
-              |load data local inpath './hadoop-study-datas/spark/sql/user_visit_action.txt' into table spark-sql
+              |load data local inpath './hadoop-study-datas/spark/sql/user_visit_action.txt' into table spark_sql
               |.user_visit_action
             """.stripMargin)
 
         spark.sql(
             """
-              |CREATE TABLE `product_info`(
+              |CREATE TABLE IF NOT EXISTS  `product_info` (
               |  `product_id` bigint,
               |  `product_name` string,
               |  `extend_info` string)
@@ -60,12 +60,12 @@ object SparkSQL_Hive1 {
 
         spark.sql(
             """
-              |load data local inpath './hadoop-study-datas/spark/sql/product_info.txt' into table spark-sql.product_info
+              |load data local inpath './hadoop-study-datas/spark/sql/product_info.txt' into table spark_sql.product_info
             """.stripMargin)
 
         spark.sql(
             """
-              |CREATE TABLE `city_info`(
+              |CREATE TABLE IF NOT EXISTS  `city_info` (
               |  `city_id` bigint,
               |  `city_name` string,
               |  `area` string)
@@ -74,7 +74,7 @@ object SparkSQL_Hive1 {
 
         spark.sql(
             """
-              |load data local inpath './hadoop-study-datas/spark/sql/city_info.txt' into table spark-sql.city_info
+              |load data local inpath './hadoop-study-datas/spark/sql/city_info.txt' into table spark_sql.city_info
             """.stripMargin)
 
         spark.sql("""select * from city_info""").show

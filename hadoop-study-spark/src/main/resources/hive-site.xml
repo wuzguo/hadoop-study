@@ -3,7 +3,7 @@
 <configuration>
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:mysql://hadoop003:3306/metastore?createDatabaseIfNotExist=true&amp;useSSL=true</value>
+        <value>jdbc:mysql://hadoop003:3306/metastore?createDatabaseIfNotExist=true</value>
         <description>JDBC connect string for a JDBC metastore</description>
     </property>
 
@@ -48,6 +48,18 @@
         <value>/opt/module/apache-hive-2.3.7/addDir/hive-logging-operation-log/</value>
         <description>Top level directory where operation logs are stored if logging functionality is enabled
         </description>
+    </property>
+    <property>
+        <name>hive.optimize.sort.dynamic.partition</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.exec.max.dynamic.partitions</name>
+        <value>100000</value>
+    </property>
+    <property>
+        <name>hive.exec.max.dynamic.partitions.pernode</name>
+        <value>100000</value>
     </property>
 </configuration>
 

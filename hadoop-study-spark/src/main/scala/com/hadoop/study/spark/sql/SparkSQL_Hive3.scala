@@ -19,26 +19,26 @@ object SparkSQL_Hive3 {
 
     def main(args: Array[String]): Unit = {
         // 设置环境变量
-        System.setProperty("HADOOP_USER_NAME", "root")
+        System.setProperty("HADOOP_USER_NAME", "zak")
 
         //  创建SparkSQL的运行环境
         val sparkConf = new SparkConf().setMaster("local[*]").setAppName("SparkSQL_Hive3")
         val spark = SparkSession.builder().enableHiveSupport().config(sparkConf).getOrCreate()
 
-        spark.sql("use spark-sql")
+        spark.sql("use spark_sql")
 
         // 查询基本数据
         spark.sql(
             """
               |  select
-              |     a.*,
-              |     p.product_name,
-              |     c.area,
-              |     c.city_name
-              |  from user_visit_action a
-              |  join product_info p on a.click_product_id = p.product_id
-              |  join city_info c on a.city_id = c.city_id
-              |  where a.click_product_id > -1
+              |     action.*,
+              |     info.product_name,
+              |     city.area,
+              |     city.city_name
+              |  from user_visit_action action
+              |  join product_info info on action.click_product_id = info.product_id
+              |  join city_info city on action.city_id = city.city_id
+              |  where action.click_product_id > -1
             """.stripMargin).createOrReplaceTempView("t1")
 
         // 根据区域，商品进行数据聚合
@@ -121,7 +121,7 @@ object SparkSQL_Hive3 {
 
         // 将统计的结果生成字符串信息
         override def finish(buff: Buffer): String = {
-            val remarkList = ListBuffer[String]()
+            val remarks = ListBuffer[String]()
 
             val totalcnt = buff.total
             val cityMap = buff.cityMap
@@ -136,17 +136,16 @@ object SparkSQL_Hive3 {
             val hasMore = cityMap.size > 2
             var rsum = 0L
             cityCntList.foreach {
-                case (city, cnt) => {
+                case (city, cnt) =>
                     val r = cnt * 100 / totalcnt
-                    remarkList.append(s"${city} ${r}%")
+                    remarks.append(s"${city} ${r}%")
                     rsum += r
-                }
             }
             if (hasMore) {
-                remarkList.append(s"其他 ${100 - rsum}%")
+                remarks.append(s"其他 ${100 - rsum}%")
             }
 
-            remarkList.mkString(", ")
+            remarks.mkString(", ")
         }
 
         override def bufferEncoder: Encoder[Buffer] = Encoders.product
