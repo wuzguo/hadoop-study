@@ -9,7 +9,7 @@ object RDD_Accumulator {
         val sparConf = new SparkConf().setMaster("local").setAppName("Acc")
         val sc = new SparkContext(sparConf)
 
-        val rdd = sc.makeRDD(List(1, 2, 3, 4))
+        val rdd = sc.makeRDD(List(1, 2, 3, 4),2)
 
         // reduce : 分区内计算，分区间计算
         //val i: Int = rdd.reduce(_+_)

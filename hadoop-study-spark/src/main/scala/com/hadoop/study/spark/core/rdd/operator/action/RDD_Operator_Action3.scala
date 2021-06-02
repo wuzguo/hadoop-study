@@ -10,15 +10,13 @@ object RDD_Operator_Action3 {
         val sc = new SparkContext(sparkConf)
 
         //val rdd = sc.makeRDD(List(1,1,1,4),2)
-        val rdd = sc.makeRDD(List(
-            ("a", 1), ("a", 2), ("a", 3)
-        ))
+        val rdd = sc.makeRDD(List((1, "a"), (1, "a"), (1, "a"), (2,"b"), (3, "c"), (3, "c")))
 
         // TODO - 行动算子
 
         //val intToLong: collection.Map[Int, Long] = rdd.countByValue()
         //println(intToLong)
-        val stringToLong: collection.Map[String, Long] = rdd.countByKey()
+        val stringToLong = rdd.countByKey()
 
         println(stringToLong)
         sc.stop()

@@ -2,7 +2,6 @@ package com.hadoop.study.spark.streaming.req
 
 import java.sql.ResultSet
 import java.text.SimpleDateFormat
-import com.atguigu.bigdata.spark.util.JDBCUtil
 import com.hadoop.study.spark.util.JDBCUtil
 import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecord}
 import org.apache.spark.SparkConf
@@ -32,7 +31,7 @@ object SparkStreaming11_Req1_BlackList1 {
             LocationStrategies.PreferConsistent,
             ConsumerStrategies.Subscribe[String, String](Set("topic_streaming"), kafkaParam)
         )
-        val AdsClick = kafkaDataDS.map(
+        val adsClick = kafkaDataDS.map(
             kafkaData => {
                 val data = kafkaData.value()
                 val datas = data.split(" ")
@@ -40,7 +39,7 @@ object SparkStreaming11_Req1_BlackList1 {
             }
         )
 
-        val ds = AdsClick.transform(
+        val ds = adsClick.transform(
             rdd => {
                 // TODO 通过JDBC周期性获取黑名单数据
                 val blackList = ListBuffer[String]()

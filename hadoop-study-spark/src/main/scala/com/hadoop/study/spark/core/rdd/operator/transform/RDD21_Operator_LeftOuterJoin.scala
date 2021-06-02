@@ -18,10 +18,11 @@ object RDD21_Operator_LeftOuterJoin {
         val rdd2 = sc.makeRDD(List(
             ("a", 4), ("b", 5), ("c", 6)
         ))
-        //val leftJoinRDD = rdd1.leftOuterJoin(rdd2)
+        val leftJoinRDD = rdd1.leftOuterJoin(rdd2)
         val rightJoinRDD = rdd1.rightOuterJoin(rdd2)
 
-        //leftJoinRDD.collect().foreach(println)
+        leftJoinRDD.collect().foreach(println)
+        println("---------------")
         rightJoinRDD.collect().foreach(println)
 
         sc.stop()

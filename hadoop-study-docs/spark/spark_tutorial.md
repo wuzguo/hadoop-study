@@ -20,35 +20,7 @@ Spark是一种基于内存的快速、通用、可扩展的大数据分析计算
 
 Spark作为一个数据处理框架和计算引擎，被设计在所有常见的集群环境中运行, 在国内工作中主流的环境为Yarn，不过逐渐容器式环境也慢慢流行起来。接下来，我们就分别看看不同环境下Spark的运行。
 
-#### 2.1 重要组成
-
-##### Driver（驱动器）
-
-Spark的驱动器是执行开发程序中的main方法的进程。它负责开发人员编写的用来创建SparkContext、创建RDD，以及进行RDD的转化操作和行动操作代码的执行。如果你是用spark shell，那么当你启动Spark shell的时候，系统后台自启了一个Spark驱动器程序，就是在Spark shell中预加载的一个叫作 sc的SparkContext对象。如果驱动器程序终止，那么Spark应用也就结束了。
-
-主要负责：
-
-- 把用户程序转为作业（JOB）
-
-- 跟踪Executor的运行状况
-
-- 为执行器节点调度任务
-
-- UI展示应用运行状况
-
-##### Executor（执行器）
-
-Spark Executor是一个工作进程，负责在 Spark 作业中运行任务，任务间相互独立。Spark 应用启动时，Executor节点被同时启动，并且始终伴随着整个 Spark 应用的生命周期而存在。如果有Executor节点发生了故障或崩溃，Spark 应用也可以继续执行，会将出错节点上的任务调度到其他Executor节点上继续运行。
-
-主要负责：
-
-- 负责运行组成 Spark 应用的任务，并将结果返回给驱动器进程；
-
-- 通过自身的块管理器（Block Manager）为用户程序中要求缓存的RDD提供内存式存储。RDD是直接缓存在Executor进程内的，因此任务可以在运行时充分利用缓存数据加速运算。
-
-#### 2.2 运行模式
-
-##### Local模式
+#### 2.1 Local模式
 
 Local模式就是运行在一台计算机上的模式，通常就是用于在本机上练手和测试。它可以通过以下集中方式设置Master。
 
@@ -58,7 +30,7 @@ Local模式就是运行在一台计算机上的模式，通常就是用于在本
 
 **local[*]**：这种模式直接帮你按照Cpu最多Cores来设置线程数了。
 
-1. Local环境
+##### Local环境
 
 进入spark根目录，执行如下命令
 
@@ -72,7 +44,7 @@ Local模式就是运行在一台计算机上的模式，通常就是用于在本
 
 ![](../images/202106/3.png)
 
-2. 命令行工具
+##### 命令行工具
 
 在解压缩文件夹下的data目录中，添加word.txt文件。在命令行工具中执行如下代码指令。
 
@@ -82,7 +54,7 @@ sc.textFile("hdfs://hadoop001:9000/user/data/1.txt").flatMap(_.split("")).map((_
 
 ![](../images/202106/4.png)
 
-3. 提交应用
+##### 提交应用
 
 ```shell
 [zak@hadoop003 spark-3.1.1]$ bin/spark-submit --class org.apache.spark.examples.SparkPi --master local[2] ./examples/jars/spark-examples_2.12-3.1.1.jar 10
@@ -95,15 +67,15 @@ sc.textFile("hdfs://hadoop001:9000/user/data/1.txt").flatMap(_.split("")).map((_
 
 ![](../images/202106/5.png)
 
-##### Standalone模式
+#### 2.2 Standalone模式
 
 local本地模式毕竟只是用来进行练习演示的，真实工作中还是要将应用提交到对应的集群中去执行，这里我们来看看只使用Spark自身节点运行的集群模式，也就是我们所谓的独立部署（Standalone）模式。
 
 ![](../images/202106/6.png)
 
-1. 安装使用
+##### 安装使用
 
-进入spark安装目录下的conf文件夹
+1. 进入spark安装目录下的conf文件夹
 
 ```shell
 [zak@hadoop003 module]$ cd spark-3.1.1/conf/
@@ -146,7 +118,7 @@ SPARK_MASTER_PORT=7077
 [zak@hadoop003 spark-3.1.1]$ sbin/start-all.sh
 ```
 
-7. 官方求PI案例
+##### 官方求PI案例
 
 ```shell
 [zak@hadoop003 spark-3.1.1]$ bin/spark-submit --class org.apache.spark.examples.SparkPi --master spark://hadoop003:7077 --executor-memory 1G --total-executor-cores 2 ./examples/jars/spark-examples_2.12-3.1.1.jar 100
@@ -158,7 +130,30 @@ SPARK_MASTER_PORT=7077
 
 ![](../images/202106/8.png)
 
-8. 启动spark shell
+##### 提交参数说明
+
+在提交应用中，一般会同时一些提交参数
+
+```
+bin/spark submit class <main class> master <master url>
+... # other options
+<application jar>
+[application arguments]
+```
+
+| 参数                      | 解释                                                         | 可选值举例                                   |
+| ------------------------- | ------------------------------------------------------------ | -------------------------------------------- |
+| -- class                  | Spark程序中包含主函数的类                                    |                                              |
+| -- master                 | Spark程序运行的模式。                                        | 模式：local[*]、spark://hadoop003:7077、Yarn |
+| -- executor-memory 1G     | 指定每个executor 可用内存为 1G。                             | 符合集群内存配置即可，具体情况具体分析。     |
+| -- total-executor-cores 2 | 指定所有executor使用的cpu核数为2个。                         | ...                                          |
+| -- executor-cores         | 指定每个executor使用的cpu核数。                              | ...                                          |
+| application-jar           | 打包好的应用jar，包含依赖。这个URL在集群中全局可见。 比如hdfs:// 共享存储系统，如果是file:// path，那么所有的节点的path都包含同样的jar。 | ...                                          |
+| application arguments     | 传给 main() 方法的参数。                                     |                                              |
+
+
+
+##### Spark shell
 
 ```shell
 [zak@hadoop003 spark-3.1.1]$ bin/spark-shell --master spark://hadoop003:7077 --executor-memory 1g --total-executor-cores 2
@@ -166,15 +161,15 @@ SPARK_MASTER_PORT=7077
 
 ![](../images/202106/9.png)
 
-9. JobHistoryServer配置
+##### JobHistoryServer配置
 
-- 修改spark-default.conf.template名称
+1. 修改spark-default.conf.template名称
 
 ```shell
 [zak@hadoop003 conf]$ mv spark-defaults.conf.template spark-defaults.conf
 ```
 
-- 修改spark-default.conf文件，开启Log：
+2. 修改spark-default.conf文件，开启Log：
 
 ```shell
 [zak@hadoop003 conf]$ vi spark-defaults.conf
@@ -192,7 +187,7 @@ spark.eventLog.dir        hdfs://hadoop001:9000/directory
 [zak@hadoop003 hadoop-2.9.2]$ bin/hadoop fs –mkdir /directory
 ```
 
-- 修改spark-env.sh文件，添加如下配置：
+3. 修改spark-env.sh文件，添加如下配置：
 
 ```shell
 [zak@hadoop003 conf]$ vi spark-env.sh
@@ -208,37 +203,36 @@ export SPARK_HISTORY_OPTS="-Dspark.history.ui.port=18080  -Dspark.history.retain
 
 **spark.history.retainedApplications=30** 指定保存Application历史记录的个数，如果超过这个值，旧的应用程序信息将被删除，这个是内存中的应用数，而不是页面上显示的应用数。
 
-- 分发配置文件
+4. 分发配置文件
 
 ```shell
 [zak@hadoop003 module]$ scp -r spark-3.1.1/conf/ hadoop001:/opt/module/spark-3.1.1/conf/
 [zak@hadoop003 module]$ scp -r spark-3.1.1/conf/ hadoop002:/opt/module/spark-3.1.1/conf/
 ```
 
-- 启动历史服务
+5. 启动历史服务
 
 ```shell
 [zak@hadoop003 spark-3.1.1]$ sbin/start-history-server.sh
 ```
 
-- 再次执行任务
+6. 再次执行任务
 
 ```shell
 [zak@hadoop003 spark-3.1.1]$ bin/spark-submit --class org.apache.spark.examples.SparkPi --master spark://hadoop003:7077 --executor-memory 1G --total-executor-cores 2 ./examples/jars/spark-examples_2.12-3.1.1.jar 100
 ```
 
-- 查看历史服务
+7. 查看历史服务
 
 ![](../images/202106/10.png)
 
-
-10. HA配置
+##### HA配置
 
 ![](../images/202106/11.png)
 
-- zookeeper正常安装并启动
+1. zookeeper正常安装并启动
 
-- 修改spark-env.sh文件添加如下配置：
+2. 修改spark-env.sh文件添加如下配置：
 
 ```shell
 [zak@hadoop003 conf]$ vi spark-env.sh
@@ -260,34 +254,34 @@ export SPARK_DAEMON_JAVA_OPTS="
 -Dspark.deploy.zookeeper.dir=/spark"
 ```
 
-- 分发配置文件
+3. 分发配置文件
 
 ```shell
 [zak@hadoop003 module]$ scp -r spark-3.1.1/conf/ hadoop001:/opt/module/spark-3.1.1/conf/
 [zak@hadoop003 module]$ scp -r spark-3.1.1/conf/ hadoop002:/opt/module/spark-3.1.1/conf/
 ```
 
-- 在hadoop001上启动全部节点
+4. 在hadoop001上启动全部节点
 
 ```shell
 [zak@hadoop001 spark-3.1.1]$ sbin/start-all.sh
 ```
 
-- 在hadoop003上单独启动master节点
+5. 在hadoop003上单独启动master节点
 
 ```shell
 [zak@hadoop003 spark-3.1.1]$ sbin/start-master.sh
 ```
 
-- spark HA集群访问
+6. Spark HA集群访问
 
 ```shell
 [zak@hadoop003 spark-3.1.1]$ bin/spark-shell --master spark://hadoop001:7077,hadoop003:7077 --executor-memory 1g --total-executor-cores 2
 ```
 
-##### Yarn模式
+#### 2.3 Yarn模式
 
-Spark客户端直接连接Yarn，不需要额外构建Spark集群。有yarn-client和yarn-cluster两种模式，主要区别在于Driver程序的运行节点。
+Spark客户端直接连接Yarn，不需要额外构建Spark集群。有 **yarn-client** 和 **yarn-cluster** 两种模式，主要区别在于Driver程序的运行节点。
 
 - **yarn-client**：Driver程序运行在客户端，适用于交互、调试，希望立即看到app的输出。
 
@@ -295,9 +289,9 @@ Spark客户端直接连接Yarn，不需要额外构建Spark集群。有yarn-clie
 
 ![](../images/202106/12.png)
 
-1. 安装使用
+##### 安装使用
 
-- 修改hadoop配置文件yarn-site.xml,添加如下内容：
+1. 修改hadoop配置文件yarn-site.xml,添加如下内容：
 
 ```shell
 [zak@hadoop001 hadoop-2.9.2]$ vi yarn-site.xml
@@ -314,21 +308,21 @@ Spark客户端直接连接Yarn，不需要额外构建Spark集群。有yarn-clie
 </property>
 ```
 
-- 修改spark-env.sh，添加如下配置：
+2. 修改spark-env.sh，添加如下配置：
 
 ```shell
 [zak@hadoop003 conf]$ vi spark-env.sh
 YARN_CONF_DIR=/opt/ha/hadoop-2.9.2/etc/hadoop
 ```
 
-- 分发配置文件
+3. 分发配置文件
 
 ```shell
 [zak@hadoop003 module]$ scp -r spark-3.1.1/conf/ hadoop001:/opt/module/spark-3.1.1/conf/
 [zak@hadoop003 module]$ scp -r spark-3.1.1/conf/ hadoop002:/opt/module/spark-3.1.1/conf/
 ```
 
-- 执行一个程序
+4. 执行一个程序
 
 ```shell
 [zak@hadoop003 spark-3.1.1]$ bin/spark-submit --class org.apache.spark.examples.SparkPi --master yarn --deploy-mode client ./examples/jars/spark-examples_2.12-3.1.1.jar 100
@@ -336,9 +330,9 @@ YARN_CONF_DIR=/opt/ha/hadoop-2.9.2/etc/hadoop
 
 注意：在提交任务之前需启动HDFS以及YARN集群。
 
-2. 日志查看
+##### 日志查看
 
-- 修改配置文件spark-defaults.conf
+1. 修改配置文件spark-defaults.conf
 
 添加如下内容：
 
@@ -347,7 +341,7 @@ spark.yarn.historyServer.address=hadoop003:18080
 spark.history.ui.port=18080
 ```
 
-- 重启spark历史服务
+2. 重启spark历史服务
 
 ```shell
 [zak@hadoop003 spark-3.1.1]$ sbin/stop-history-server.sh 
@@ -357,7 +351,7 @@ starting org.apache.spark.deploy.history.HistoryServer, logging to /opt/module/s
 [zak@hadoop003 spark-3.1.1]$ 
 ```
 
-- 提交任务到Yarn执行
+3. 提交任务到Yarn执行
 
 ```shell
 [zak@hadoop003 spark-3.1.1]$ bin/spark-submit --class org.apache.spark.examples.SparkPi --master yarn --deploy-mode client ./examples/jars/spark-examples_2.12-3.1.1.jar 100
@@ -365,10 +359,6 @@ starting org.apache.spark.deploy.history.HistoryServer, logging to /opt/module/s
 
 ![](../images/202106/13.png)
 
-- Web页面查看日志
+4. Web页面查看日志
 
 ![](../images/202106/14.png)
-
-- 程序运行的Stages和DAG图。
-
-![](../images/202106/15.png)

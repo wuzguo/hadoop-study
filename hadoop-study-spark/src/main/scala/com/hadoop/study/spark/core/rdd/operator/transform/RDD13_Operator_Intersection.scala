@@ -22,6 +22,7 @@ object RDD13_Operator_Intersection {
         // 交集 : 【3，4】
         val rdd3: RDD[Int] = rdd1.intersection(rdd2)
         //val rdd8 = rdd1.intersection(rdd7)
+        rdd3.collect().foreach(println)
         println(rdd3.collect().mkString(","))
 
         // 并集 : 【1，2，3，4，3，4，5，6】

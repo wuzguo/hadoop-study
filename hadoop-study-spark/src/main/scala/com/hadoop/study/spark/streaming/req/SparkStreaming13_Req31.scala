@@ -31,7 +31,7 @@ object SparkStreaming13_Req31 {
             LocationStrategies.PreferConsistent,
             ConsumerStrategies.Subscribe[String, String](Set("topic_streaming"), kafkaParam)
         )
-        val AdsClick = kafkaDataDS.map(
+        val adsClick = kafkaDataDS.map(
             kafkaData => {
                 val data = kafkaData.value()
                 val datas = data.split(" ")
@@ -52,7 +52,7 @@ object SparkStreaming13_Req31 {
         // 32 / 10 * 10 => 30
 
         // 这里涉及窗口的计算
-        val reduceDS = AdsClick.map(
+        val reduceDS = adsClick.map(
             data => {
                 val ts = data.ts.toLong
                 val newTS = ts / 10000 * 10000

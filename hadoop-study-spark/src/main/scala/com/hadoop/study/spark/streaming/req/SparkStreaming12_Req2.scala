@@ -1,8 +1,6 @@
 package com.hadoop.study.spark.streaming.req
 
 import java.text.SimpleDateFormat
-import com.atguigu.bigdata.spark.streaming.SparkStreaming11_Req1_BlackList.AdsClick
-import com.atguigu.bigdata.spark.util.JDBCUtil
 import com.hadoop.study.spark.util.JDBCUtil
 import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecord}
 import org.apache.spark.SparkConf
@@ -30,7 +28,7 @@ object SparkStreaming12_Req2 {
             LocationStrategies.PreferConsistent,
             ConsumerStrategies.Subscribe[String, String](Set("topic_streaming"), kafkaParam)
         )
-        val AdsClick = kafkaDataDS.map(
+        val adsClick = kafkaDataDS.map(
             kafkaData => {
                 val data = kafkaData.value()
                 val datas = data.split(" ")
@@ -38,7 +36,7 @@ object SparkStreaming12_Req2 {
             }
         )
 
-        val reduceDS = AdsClick.map(
+        val reduceDS = adsClick.map(
             data => {
                 val sdf = new SimpleDateFormat("yyyy-MM-dd")
                 val day = sdf.format(new java.util.Date( data.ts.toLong ))

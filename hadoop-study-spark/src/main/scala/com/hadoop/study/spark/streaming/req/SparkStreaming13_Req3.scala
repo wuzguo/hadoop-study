@@ -1,8 +1,5 @@
 package com.hadoop.study.spark.streaming.req
 
-import java.text.SimpleDateFormat
-
-import com.atguigu.bigdata.spark.util.JDBCUtil
 import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecord}
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.dstream.InputDStream
@@ -29,7 +26,7 @@ object SparkStreaming13_Req3 {
             LocationStrategies.PreferConsistent,
             ConsumerStrategies.Subscribe[String, String](Set("topic_streaming"), kafkaParam)
         )
-        val AdsClick = kafkaDataDS.map(
+        val adsClick = kafkaDataDS.map(
             kafkaData => {
                 val data = kafkaData.value()
                 val datas = data.split(" ")
@@ -50,7 +47,7 @@ object SparkStreaming13_Req3 {
         // 32 / 10 * 10 => 30
 
         // 这里涉及窗口的计算
-        val reduceDS = AdsClick.map(
+        val reduceDS = adsClick.map(
             data => {
                 val ts = data.ts.toLong
                 val newTS = ts / 10000 * 10000
