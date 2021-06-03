@@ -240,18 +240,13 @@ class HashPartitioner(partitions: Int) extends Partitioner {
 将一定范围内的数据映射到一个分区中，尽量保证每个分区数据均匀，而且分区间有序。
 
 ```scala
-class RangePartitioner[K : Ordering : ClassTag, V](
-    partitions: Int,
-    rdd: RDD[_ <: Product2[K, V]],
-    private var ascending: Boolean = true,
-    val samplePointsPerPartitionHint: Int = 20)
-  extends Partitioner {
-
+class RangePartitioner[K : Ordering : ClassTag, V]( partitions: Int, rdd: RDD[_ <: Product2[K, V]], 
+  private var ascending: Boolean = true, val samplePointsPerPartitionHint: Int = 20)  extends Partitioner {
+    
   // This is added to make sure from a bytecode point of view, there is still a 3-arg ctor.
   def this(partitions: Int, rdd: RDD[_ <: Product2[K, V]], ascending: Boolean) = {
     this(partitions, rdd, ascending, samplePointsPerPartitionHint = 20)
   }
-
       
   private var ordering = implicitly[Ordering[K]]
 
