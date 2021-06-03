@@ -1,6 +1,6 @@
-### 五、Spark核心编程
+### 四、Spark核心编程
 
-#### 5.5 RDD 依赖关系
+#### 4.6 RDD 依赖关系
 
 1. RDD 血缘关系
 
@@ -113,7 +113,7 @@ RDD任务切分中间分为：Application、Job、Stage和Task。
 
 ![](../images/202106/24.png)
 
-#### 5.6 RDD 持久化
+#### 4.7 RDD 持久化
 
 1. RDD Cache缓存
 
@@ -201,7 +201,7 @@ wordToOneRdd.collect().foreach(println)
 - Cache缓存的数据通常存储在磁盘、内存等地方，可靠性低。Checkpoint的数据通常存储在HDFS等容错、高可用的文件系统，可靠性高。
 - 建议对checkpoint()的RDD使用Cache缓存，这样checkpoint的job只需从Cache缓存中读取数据即可，否则需要再从头计算一次RDD。
 
-#### 5.6 RDD 分区器
+#### 4.8 RDD 分区器
 
 Spark目前支持Hash分区和Range分区，和用户自定义分区。Hash分区为当前的默认分区。分区器直接决定了RDD中分区的个数、RDD中每条数据经过Shuffle后进入哪个分区，进而决定了Reduce的个数。
 

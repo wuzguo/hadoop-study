@@ -1,6 +1,6 @@
-### 五、Spark核心编程
+### 四、Spark核心编程
 
-#### 5.1 基础编程
+#### 4.2 基础编程
 
 ##### RDD 创建
 
@@ -58,7 +58,7 @@ sc.stop()
 
 使用 new 的方式直接构造 RDD ，一般由 Spark 框架自身使用。
 
-#### 5.2 RDD 并行度与分区
+#### 4.3 RDD 并行度与分区
 
  默认情况下，Spark可以将一个作业切分多个任务后，发送给Executor节点并行计算，而能够并行计算的任务数量我们称之为并行度。这个数量可以在构建RDD时指定。记住，**这里的并行执行的任务数量，并不是指的切分任务的数量**。
 
@@ -126,7 +126,7 @@ def positions(length: Long, numSlices: Int): Iterator[(Int, Int)] = {
   }
 ```
 
-#### 5.3 RDD 转换算子
+#### 4.4 RDD 转换算子
 
 RDD根据数据处理方式的不同将算子整体上分为Value类型、双Value类型和Key-Value类型。
 ![](../images/202106/23.png)
@@ -764,7 +764,7 @@ cgRDD.collect().foreach(println)
 // (c,(CompactBuffer(),CompactBuffer(6, 7)))
 ```
 
-#### 5.4 RDD 行动算子
+#### 4.5 RDD 行动算子
 
 1. reduce
 

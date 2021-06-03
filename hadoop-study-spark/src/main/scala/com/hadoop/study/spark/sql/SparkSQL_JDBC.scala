@@ -16,7 +16,7 @@ import java.util.Properties
 object SparkSQL_JDBC {
 
     def main(args: Array[String]): Unit = {
-        val conf = new SparkConf().setMaster("local[*]").setAppName("SparkSQL_UDF")
+        val conf = new SparkConf().setMaster("local[*]").setAppName("SparkSQL_JDBC")
         val spark = SparkSession.builder().config(conf).getOrCreate()
 
         // 连接数据库
