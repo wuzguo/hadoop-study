@@ -1,4 +1,4 @@
-### S五、SparkSQL
+### 五、SparkSQL
 
 #### 5.1 SparkSQL 概述
 
@@ -397,9 +397,9 @@ csv   format   jdbc   json   load   option   options   orc   parquet   schema   
 scala> spark.read.format("...")[option("...")].load("...")
 ```
 
-- **format("…")**：指定加载的数据类型，包括"csv"、"jdbc"、"json"、"orc"、"parquet"和"textFile"。
-- **load("…")**：在"csv"、"jdbc"、"json"、"orc"、"parquet"和"textFile"格式下需要传入加载数据的路径。
-- **option("…")**：在"jdbc"格式下需要传入JDBC相应参数，url、user、password和dbtable。
+- **format("…")**：指定加载的数据类型，包括csv、jdbc、json、orc、parquet和textFile。
+- **load("…")**：在csv、jdbc、json、orc、parquet和textFile格式下需要传入加载数据的路径。
+- **option("…")**：在jdbc格式下需要传入JDBC相应参数，url、user、password和dbtable。
 
 我们前面都是使用read API 先把文件加载到 DataFrame然后再查询，其实，我们也可以直接在文件上进行查询: 文件格式.`文件路径`
 
@@ -420,9 +420,9 @@ bucketBy   csv   format   insertInto   jdbc   json   mode   option   options   o
 scala> df.write.format("...")[option("...")].save("...")
 ```
 
-- **format("…")**：指定保存的数据类型，包括"csv"、"jdbc"、"json"、"orc"、"parquet"和"textFile"。
-- **save ("…")**：在"csv"、"orc"、"parquet"和"textFile"格式下需要传入保存数据的路径。
-- **option("…")**：在"jdbc"格式下需要传入JDBC相应参数，url、user、password和dbtable。
+- **format("…")**：指定保存的数据类型，包括csv、jdbc、json、orc、parquet和textFile。
+- **save ("…")**：在csv、orc、parquet和textFile格式下需要传入保存数据的路径。
+- **option("…")**：在jdbc格式下需要传入JDBC相应参数，url、user、password和dbtable。
 
 保存操作可以使用 SaveMode, 用来指明如何处理数据，使用mode()方法来设置。有一点很重要: 这些 SaveMode 都是没有加锁的, 也不是原子操作。
 

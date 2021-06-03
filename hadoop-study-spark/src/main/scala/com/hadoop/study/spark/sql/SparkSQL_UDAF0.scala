@@ -14,7 +14,7 @@ import org.apache.spark.sql.SparkSession
 object SparkSQL_UDAF0 {
 
     def main(args: Array[String]): Unit = {
-        val conf = new SparkConf().setMaster("local[*]").setAppName("SparkSQL_UDF")
+        val conf = new SparkConf().setMaster("local[*]").setAppName("SparkSQL_UDAF0")
         val spark = SparkSession.builder().config(conf).getOrCreate()
 
         // 读取文件

@@ -15,7 +15,7 @@ import org.apache.spark.sql.{Dataset, Row, SparkSession}
 object SparkSQL_Basic {
 
     def main(args: Array[String]): Unit = {
-        val conf = new SparkConf().setAppName("sparkSQL").setMaster("local[*]")
+        val conf = new SparkConf().setMaster("local[*]").setAppName("SparkSQL_Basic")
         val spark = SparkSession.builder().config(conf).getOrCreate()
         // 读取文件
         val df = spark.read.json("./hadoop-study-datas/spark/sql/user.json")

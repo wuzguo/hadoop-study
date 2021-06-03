@@ -18,7 +18,7 @@ object SparkSQL_UDAF1 {
     def main(args: Array[String]): Unit = {
 
         // 创建SparkSQL的运行环境
-        val sparkConf = new SparkConf().setMaster("local[*]").setAppName("SparkSQL_UDAF")
+        val sparkConf = new SparkConf().setMaster("local[*]").setAppName("SparkSQL_UDAF1")
         val spark = SparkSession.builder().config(sparkConf).getOrCreate()
 
         // 读取文件
