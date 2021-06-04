@@ -88,6 +88,8 @@ Client模式将用于监控和调度的Driver模块在客户端执行，而不�
 - Executor进程启动后会向Driver反向注册，Executor全部注册完成后Driver开始执行main函数。
 - 之后执行到Action算子时，触发一个Job，并根据宽依赖开始划分stage，每个stage生成对应的TaskSet，之后将task分发到各个Executor上执行。
 
+![](../images/202106/33.png)
+
 ##### Cluster模式
 
 Cluster模式将用于监控和调度的Driver模块启动在Yarn集群资源中执行。一般应用于实际生产环境。
@@ -97,3 +99,5 @@ Cluster模式将用于监控和调度的Driver模块启动在Yarn集群资源中
 - Driver启动后向ResourceManager申请Executor内存，ResourceManager接到ApplicationMaster的资源申请后会分配container，然后在合适的NodeManager上启动Executor进程。
 - Executor进程启动后会向Driver反向注册，Executor全部注册完成后Driver开始执行main函数。
 - 之后执行到Action算子时，触发一个Job，并根据宽依赖开始划分stage，每个stage生成对应的TaskSet，之后将task分发到各个Executor上执行。
+
+![](../images/202106/32.png)
