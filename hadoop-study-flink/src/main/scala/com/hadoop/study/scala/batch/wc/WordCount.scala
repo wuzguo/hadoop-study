@@ -21,13 +21,13 @@ object WordCount {
         val lines: DataSet[String] = env.readTextFile("./hadoop-study-datas/flink/core/1.txt")
 
         // 3. 集合
-        val ds: DataSet[(String, Int)] = lines.flatMap(new FlatMapper).groupBy(0).sum(1)
+        val ds: DataSet[(String, Int)] = lines.flatMap(new WordSpliter).groupBy(0).sum(1)
 
         // 4. 打印
         ds.print()
     }
 
-    class FlatMapper extends FlatMapFunction[String, (String, Int)] {
+    class WordSpliter extends FlatMapFunction[String, (String, Int)] {
 
         override def flatMap(value: String, out: Collector[(String, Int)]): Unit = {
             // 按空格分词
