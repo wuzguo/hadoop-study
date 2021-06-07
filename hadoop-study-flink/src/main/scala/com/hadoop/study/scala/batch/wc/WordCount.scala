@@ -1,4 +1,4 @@
-package com.hadoop.study.scala.core.wc
+package com.hadoop.study.scala.batch.wc
 
 import org.apache.flink.api.common.functions.FlatMapFunction
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment, createTypeInformation}
