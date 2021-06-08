@@ -71,8 +71,6 @@ class CustomAccumulatorV2 extends AccumulatorV2[String, mutable.Map[String, Long
 }
 ```
 
-
-
 #### 4.10 广播变量
 
 ##### 实现原理

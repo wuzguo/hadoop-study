@@ -3,7 +3,8 @@
 #### 3.1 运行架构
 
 Spark框架的核心是一个计算引擎，整体来说，它采用了标准 master-slave 的结构。
-下图展示了一个Spark执行时的基本结构。图形中的Driver表示master，负责管理整个集群中的作业任务调度。图形中的Executor 则是 slave，负责实际执行任务。
+
+下图展示了一个Spark执行时的基本结构。图形中的Driver表示master，负责管理整个集群中的作业任务调度。图形中的Executor则是slave，负责实际执行任务。
 
 ![](../images/202106/16.png)
 
@@ -15,7 +16,7 @@ Spark驱动器节点，用于执行Spark任务中的main方法，负责实际代
 
 - 将用户程序转化为作业（job）
 
-- 在Executor之间调度任务(task)
+- 在Executor之间调度任务（task）
 
 - 跟踪Executor的执行情况
 
@@ -34,13 +35,13 @@ Executor有两个核心功能：
 
 ##### Master & Worker
 
-Spark集群的独立部署环境中，不需要依赖其他的资源调度框架，自身就实现了资源调度的功能，所以环境中还有其他两个核心组件：Master和Worker，这里的Master是一个进程，主要负责资源的调度和分配，并进行集群的监控等职责，类似于Yarn环境中的RM, 而Worker呢，也是进程，一个Worker运行在集群中的一台服务器上，由Master分配资源对数据进行并行的处理和计算，类似于Yarn环境中NM。
+Spark集群的独立部署环境中，不需要依赖其他的资源调度框架，自身就实现了资源调度的功能，所以环境中还有其他两个核心组件：Master 和 Worker，这里的Master是一个进程，主要负责资源的调度和分配，并进行集群的监控等职责，类似于Yarn环境中的ResourceManager，而Worker也是进程，一个Worker运行在集群中的一台服务器上，由Master分配资源对数据进行并行的处理和计算，类似于Yarn环境中NodeManager。
 
 ##### ApplicationMaster
 
-Hadoop用户向YARN集群提交应用程序时,提交程序中应该包含ApplicationMaster，用于向资源调度器申请执行任务的资源容器Container，运行用户自己的程序任务job，监控整个任务的执行，跟踪整个任务的状态，处理任务失败等异常情况。
+Hadoop用户向YARN集群提交应用程序时,提交程序中应该包含ApplicationMaster，用于向资源调度器申请执行任务的资源容器 Container，运行用户自己的程序任务job，监控整个任务的执行，跟踪整个任务的状态，处理任务失败等异常情况。
 
-说的简单点就是，ResourceManager（资源）和Driver（计算）之间的解耦合靠的就是ApplicationMaster。
+说的简单点就是，ResourceManager（资源）和 Driver（计算）之间的解耦合靠的就是ApplicationMaster。
 
 #### 3.3 核心概念
 

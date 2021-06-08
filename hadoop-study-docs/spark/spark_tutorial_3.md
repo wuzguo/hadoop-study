@@ -172,10 +172,6 @@ mpRDD.collect().foreach(println)
 // 4
 ```
 
-
-
-
-
 - map和mapPartitions的区别
 
     数据处理角度
@@ -223,8 +219,6 @@ mpiRDD.collect().foreach(println)
 // 4
 ```
 
-
-
 4. flatMap
 
 - 函数签名
@@ -261,8 +255,6 @@ glomRDD.collect().foreach(data => println(data.mkString(",")))
 // 1,2
 // 3,4
 ```
-
-
 
 6. groupBy
 
@@ -317,8 +309,6 @@ val dataRDD1 = dataRDD.sample(false, 0.5)
 // 第三个参数：随机数种子
 val dataRDD2 = dataRDD.sample(true, 2)
 ```
-
-
 
 9. distinct
 
@@ -596,8 +586,6 @@ rdd.aggregateByKey(0)((x, y) => math.max(x, y), (x, y) => x + y).collect.foreach
 // (b,4)
 // (a,6)
 ```
-
-
 
 21. foldByKey
 
@@ -931,8 +919,6 @@ val rdd: RDD[(Int, String)] = sc.makeRDD(List((1, "a"), (1, "a"), (1, "a"), (2,"
 val res: collection.Map[Int, Lon g] = rdd.countByKey()
 // Map(1 -> 3, 2 -> 1, 3 -> 2)
 ```
-
-
 
 10. save 相关算子
 

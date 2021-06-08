@@ -4,7 +4,7 @@ Yarn是一个资源调度平台，负责为运算程序提供服务器运算资�
 
 #### Yarn基本架构
 
-YARN主要由**ResourceManager**、**NodeManager**、**ApplicationMaster**和**Container**等组件构成。
+YARN主要由 **ResourceManager**、**NodeManager**、**ApplicationMaster** 和 **Container** 等组件构成。
 
 ![](../images/202104_01/37.png)
 
@@ -79,7 +79,7 @@ YARN主要由**ResourceManager**、**NodeManager**、**ApplicationMaster**和**C
 
 - 除了向应用管理器请求作业进度外, 客户端每5秒都会通过调用waitForCompletion()来检查作业是否完成。时间间隔可以通过mapreduce.client.completion.pollinterval 来设置。作业完成之后, 应用管理器和Container会清理工作状态。作业的信息会被作业历史服务器存储以备之后用户核查。
 
-##### 作业提交过程之MapReduce
+##### 作业提交过程之 MapReduce
 
 ![](../images/202104_01/40.png)
 
