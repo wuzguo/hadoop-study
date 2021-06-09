@@ -1,6 +1,7 @@
 package com.hadoop.study.scala.streaming.wc
 
 import org.apache.flink.api.scala.createTypeInformation
+import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
@@ -18,13 +19,14 @@ object WordCount {
     def main(args: Array[String]): Unit = {
         // 1. 获取环境配置
         val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
-
         // 2. 从Socket读取文件
         val dss: DataStream[String] = env.socketTextStream("hadoop003", 9999)
 
         val windowCounts = dss.flatMap { line => line.split(" ") }
+          .filter(_.nonEmpty)
           .map { word => WordWithCount(word, 1) }
           .keyBy(_.word)
+          // 滚动窗口2秒
           .window(TumblingProcessingTimeWindows.of(Time.seconds(2)))
           .sum("count")
 
