@@ -1,7 +1,6 @@
 package com.hadoop.study.scala.streaming.wc
 
-import org.apache.flink.api.scala.createTypeInformation
-import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
+import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 

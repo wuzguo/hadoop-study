@@ -1,11 +1,10 @@
 package com.hadoop.study.scala.streaming.window
 
 import com.hadoop.study.scala.streaming.beans.Sensor
-import com.hadoop.study.scala.streaming.window.StreamingEventTimeWindow.TimestampExtractor
+import com.hadoop.study.scala.streaming.window.Streaming_EventTimeWindow.TimestampExtractor
 import org.apache.flink.api.common.functions.AggregateFunction
-import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.scala.function.WindowFunction
-import org.apache.flink.streaming.api.scala.{DataStream, OutputTag, StreamExecutionEnvironment}
+import org.apache.flink.streaming.api.scala.{DataStream, OutputTag, StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
@@ -20,7 +19,7 @@ import org.apache.flink.util.Collector
  * @date 2021/6/9 14:44
  */
 
-object StreamingTimeWindow {
+object Streaming_TimeWindow {
 
     def main(args: Array[String]): Unit = {
         // 1. 获取环境配置

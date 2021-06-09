@@ -2,8 +2,7 @@ package com.hadoop.study.scala.streaming.window
 
 import com.hadoop.study.scala.streaming.beans.Sensor
 import org.apache.flink.api.common.functions.AggregateFunction
-import org.apache.flink.api.scala.createTypeInformation
-import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
+import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, createTypeInformation}
 
 /**
  * <B>说明：描述</B>
@@ -13,7 +12,7 @@ import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironm
  * @date 2021/6/9 14:44
  */
 
-object StreamingCountWindow {
+object Streaming_CountWindow {
 
     def main(args: Array[String]): Unit = {
         // 1. 获取环境配置
