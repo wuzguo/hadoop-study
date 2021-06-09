@@ -11,7 +11,7 @@ import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironm
  * @date 2021/6/9 20:58
  */
 
-object Streaming_Collection {
+object Source_Collection {
 
     def main(args: Array[String]): Unit = {
         val env = StreamExecutionEnvironment.getExecutionEnvironment

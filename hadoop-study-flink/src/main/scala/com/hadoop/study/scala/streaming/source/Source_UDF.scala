@@ -14,7 +14,7 @@ import scala.util.Random
  * @date 2021/6/9 21:29
  */
 
-object Streaming_UDF {
+object Source_UDF {
 
     def main(args: Array[String]): Unit = {
         val env = StreamExecutionEnvironment.getExecutionEnvironment

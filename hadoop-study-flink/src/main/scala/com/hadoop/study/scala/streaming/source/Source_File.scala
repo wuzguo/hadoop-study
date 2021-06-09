@@ -10,7 +10,7 @@ import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
  * @date 2021/6/9 21:12
  */
 
-object Streaming_File {
+object Source_File {
 
     def main(args: Array[String]): Unit = {
         val env = StreamExecutionEnvironment.getExecutionEnvironment

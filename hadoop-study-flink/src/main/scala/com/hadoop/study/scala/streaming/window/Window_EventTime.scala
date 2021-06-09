@@ -15,7 +15,7 @@ import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWat
  * @date 2021/6/9 14:44
  */
 
-object Streaming_EventTimeWindow {
+object Window_EventTime {
 
     def main(args: Array[String]): Unit = {
         // 1. 获取环境配置

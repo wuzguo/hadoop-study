@@ -12,7 +12,7 @@ import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironm
  * @date 2021/6/9 14:44
  */
 
-object Streaming_CountWindow {
+object Window_Count {
 
     def main(args: Array[String]): Unit = {
         // 1. 获取环境配置

@@ -15,7 +15,7 @@ import java.util.Properties
  * @date 2021/6/9 21:14
  */
 
-object Streaming_Kafka {
+object Source_Kafka {
 
     def main(args: Array[String]): Unit = {
         val env = StreamExecutionEnvironment.getExecutionEnvironment
