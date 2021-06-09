@@ -21,14 +21,14 @@ object SparkStreaming04_Kafka_Mock {
         // 格式 ：timestamp area city userId adId
         // 含义： 时间戳  区域  城市 用户 广告
         // Application => Kafka => SparkStreaming => Analysis
-        val prop = new Properties()
+        val properties = new Properties()
         // 添加配置
-        prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "hadoop002:9092")
-        prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
-        prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "hadoop002:9092")
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
 
         // 生产者
-        val producer = new KafkaProducer[String, String](prop)
+        val producer = new KafkaProducer[String, String](properties)
 
         while (true) {
             mock().foreach(

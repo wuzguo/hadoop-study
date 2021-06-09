@@ -11,7 +11,7 @@ import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironm
  * @date 2021/6/9 20:58
  */
 
-object Streaming_SourceCollection {
+object Streaming_Collection {
 
     def main(args: Array[String]): Unit = {
         val env = StreamExecutionEnvironment.getExecutionEnvironment
@@ -27,6 +27,12 @@ object Streaming_SourceCollection {
         ))
         // 打印数据
         sensorStream.print("sensor ")
+
+        // 数字
+        val intStream = env.fromElements(1, 2, 4, 67, 189)
+        // 打印数据
+        intStream.print("int ")
+
         // 执行
         env.execute("Streaming Source Collection")
     }
