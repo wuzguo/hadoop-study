@@ -1,6 +1,7 @@
-package com.hadoop.study.scala.streaming.wc
+package com.hadoop.study.scala.streaming.time
 
 import org.apache.flink.api.scala.createTypeInformation
+import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
@@ -13,7 +14,7 @@ import org.apache.flink.streaming.api.windowing.time.Time
  * @date 2021/6/7 10:49
  */
 
-object WordCount {
+object WordCountTime {
 
     def main(args: Array[String]): Unit = {
         // 1. 获取环境配置
@@ -33,6 +34,11 @@ object WordCount {
         windowCounts.print().setParallelism(1)
 
         env.execute("Socket Window WordCount")
+    }
+
+    class TimestampExtractor extends BoundedOutOfOrdernessTimestampExtractor[(String, Int)](Time.seconds(1)) {
+
+        override def extractTimestamp(element: (String, Int)): Long = element._2 * 1000
     }
 
     /** Data type for words with count */
