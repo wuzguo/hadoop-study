@@ -2,7 +2,9 @@ package com.hadoop.study.scala.streaming.table
 
 import com.hadoop.study.scala.streaming.beans.Sensor
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
+import org.apache.flink.table.api.Expressions.$
 import org.apache.flink.table.api.bridge.scala.{StreamTableEnvironment, tableConversions}
+import org.apache.flink.types.Row
 
 /**
  * <B>说明：描述</B>
@@ -36,14 +38,14 @@ object Table_Example {
         val dataTable = tableEnv.fromDataStream(sensorStream)
 
         // 5. 调用table API进行转换操作 DSL
-        val resultTable = dataTable.select("id, timestamp, temp").where("id = 'sensor_1'")
-        resultTable.toAppendStream[Sensor].print("result")
+        val resultTable = dataTable.select($("id"), $("temp")).where($("id").isEqual("sensor_1"))
+        resultTable.toAppendStream[Row].print("result ")
 
         // 6. 执行SQL
         tableEnv.createTemporaryView("sensor", dataTable)
         val sql = "select * from sensor where id = 'sensor_1'"
         val resultSqlTable = tableEnv.sqlQuery(sql)
-        resultSqlTable.toAppendStream[Sensor].print("sql")
+        resultSqlTable.toAppendStream[Row].print("sql ")
 
         env.execute("Table Example")
     }
