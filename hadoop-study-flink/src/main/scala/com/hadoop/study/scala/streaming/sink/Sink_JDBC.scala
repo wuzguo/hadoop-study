@@ -45,7 +45,7 @@ object Sink_JDBC {
         var insertStmt: PreparedStatement = _
 
         override def open(parameters: Configuration): Unit = {
-            connection = DriverManager.getConnection("jdbc:mysql://hadoop003:3306/flink-sink", "root", "136501412")
+            connection = DriverManager.getConnection("jdbc:mysql://hadoop003:3306/flink-sink", "root", "123456")
             updateStmt = connection.prepareStatement("update sink_sensor set temp = ? where id = ?")
             insertStmt = connection.prepareStatement("insert into sink_sensor (id,temp,timestamp) values (?, ?, ?)")
         }
