@@ -32,8 +32,8 @@ object Sink_Redis {
 
         // 配置文件
         val config = new FlinkJedisPoolConfig.Builder()
-          .setHost("10.20.1.182")
-          .setDatabase(4)
+          .setHost("hadoop002")
+          .setDatabase(0)
           .setPort(6379)
           .build()
 
