@@ -34,13 +34,13 @@ object Sink_Kafka {
         val inputStream = env.addSource(new FlinkKafkaConsumer("topic_streaming", new SimpleStringSchema, properties))
         inputStream.print("kafka ")
 
-        val values = inputStream.map(line => {
+        val sinkValues = inputStream.map(line => {
             line.split(" ").mkString(", ")
         })
-
-        values.addSink(new FlinkKafkaProducer("topic_streaming_sink", new SimpleStringSchema, properties))
+        // 发送到Kafka
+        sinkValues.addSink(new FlinkKafkaProducer("topic_streaming_sink", new SimpleStringSchema, properties))
 
         // 执行
-        env.execute("Streaming Source Kafka")
+        env.execute("Streaming Sink Kafka")
     }
 }
