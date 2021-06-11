@@ -41,12 +41,13 @@ object Table_Example {
         val resultTable = dataTable.select($("id"), $("temp")).where($("id").isEqual("sensor_1"))
         resultTable.toAppendStream[Row].print("result ")
 
-        // 6. 执行SQL
+        // 6. 创建视图，执行SQL
         tableEnv.createTemporaryView("sensor", dataTable)
         val sql = "select * from sensor where id = 'sensor_1'"
         val resultSqlTable = tableEnv.sqlQuery(sql)
         resultSqlTable.toAppendStream[Row].print("sql ")
 
+        // 7. 执行
         env.execute("Table Example")
     }
 }
