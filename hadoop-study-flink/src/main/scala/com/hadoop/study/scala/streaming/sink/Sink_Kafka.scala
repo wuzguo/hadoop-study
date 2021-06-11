@@ -6,7 +6,6 @@ import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaConsumer, FlinkKaf
 import org.apache.kafka.clients.consumer.ConsumerConfig
 
 import java.util.Properties
-import scala.collection.mutable.ListBuffer
 
 /**
  * <B>说明：描述</B>
