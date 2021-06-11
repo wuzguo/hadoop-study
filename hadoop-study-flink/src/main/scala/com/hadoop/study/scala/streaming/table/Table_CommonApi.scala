@@ -4,7 +4,7 @@ import org.apache.flink.api.scala.ExecutionEnvironment
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.table.api.Expressions.$
 import org.apache.flink.table.api.bridge.scala.{BatchTableEnvironment, StreamTableEnvironment, tableConversions}
-import org.apache.flink.table.api.{EnvironmentSettings, TableEnvironment}
+import org.apache.flink.table.api.{EnvironmentSettings, FieldExpression, TableEnvironment, WithOperations}
 import org.apache.flink.table.descriptors.{Csv, FileSystem, Schema}
 import org.apache.flink.types.Row
 
@@ -61,12 +61,12 @@ object Table_CommonApi {
         // 3. 查询转换
         // 3.1 Table API
         // 简单转换
-        val resultTable = sensorTable.select($("id"), $("temp")).filter($("id").isEqual("sensor_6"))
+        val resultTable = sensorTable.select($"id", $"temp").filter($("id").isEqual("sensor_6"))
         // resultTable.toAppendStream[Row].print()
 
         // 聚合统计
-        val aggTable = sensorTable.groupBy($("id")).select($("id"), $("id").count().as("count"),
-            $("temp").avg().as("avgTemp"))
+        val aggTable = sensorTable.groupBy($("id")).select($"id", $"id".count.as("count"),
+            $"temp".avg.as("avgTemp"))
         // aggTable.toRetractStream[Row].print()
 
         // 3.2 SQL

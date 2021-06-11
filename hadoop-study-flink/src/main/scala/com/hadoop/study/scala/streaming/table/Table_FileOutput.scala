@@ -1,7 +1,7 @@
 package com.hadoop.study.scala.streaming.table
 
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.table.api.DataTypes
+import org.apache.flink.table.api.{DataTypes, FieldExpression}
 import org.apache.flink.table.api.Expressions.$
 import org.apache.flink.table.api.bridge.scala.StreamTableEnvironment
 import org.apache.flink.table.descriptors.{Csv, FileSystem, Schema}
@@ -41,7 +41,7 @@ object Table_FileOutput {
         // 3. 查询转换
         // 3.1 Table API
         // 简单转换
-        val resultTable = sensorTable.select($("id"), $("temp")).filter($("id").isEqual("sensor_6"))
+        val resultTable = sensorTable.select($"id", $"temp").filter($("id").isEqual("sensor_6"))
         // resultTable.toAppendStream[Row].print()
 
         // 输出到文件

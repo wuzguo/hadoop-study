@@ -1,10 +1,11 @@
-package com.hadoop.study.scala.streaming.table
+package com.hadoop.study.scala.streaming.table.udf
 
 import com.hadoop.study.scala.streaming.beans.Sensor
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
-import org.apache.flink.table.api.Expressions.$
+import org.apache.flink.table.api.Expressions.{$, call}
 import org.apache.flink.table.api.FieldExpression
 import org.apache.flink.table.api.bridge.scala.{StreamTableEnvironment, tableConversions}
+import org.apache.flink.table.functions.ScalarFunction
 import org.apache.flink.types.Row
 
 /**
@@ -12,10 +13,10 @@ import org.apache.flink.types.Row
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/6/10 17:02
+ * @date 2021/6/11 14:58
  */
 
-object Table_Example {
+object Table_Udf_ScalarFunction {
 
     def main(args: Array[String]): Unit = {
         // 0. 环境变量
@@ -36,19 +37,29 @@ object Table_Example {
         val tableEnv = StreamTableEnvironment.create(env)
 
         // 4. 基于流创建一张表
-        val dataTable = tableEnv.fromDataStream(sensorStream)
+        val dataTable = tableEnv.fromDataStream(sensorStream,$"id", $"timestamp", $"temp")
 
-        // 5. 调用table API进行转换操作 DSL
-        val resultTable = dataTable.select($"id", $"temp").where($("id").isEqual("sensor_1"))
-        resultTable.toAppendStream[Row].print("result ")
+        // 5. 自定义标量函数，实现求id的hash值
+        // 5.1 table API
+        val hashCode = new HashCode(23)
+        // 需要在环境中注册UDF
+        tableEnv.createTemporarySystemFunction("hash", hashCode)
+        // call registered function in Table API
+        val resultTable = dataTable.select($"id", $"timestamp", call("hash", $"id"))
+         resultTable.toAppendStream[Row].print("result ")
 
-        // 6. 创建视图，执行SQL
-        tableEnv.createTemporaryView("sensor", dataTable)
-        val sql = "select * from sensor where id = 'sensor_1'"
-        val resultSqlTable = tableEnv.sqlQuery(sql)
+        // 5.2 SQL
+        tableEnv.createTemporaryView("sensors", dataTable)
+        val resultSqlTable = tableEnv.sqlQuery("select id, hash(id) from sensors")
         resultSqlTable.toAppendStream[Row].print("sql ")
 
-        // 7. 执行
-        env.execute("Table Example")
+        env.execute("Table UDF ScalarFunction")
     }
+
+    // 实现自定义的ScalarFunction
+    class HashCode(val factor: Int) extends ScalarFunction {
+
+        def eval(str: String): Int = str.hashCode * factor
+    }
+
 }

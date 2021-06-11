@@ -6,9 +6,8 @@ import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrderness
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter
-import org.apache.flink.table.api.Expressions.$
 import org.apache.flink.table.api.bridge.scala.{StreamTableEnvironment, tableConversions}
-import org.apache.flink.table.api.{LiteralIntExpression, Tumble}
+import org.apache.flink.table.api.{FieldExpression, LiteralIntExpression, Tumble, WithOperations}
 import org.apache.flink.types.Row
 
 /**
@@ -39,8 +38,7 @@ object Table_TimeAndWindow {
             new AssignerWithPeriodicWatermarksAdapter.Strategy(new TimestampExtractor(Time.seconds(1))))
 
         // 4. 将流转换成表，定义时间特性
-        val dataTable = tableEnv.fromDataStream(dataStream, $("id"), $("timestamp"), $("temp"),
-            $("rt").rowtime())
+        val dataTable = tableEnv.fromDataStream(dataStream, $"id", $"timestamp", $"temp", $"rt".rowtime)
         tableEnv.createTemporaryView("sensors", dataTable)
 
         // 5. 窗口操作
@@ -48,9 +46,9 @@ object Table_TimeAndWindow {
         // table API
 
         // 其他写法： val resultTable = dataTable.window(Tumble over 10.second on $"rt" as "tw")
-        val resultTable = dataTable.window(Tumble.over(10.seconds).on($("rt")).as("tw"))
-          .groupBy($("id"), $("tw"))
-          .select($("id"), $("id").count, $("temp").avg, $("tw").end)
+        val resultTable = dataTable.window(Tumble.over(10.seconds).on($"rt").as("tw"))
+          .groupBy($"id", $"tw")
+          .select($"id", $"id".count, $"temp".avg, $"tw".end)
         // resultTable.toAppendStream[Row].print("result ")
 
         // SQL

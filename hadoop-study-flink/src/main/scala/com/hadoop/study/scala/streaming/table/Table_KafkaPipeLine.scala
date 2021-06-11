@@ -1,9 +1,9 @@
 package com.hadoop.study.scala.streaming.table
 
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.table.api.DataTypes
 import org.apache.flink.table.api.Expressions.$
 import org.apache.flink.table.api.bridge.scala.StreamTableEnvironment
+import org.apache.flink.table.api.{DataTypes, FieldExpression}
 import org.apache.flink.table.descriptors.{Csv, Kafka, Schema}
 import org.apache.kafka.clients.producer.ProducerConfig
 
@@ -49,7 +49,7 @@ object Table_KafkaPipeLine {
         // 3.1 Table API
         // 简单转换
         val users = userInfos
-          .select($("timestamp"), $("area"), $("city"), $("userId"), $("adId"))
+          .select($"timestamp", $"area", $"city", $"userId", $"adId")
           .filter($("userId").isNotNull)
         // users.toAppendStream[Row].print()
 
