@@ -1,11 +1,10 @@
 package com.hadoop.study.scala.streaming.table
 
-import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
+import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.table.api.DataTypes
 import org.apache.flink.table.api.Expressions.$
-import org.apache.flink.table.api.bridge.scala.{StreamTableEnvironment, tableConversions}
-import org.apache.flink.table.descriptors.{Csv, Json, Kafka, Schema}
-import org.apache.flink.types.Row
+import org.apache.flink.table.api.bridge.scala.StreamTableEnvironment
+import org.apache.flink.table.descriptors.{Csv, Kafka, Schema}
 import org.apache.kafka.clients.producer.ProducerConfig
 
 /**
@@ -38,8 +37,8 @@ object Table_KafkaPipeLine {
             .field("timestamp", DataTypes.BIGINT)
             .field("area", DataTypes.STRING)
             .field("city", DataTypes.STRING)
-            .field("userId", DataTypes.BIGINT)
-            .field("adId", DataTypes.BIGINT))
+            .field("userId", DataTypes.INT)
+            .field("adId", DataTypes.INT))
           .createTemporaryTable("userInfos")
 
         val userInfos = tableEnv.from("userInfos")
@@ -52,7 +51,7 @@ object Table_KafkaPipeLine {
         val users = userInfos
           .select($("timestamp"), $("area"), $("city"), $("userId"), $("adId"))
           .filter($("userId").isNotNull)
-       // users.toAppendStream[Row].print()
+        // users.toAppendStream[Row].print()
 
         // 输出到Kafka
         // 输出文件路径
@@ -67,13 +66,13 @@ object Table_KafkaPipeLine {
             .field("timestamp", DataTypes.BIGINT)
             .field("area", DataTypes.STRING)
             .field("city", DataTypes.STRING)
-            .field("userId", DataTypes.BIGINT)
-            .field("adId", DataTypes.BIGINT))
+            .field("userId", DataTypes.INT)
+            .field("adId", DataTypes.INT))
           .createTemporaryTable("outUsers")
         // 执行,输出到表
         users.executeInsert("outUsers")
 
         // 执行
-       //  env.execute("Table FileOutput")
+        //  env.execute("Table FileOutput")
     }
 }
