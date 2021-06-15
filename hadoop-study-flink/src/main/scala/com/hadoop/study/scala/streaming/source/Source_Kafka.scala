@@ -1,5 +1,6 @@
 package com.hadoop.study.scala.streaming.source
 
+import org.apache.flink.api.common.RuntimeExecutionMode
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
@@ -30,8 +31,7 @@ object Source_Kafka {
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")
 
         // 读取数据
-        val strStream = env.addSource(new FlinkKafkaConsumer("topic_streaming", new SimpleStringSchema(),
-            properties))
+        val strStream = env.addSource(new FlinkKafkaConsumer("topic_streaming", new SimpleStringSchema(), properties))
         strStream.print("kafka ")
 
         // 执行
