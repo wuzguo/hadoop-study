@@ -39,3 +39,85 @@ Apache Flink是一个框架和分布式处理引擎，用于对无界和有界�
 
 ![](../images/202106_1/2.png)
 
+这种以流为世界观的架构，获得的最大好处就是具有极低的延迟。
+
+##### 分层 api
+
+![](../images/202106_1/3.png)
+
+最底层级的抽象仅仅提供了有状态流，它将通过过程函数（Process Function）被嵌入到 DataStream API 中。
+
+底层过程函数（Process Function) 与 DataStream API 相集成，使其可以对某些特定的操作进行底层的抽象，它允许用户可以自由地处理来自一个或多个数据流的事件，并使用一致的容错的状态。
+
+实际上，大多数应用并不需要上述的底层抽象，而是针对核心 API Core APIs 进行编程，比如 DataStream API（有界或无界流数据）以及 DataSet API（有界数据
+集） 。这些 API 为数据处理提供了通用的构建模块，比如由用户定义的多种形式的转换（transformations），连接（joins），聚合（aggregations ），窗口操作 windows等等。
+
+DataSet API 为有界数据集提供了额外的支持，例如循环与迭代。这些 API 处理的数据类型以类（classes）的形式由各自的编程语言所表示。
+
+Table API是以表为中心的声明式编程，其中表可能会动态变化。Table API 遵循（扩展的）关系模型：表有二维数据结构（schema），同时 API 提供可比较的操作，例如 select、project、join、group by、aggregate 等。
+
+Table API 程序声明式地定义了什么逻辑操作应该执行，而不是准确地确定这些操作代码的看上去如何。
+
+尽管 Table API 可以通过多种类型的用户自定义函数（UDF）进行扩展，其仍不如核心 API 更具表达能力，但是使用起来却更加简洁（代码量更少）。
+
+除此之外，Table API 程序 在执行之前会经过内置优化器进行优化。你可以在表与DataStream/DataSet 之间无缝切换，以允许程序将 Table API 与 DataStream 以及 DataSet 混合使用 。
+
+Flink提供的最高层级的抽象是 SQL。这一层抽象在语法与表达能力上与Table API 类似，但是是以 SQL 查询表达式的形式表现程序。SQL 抽象与 Table API 交互密切，同时 SQL 查询可以直接在 Table API 定义的表上执行。
+
+
+
+### 二、快速上手
+
+#### 2.1 Word Count
+
+##### 批处理
+
+```scala
+def main(args: Array[String]): Unit = {
+    // 1. 获取执行环境
+    val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
+    // 2. 读取文件
+    val lines: DataSet[String] = env.readTextFile("./hadoop-study-datas/flink/core/1.txt")
+
+    // 3. 集合
+    val ds: DataSet[(String, Int)] = lines.flatMap(new WordSplitter).groupBy(0).sum(1)
+
+    // 4. 打印
+    ds.print()
+}
+
+class WordSplitter extends FlatMapFunction[String, (String, Int)] {
+
+    override def flatMap(value: String, out: Collector[(String, Int)]): Unit = {
+        // 按空格分词
+        val words = value.split(" ")
+        // 遍历所有word，包成二元组输出
+        words.foreach(word => out.collect((word, 1)))
+    }
+}
+```
+
+##### 流处理
+
+```scala
+def main(args: Array[String]): Unit = {
+    // 1. 获取环境配置
+    val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
+    // 2. 从Socket读取文件
+    val dss: DataStream[String] = env.readTextFile("./hadoop-study-datas/flink/core/1.txt")
+
+    val windowCounts = dss.flatMap { line => line.split(" ") }
+    .map { word => WordWithCount(word, 1) }
+    .keyBy(_.word)
+    .sum("count")
+
+    // 打印
+    windowCounts.print("count ")
+
+    // 3. 执行
+    env.execute("Streaming WordCount")
+}
+
+case class WordWithCount(word: String, count: Long)
+```
+

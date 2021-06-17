@@ -18,20 +18,20 @@ object WordCount {
         // 1. 获取环境配置
         val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
         // 2. 从Socket读取文件
-        val dss: DataStream[String] = env.socketTextStream("hadoop003", 9999)
+        val dss: DataStream[String] = env.readTextFile("./hadoop-study-datas/flink/core/1.txt")
 
         val windowCounts = dss.flatMap { line => line.split(" ") }
           .filter(_.nonEmpty)
           .map { word => WordWithCount(word, 1) }
           .keyBy(_.word)
           // 滚动窗口2秒
-          .window(TumblingProcessingTimeWindows.of(Time.seconds(2)))
+         // .window(TumblingProcessingTimeWindows.of(Time.seconds(2)))
           .sum("count")
 
         // print the results with a single thread, rather than in parallel
-        windowCounts.print().setParallelism(1)
+        windowCounts.print("count ")
 
-        env.execute("Socket Window WordCount")
+        env.execute("Streaming WordCount")
     }
 
     /** Data type for words with count */
