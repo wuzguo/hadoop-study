@@ -1,6 +1,7 @@
 package com.hadoop.study.scala.streaming.state
 
 import com.hadoop.study.scala.streaming.beans.Sensor
+import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.contrib.streaming.state.RocksDBStateBackend
 import org.apache.flink.runtime.state.filesystem.FsStateBackend
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
@@ -28,9 +29,12 @@ object State_FaultTolerance {
         import org.apache.flink.streaming.api.CheckpointingMode
 
         // 1. 状态后端配置
+        // 内存级别 存储在TaskManager的JVM堆上
         env.setStateBackend(new MemoryStateBackend)
+        // 存到远程的持久化文件系统（ FileSystem ）
         env.setStateBackend(new FsStateBackend("hdfs://hadoop001:9000/user/flink/state/fs"))
-        env.setStateBackend(new RocksDBStateBackend("hdfs://hadoop001:9000/user/flink/state/rocks"))
+        // 将所有状态序列化后，存入本地的 RocksDB 中存储
+        env.setStateBackend(new RocksDBStateBackend(""))
 
         // 2. 检查点配置
         env.enableCheckpointing(300)
@@ -41,6 +45,10 @@ object State_FaultTolerance {
         env.getCheckpointConfig.setMaxConcurrentCheckpoints(2)
         env.getCheckpointConfig.setMinPauseBetweenCheckpoints(100)
         env.getCheckpointConfig.setTolerableCheckpointFailureNumber(0)
+
+        // 3. 重启策略配置 // 固定延迟重启（隔一段时间尝试重启一次）
+        // (尝试重启次数， 尝试重启的时间间隔)
+        env.setRestartStrategy(RestartStrategies.fixedDelayRestart( 3, 60000))
 
         // 从文件读取数据
         val socketStream = env.socketTextStream("hadoop003", 9999)
@@ -53,6 +61,7 @@ object State_FaultTolerance {
 
         sensorStream.print("result ")
 
+        // 执行
         env.execute("Streaming State FaultTolerance")
     }
 }
