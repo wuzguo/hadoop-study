@@ -47,7 +47,9 @@ object Process_ApplicationCase {
         var lastTempValue: ValueState[Double] = _
 
         override def open(parameters: Configuration): Unit = {
+
             lastTempValue = getRuntimeContext.getState(new ValueStateDescriptor[Double]("last-temp-value", classOf[Double]))
+
             timerState = getRuntimeContext.getState(new ValueStateDescriptor[Long]("timer-state", classOf[Long]))
 
             super.open(parameters)

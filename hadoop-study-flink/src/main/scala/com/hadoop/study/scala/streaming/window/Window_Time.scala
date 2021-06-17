@@ -35,7 +35,6 @@ object Window_Time {
         }).assignTimestampsAndWatermarks(
             new AssignerWithPeriodicWatermarksAdapter.Strategy(new TimestampExtractor(Time.seconds(1))))
 
-
         val sensors: DataStream[Integer] = dataStream.keyBy(_.id)
           // 滚动窗口15秒
           .window(TumblingEventTimeWindows.of(Time.seconds(15)))
@@ -54,7 +53,7 @@ object Window_Time {
 
         // 5. 其他API
         val output = new OutputTag[Sensor]("late")
-        val sumStream : DataStream[Sensor] = dataStream.keyBy(_.id)
+        val sumStream: DataStream[Sensor] = dataStream.keyBy(_.id)
           .window(TumblingEventTimeWindows.of(Time.seconds(15)))
           .allowedLateness(Time.minutes(1))
           .sideOutputLateData(output)
@@ -67,8 +66,7 @@ object Window_Time {
     }
 
     class AllWindowFunction extends WindowFunction[Sensor, (String, Long, Integer), String, TimeWindow] {
-        override def apply(key: String, window: TimeWindow, input: Iterable[Sensor], out: Collector[(String, Long,
-          Integer)]): Unit = {
+        override def apply(key: String, window: TimeWindow, input: Iterable[Sensor], out: Collector[(String, Long, Integer)]): Unit = {
             val windowEnd = window.getEnd
             out.collect((key, windowEnd, input.toList.size))
         }

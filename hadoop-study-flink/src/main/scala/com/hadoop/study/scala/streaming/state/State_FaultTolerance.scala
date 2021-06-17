@@ -26,6 +26,7 @@ object State_FaultTolerance {
 
         import org.apache.flink.runtime.state.memory.MemoryStateBackend
         import org.apache.flink.streaming.api.CheckpointingMode
+
         // 1. 状态后端配置
         env.setStateBackend(new MemoryStateBackend)
         env.setStateBackend(new FsStateBackend("hdfs://hadoop001:9000/user/flink/state/fs"))
