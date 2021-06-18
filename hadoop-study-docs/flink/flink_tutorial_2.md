@@ -76,15 +76,7 @@ TaskManager在启动的时候就设置好了槽位数（Slot），每个 slot �
 所有的Flink 程序都是由三部分组成的： Source、Transformation 和 Sink 。
 Source负责读取数据源，Transformation 利用各种算子进行处理加工， Sink 负责输出。
 
-```scala
-// 读取数据
-val inputStream = env.addSource(new FlinkKafkaConsumer("topic_streaming", new SimpleStringSchema, properties))
-
-val sinkValues = inputStream.map(line => { line.split(" ").mkString(", ")})
-
-// 发送到Kafka
-sinkValues.addSink(new FlinkKafkaProducer("topic_streaming_sink", new SimpleStringSchema, properties))
-```
+![](../images/202106_1/36.png)
 
 在运行时，Flink 上运行的程序会被映射成 "逻辑数据流"（dataflows），它包含了这三部分。
 
