@@ -44,6 +44,6 @@ object Window_Examples {
           .print("windows:::")
           .setParallelism(1)
 
-        env.execute("Tumbling EventTime Windows")
+        env.execute("EventTime Session Windows")
     }
 }
