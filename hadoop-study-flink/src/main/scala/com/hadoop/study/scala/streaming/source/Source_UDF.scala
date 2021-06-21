@@ -32,7 +32,7 @@ object Source_UDF {
     // 自定义数据源功能
     class CustomSourceFunction extends SourceFunction[Sensor] {
 
-        val running = true
+        private var running = true
 
         override def run(ctx: SourceFunction.SourceContext[Sensor]): Unit = {
             val random = new Random()
@@ -45,6 +45,8 @@ object Source_UDF {
             }
         }
 
-        override def cancel(): Unit = running
+        override def cancel(): Unit = {
+            running = false
+        }
     }
 }
