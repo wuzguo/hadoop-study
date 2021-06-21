@@ -29,6 +29,7 @@ object Source_UDF {
         env.execute("Streaming Source UDF")
     }
 
+    // 自定义数据源功能
     class CustomSourceFunction extends SourceFunction[Sensor] {
 
         val running = true
@@ -39,7 +40,6 @@ object Source_UDF {
             while (running) {
                 val sensor = Sensor("sensor_" + random.nextInt(10), System.currentTimeMillis(), 30 + random.nextGaussian() * 20)
                 ctx.collect(sensor)
-
                 // 睡眠
                 Thread.sleep(1000)
             }

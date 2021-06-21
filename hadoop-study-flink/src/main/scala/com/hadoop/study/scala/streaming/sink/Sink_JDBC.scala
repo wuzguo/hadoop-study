@@ -54,6 +54,8 @@ object Sink_JDBC {
             updateStmt.setDouble(1, value.temp)
             updateStmt.setString(2, value.id)
             updateStmt.execute()
+
+            // 如果为0 表示是新增
             if (updateStmt.getUpdateCount == 0) {
                 insertStmt.setString(1, value.id)
                 insertStmt.setDouble(2, value.temp)

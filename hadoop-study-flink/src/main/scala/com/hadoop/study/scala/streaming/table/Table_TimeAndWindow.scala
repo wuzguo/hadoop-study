@@ -1,7 +1,6 @@
 package com.hadoop.study.scala.streaming.table
 
 import com.hadoop.study.scala.streaming.beans.Sensor
-import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.time.Time
@@ -24,7 +23,6 @@ object Table_TimeAndWindow {
         // 1. 获取环境配置
         val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
         env.setParallelism(1)
-        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
 
         val tableEnv = StreamTableEnvironment.create(env)
         // 2. 从Socket读取文件

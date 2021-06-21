@@ -48,7 +48,6 @@ object Transform_MultiStreams {
             }
         })
 
-
         val highStream = mainStream.getSideOutput(highOutput)
       //  highStream.print("high side ")
 

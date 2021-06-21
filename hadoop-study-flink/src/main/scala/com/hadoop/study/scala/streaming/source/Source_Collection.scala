@@ -14,6 +14,7 @@ import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironm
 object Source_Collection {
 
     def main(args: Array[String]): Unit = {
+
         val env = StreamExecutionEnvironment.getExecutionEnvironment
         // 设置并行度
         env.setParallelism(1)

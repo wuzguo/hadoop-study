@@ -44,6 +44,7 @@ object Sink_Redis {
 
     // 自定义Mapper
     class CustomRedisMapper extends RedisMapper[Sensor] {
+
         override def getCommandDescription: RedisCommandDescription = new RedisCommandDescription(RedisCommand.HSET,
             "sink:sensor:")
 

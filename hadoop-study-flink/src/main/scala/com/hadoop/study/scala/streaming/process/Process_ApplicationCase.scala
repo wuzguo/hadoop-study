@@ -35,7 +35,7 @@ object Process_ApplicationCase {
         // 测试KeyedProcessFunction，先分组然后自定义处理
         sensorStream.keyBy(_.id)
           .process(new TempIncrWarningProcessFunction(10))
-          .print();
+          .print()
 
         env.execute("Streaming Process Application")
     }
@@ -48,9 +48,9 @@ object Process_ApplicationCase {
 
         override def open(parameters: Configuration): Unit = {
 
-            lastTempState = getRuntimeContext.getState(new ValueStateDescriptor[Double]("last-temp-value", classOf[Double]))
+            lastTempState = getRuntimeContext.getState(new ValueStateDescriptor[Double]("last-temp-state", classOf[Double]))
 
-            timerState = getRuntimeContext.getState(new ValueStateDescriptor[Long]("timer-state", classOf[Long]))
+            timerState = getRuntimeContext.getState(new ValueStateDescriptor[Long]("timer-ts-state", classOf[Long]))
 
             super.open(parameters)
         }
@@ -59,19 +59,20 @@ object Process_ApplicationCase {
                                     out: Collector[String]): Unit = {
             // 取出状态
             val lastTemp = lastTempState.value
-            val state = timerState.value
+            val timer = timerState.value
 
             // 如果温度上升并且没有定时器，注册10秒后的定时器，开始等待
-            if (value.temp > lastTemp) {
+            if (value.temp > lastTemp && timer == null) {
                 // 计算出定时器时间戳
                 val timestamp = ctx.timerService.currentProcessingTime + interval * 1000
+                // 注册定时器，当前处理时间延时10秒触发
                 ctx.timerService.registerProcessingTimeTimer(timestamp)
+
                 timerState.update(timestamp)
-            }
-            else {
+            } else {
                 // 如果温度下降，那么删除定时器
-                if (value.temp < lastTemp) {
-                    ctx.timerService.deleteProcessingTimeTimer(state)
+                if (value.temp < lastTemp && timer != null) {
+                    ctx.timerService.deleteProcessingTimeTimer(timer)
                     timerState.clear()
                 }
             }
