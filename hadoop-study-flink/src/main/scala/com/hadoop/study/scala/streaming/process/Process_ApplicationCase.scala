@@ -62,9 +62,9 @@ object Process_ApplicationCase {
             val timer = timerState.value
 
             // 如果温度上升并且没有定时器，注册10秒后的定时器，开始等待
-            if (value.temp > lastTemp && timer <= 0) {
+            if (value.temp > lastTemp && timer == 0) {
                 // 计算出定时器时间戳。这里使用的处理时间
-                val timestamp = ctx.timerService.currentProcessingTime + interval * 1000
+                val timestamp = ctx.timerService().currentProcessingTime() + interval * 1000
                 // 注册定时器，当前处理时间延时10秒触发
                 ctx.timerService.registerProcessingTimeTimer(timestamp)
 

@@ -2,7 +2,8 @@ package com.hadoop.study.scala.streaming.state
 
 import com.hadoop.study.scala.streaming.beans.Sensor
 import org.apache.flink.api.common.functions.MapFunction
-import org.apache.flink.streaming.api.checkpoint.ListCheckpointed
+import org.apache.flink.runtime.state.{FunctionInitializationContext, FunctionSnapshotContext}
+import org.apache.flink.streaming.api.checkpoint.{CheckpointedFunction, ListCheckpointed}
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
 
 import java.util
@@ -38,7 +39,7 @@ object State_OperatorState {
         env.execute("Streaming State OperatorState")
     }
 
-    class CustomCountMapper extends MapFunction[Sensor, Int] with ListCheckpointed[Integer] {
+    class CustomCountMapper extends MapFunction[Sensor, Int] with CheckpointedFunction {
 
         var count = 0
 
@@ -47,15 +48,12 @@ object State_OperatorState {
             count
         }
 
-        override def snapshotState(checkpointId: Long, timestamp: Long): util.List[Integer] = {
-            new util.ArrayList[Integer](count)
+        override def snapshotState(context: FunctionSnapshotContext): Unit =  {
+
         }
 
-        override def restoreState(state: util.List[Integer]): Unit = {
-            import scala.collection.JavaConversions._
-            for (num <- state) {
-                count += num
-            }
+        override def initializeState(context: FunctionInitializationContext): Unit = {
+
         }
     }
 }
