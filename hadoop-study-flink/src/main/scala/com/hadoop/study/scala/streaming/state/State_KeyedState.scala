@@ -40,7 +40,7 @@ object State_KeyedState {
 
     class CustomRichMapFunction extends RichMapFunction[Sensor, Int] {
 
-        var keyCountState: ValueState[Int] = _
+        private var keyCountState: ValueState[Int] = _
 
         override def map(value: Sensor): Int = {
             var count: Int = keyCountState.value

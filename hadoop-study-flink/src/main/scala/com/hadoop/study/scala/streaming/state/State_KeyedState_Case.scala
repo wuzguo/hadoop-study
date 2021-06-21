@@ -42,7 +42,7 @@ object State_KeyedState_Case {
     class CustomRichMapFunction(val threshold: Double) extends RichFlatMapFunction[Sensor, (String, Double, Double)] {
 
         // 定义状态，保存上一次的温度值
-        var lastTempState: ValueState[Double] = _
+        private var lastTempState: ValueState[Double] = _
 
         override def flatMap(value: Sensor, out: Collector[(String, Double, Double)]): Unit = {
             // 获取状态
