@@ -61,9 +61,10 @@ object Transform_MultiStreams {
 
         val lowStream = mainStream.getSideOutput(lowOutput)
 
-
         val connectStreams = highTupleStream.connect(lowStream)
+
         val resultStream = connectStreams.map(new CoMapFunction[(String, Double), Sensor, (String, Double, String)] {
+
             override def map1(value: (String, Double)): (String, Double, String) = (value._1, value._2, "high temp warning")
 
             override def map2(value: Sensor): (String, Double, String) = (value.id, value.temp, "normal temp")

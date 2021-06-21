@@ -38,10 +38,11 @@ object Transform_RichFunction {
 
     // 自定义函数
     class CustomRichFunction extends RichMapFunction[Sensor, (String, Double)] {
+
         override def map(value: Sensor): (String, Double) = (value.id, value.temp)
 
         override def open(parameters: Configuration): Unit = {
-            println(s"open: $parameters")
+            println(s"open:  $parameters")
             super.open(parameters)
         }
 

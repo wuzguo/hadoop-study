@@ -42,13 +42,13 @@ object Process_ApplicationCase {
 
     class TempIncrWarningProcessFunction(val interval: Int) extends KeyedProcessFunction[String, Sensor, String] {
 
-        var timerState: ValueState[Long] = _
+        private var timerState: ValueState[Long] = _
 
-        var lastTempValue: ValueState[Double] = _
+        private var lastTempState: ValueState[Double] = _
 
         override def open(parameters: Configuration): Unit = {
 
-            lastTempValue = getRuntimeContext.getState(new ValueStateDescriptor[Double]("last-temp-value", classOf[Double]))
+            lastTempState = getRuntimeContext.getState(new ValueStateDescriptor[Double]("last-temp-value", classOf[Double]))
 
             timerState = getRuntimeContext.getState(new ValueStateDescriptor[Long]("timer-state", classOf[Long]))
 
@@ -58,7 +58,7 @@ object Process_ApplicationCase {
         override def processElement(value: Sensor, ctx: KeyedProcessFunction[String, Sensor, String]#Context,
                                     out: Collector[String]): Unit = {
             // 取出状态
-            val lastTemp = lastTempValue.value
+            val lastTemp = lastTempState.value
             val state = timerState.value
 
             // 如果温度上升并且没有定时器，注册10秒后的定时器，开始等待
@@ -77,7 +77,7 @@ object Process_ApplicationCase {
             }
 
             // 更新温度状态
-            lastTempValue.update(value.temp)
+            lastTempState.update(value.temp)
         }
 
         override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[String, Sensor, String]#OnTimerContext,

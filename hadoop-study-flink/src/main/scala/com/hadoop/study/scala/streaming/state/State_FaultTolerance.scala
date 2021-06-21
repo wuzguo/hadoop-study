@@ -40,10 +40,15 @@ object State_FaultTolerance {
         env.enableCheckpointing(300)
 
         // 高级选项
+        // 检查点执行模式
         env.getCheckpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE)
+        // 执行超时时间
         env.getCheckpointConfig.setCheckpointTimeout(60000)
+        // 并行执行的数量
         env.getCheckpointConfig.setMaxConcurrentCheckpoints(2)
+        // 两次执行的最小间隔时间
         env.getCheckpointConfig.setMinPauseBetweenCheckpoints(100)
+        // 可容忍的检查点失败次数，默认值为 0 表示我们不容忍任何检查点失败
         env.getCheckpointConfig.setTolerableCheckpointFailureNumber(0)
 
         // 3. 重启策略配置 // 固定延迟重启（隔一段时间尝试重启一次）

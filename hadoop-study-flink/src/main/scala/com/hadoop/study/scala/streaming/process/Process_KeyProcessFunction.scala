@@ -33,16 +33,14 @@ object Process_KeyProcessFunction {
         })
 
         // 测试KeyedProcessFunction，先分组然后自定义处理
-        sensorStream.keyBy(_.id)
-          .process(new CustomProcessFunction)
-          .print();
+        sensorStream.keyBy(_.id).process(new CustomProcessFunction).print()
 
         env.execute("Streaming Process KeyProcessFunction")
     }
 
     class CustomProcessFunction extends KeyedProcessFunction[String, Sensor, Integer] {
 
-        var timerState: ValueState[Long] = _
+        private var timerState: ValueState[Long] = _
 
         override def open(parameters: Configuration): Unit = {
             timerState = getRuntimeContext.getState(new ValueStateDescriptor[Long]("timer-state", classOf[Long]))
