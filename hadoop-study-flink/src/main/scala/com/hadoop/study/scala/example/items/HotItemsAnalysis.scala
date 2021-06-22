@@ -50,7 +50,7 @@ object HotItemsAnalysis {
         aggStream.print("agg: ")
 
         // 计算TopN
-        val resultStream = aggStream.keyBy(_.windowEnd).process(new TopItemFunction(5))
+        val resultStream = aggStream.keyBy(_.windowEnd).process(new TopItemsFunction(5))
         resultStream.print()
 
         // 执行
@@ -77,7 +77,7 @@ object HotItemsAnalysis {
         }
     }
 
-    class TopItemFunction(val topSize: Int) extends KeyedProcessFunction[Long, ItemViewCount, String] {
+    class TopItemsFunction(val topSize: Int) extends KeyedProcessFunction[Long, ItemViewCount, String] {
         // 先定义状态：ListState
         private var viewCountState: ListState[ItemViewCount] = _
 
