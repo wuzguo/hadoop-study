@@ -1,5 +1,7 @@
 package com.hadoop.study.scala.example.beans
 
+import java.sql.Timestamp
+
 /**
  * <B>说明：描述</B>
  *
@@ -8,4 +10,4 @@ package com.hadoop.study.scala.example.beans
  * @date 2021/6/21 19:25
  */
 
-case class ItemViewCount(itemId: Long, windowEnd: Long, count: Long)
+case class ItemViewCount(itemId: Long, windowEnd: Long, timestamp: Timestamp, count: Long)

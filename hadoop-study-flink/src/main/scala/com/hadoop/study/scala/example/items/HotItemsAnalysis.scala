@@ -7,7 +7,7 @@ import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
 import org.apache.flink.streaming.api.scala.function.WindowFunction
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
-import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
+import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
 import org.apache.flink.util.Collector
@@ -27,23 +27,26 @@ object HotItemsAnalysis {
 
     def main(args: Array[String]): Unit = {
         val env = StreamExecutionEnvironment.getExecutionEnvironment
+        env.setParallelism(1)
+
         // 读取数据
-        val dataStream = env.socketTextStream("hadoop003", 9999)
+        val inputStream = env.socketTextStream("hadoop003", 9999)
 
         // 行为数据，加上WaterMarker的数据，由于数据是ETL数据，已经排好序
-        val behaviorStream = dataStream.map(line => {
+        val dataStream = inputStream.map(line => {
             val values = line.split(",")
-            UserBehavior(values(0).toLong, values(1).toLong, values(2).toInt, values(3), values(4).toLong)
-        }).assignAscendingTimestamps(_.timestamp * 1000)
+            UserBehavior(values(0).toLong, values(1).toLong, values(2).toInt, values(3), new Timestamp(values(4).toLong * 1000))
+        }).assignAscendingTimestamps(_.timestamp.getTime)
+        // 打印数据
+        dataStream.print("data: ")
 
-        // 开窗
-        val windowStream = behaviorStream.filter(_.action == "pv")
+        // 开窗，聚合
+        val aggStream = dataStream.filter(_.action == "pv")
           .keyBy(_.itemId)
-          .window(TumblingEventTimeWindows.of(Time.hours(1), Time.minutes(5)))
+          .window(SlidingEventTimeWindows.of(Time.hours(1), Time.minutes(5)))
+          .aggregate(new AggregatorFunction, new ResultWindowFunction)
 
-        // 聚合
-        val aggStream = windowStream.aggregate(new AggregatorFunction, new ResultWindowFunction)
-        // 聚合结果
+        // 打印聚合结果
         aggStream.print("agg: ")
 
         // 计算TopN
@@ -70,12 +73,11 @@ object HotItemsAnalysis {
     class ResultWindowFunction extends WindowFunction[Long, ItemViewCount, Long, TimeWindow] {
 
         override def apply(key: Long, window: TimeWindow, input: Iterable[Long], out: Collector[ItemViewCount]): Unit = {
-            out.collect(ItemViewCount(key, window.getEnd, input.iterator.next()))
+            out.collect(ItemViewCount(key, window.getEnd, new Timestamp(window.getEnd), input.iterator.next()))
         }
     }
 
     class TopItemFunction(val topSize: Int) extends KeyedProcessFunction[Long, ItemViewCount, String] {
-
         // 先定义状态：ListState
         private var viewCountState: ListState[ItemViewCount] = _
 
@@ -90,6 +92,7 @@ object HotItemsAnalysis {
             // 转换
             val itemViewCounts: ListBuffer[ItemViewCount] = ListBuffer()
             viewCountState.get().forEach(viewCountState => itemViewCounts += viewCountState)
+
             // 倒序排序，取前几名
             val topViewCounts = itemViewCounts.sortBy(_.count)(Ordering.Long.reverse).take(topSize)
 

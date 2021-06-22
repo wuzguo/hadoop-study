@@ -1,5 +1,7 @@
 package com.hadoop.study.scala.example.beans
 
+import java.sql.Timestamp
+
 /**
  * <B>说明：描述</B>
  *
@@ -8,4 +10,4 @@ package com.hadoop.study.scala.example.beans
  * @date 2021/6/21 19:20
  */
 
-case class UserBehavior(userId: Long, itemId: Long, categoryId: Int, action: String, timestamp: Long)
+case class UserBehavior(userId: Long, itemId: Long, categoryId: Int, action: String, timestamp: Timestamp)
