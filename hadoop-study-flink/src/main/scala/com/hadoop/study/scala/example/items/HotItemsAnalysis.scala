@@ -37,7 +37,7 @@ object HotItemsAnalysis {
             UserBehavior(values(0).toLong, values(1).toLong, values(2).toInt, values(3), values(4).toLong)
         })
 
-        // 加上WaterMarker的数据
+        // 加上WaterMarker的数据，由于数据是ETL数据，已经排好序
         val waterStream = behaviorStream.filter(_.action == "pv").assignAscendingTimestamps(_.timestamp * 1000)
 
         // 开窗
@@ -72,35 +72,33 @@ object HotItemsAnalysis {
     // 结果函数
     class ItemProcessFunction extends ProcessWindowFunction[Long, ItemViewCount, Long, TimeWindow] {
 
-        override def process(key: Long, context: Context, elements: Iterable[Long], out: Collector[ItemViewCount])
-        : Unit = {
+        override def process(key: Long, context: Context, elements: Iterable[Long], out: Collector[ItemViewCount]): Unit = {
             out.collect(ItemViewCount(key, context.window.getEnd, elements.iterator.next()))
         }
     }
 
     class TopItemFunction(val topSize: Int) extends KeyedProcessFunction[Long, ItemViewCount, String] {
 
-        // 状态
+        // 先定义状态：ListState
         private var viewCountState: ListState[ItemViewCount] = _
 
-        override def processElement(value: ItemViewCount, ctx: KeyedProcessFunction[Long, ItemViewCount,
-          String]#Context, out: Collector[String]): Unit = {
+        override def processElement(value: ItemViewCount, ctx: KeyedProcessFunction[Long, ItemViewCount, String]#Context, out: Collector[String]): Unit = {
+            // 将数据放在ListState
             viewCountState.add(value)
             // 注册一个定时器
             ctx.timerService().registerEventTimeTimer(value.windowEnd + 1)
         }
 
-        override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[Long, ItemViewCount, String]#OnTimerContext,
-                             out: Collector[String]): Unit = {
-            // 输出
+        override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[Long, ItemViewCount, String]#OnTimerContext, out: Collector[String]): Unit = {
+            // 转换
             val itemViewCounts: ListBuffer[ItemViewCount] = ListBuffer()
             viewCountState.get().forEach(viewCountState => itemViewCounts += viewCountState)
             // 倒序排序，取前几名
             val topViewCounts = itemViewCounts.sortBy(_.count)(Ordering.Long.reverse).take(topSize)
 
-            // 输出，将排名信息格式化成String，便于打印输出可视化展示
+            // 输出：将排名信息格式化成String，便于打印输出可视化展示
             val builder = new StringBuilder
-            builder.append("窗口结束时间：").append(new Timestamp(timestamp - 1)).append("\n")
+            builder.append("窗口结束时间：").append(new Timestamp(timestamp - 1)).append("\n").append("------------------------------------\n")
             // 遍历结果列表中的每个ItemViewCount，输出到一行
             for (i <- topViewCounts.indices) {
                 val itemViewCount = topViewCounts(i)
@@ -108,7 +106,7 @@ object HotItemsAnalysis {
                   .append("商品 = ").append(itemViewCount.itemId).append("\t")
                   .append("热度 = ").append(itemViewCount.count).append("\n")
             }
-            builder.append("\n==================================\n\n")
+            builder.append("===================================\n")
             // 打印结果
             out.collect(builder.toString)
         }
