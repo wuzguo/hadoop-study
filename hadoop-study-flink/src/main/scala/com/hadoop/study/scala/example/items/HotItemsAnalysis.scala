@@ -85,7 +85,8 @@ object HotItemsAnalysis {
             // 将数据放在ListState
             viewCountState.add(value)
             // 注册一个定时器
-            ctx.timerService().registerEventTimeTimer(value.windowEnd + 1)
+            println(new Timestamp(ctx.timerService().currentWatermark()))
+            ctx.timerService().registerEventTimeTimer(ctx.timerService().currentWatermark() + 1)
         }
 
         override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[Long, ItemViewCount, String]#OnTimerContext, out: Collector[String]): Unit = {
