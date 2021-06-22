@@ -102,7 +102,7 @@ object HotItemsAnalysis {
             // 遍历结果列表中的每个ItemViewCount，输出到一行
             for (i <- topViewCounts.indices) {
                 val itemViewCount = topViewCounts(i)
-                builder.append("No ").append(i + 1).append(":\t")
+                builder.append("No.").append(i + 1).append(":\t")
                   .append("商品 = ").append(itemViewCount.itemId).append("\t")
                   .append("热度 = ").append(itemViewCount.count).append("\n")
             }
