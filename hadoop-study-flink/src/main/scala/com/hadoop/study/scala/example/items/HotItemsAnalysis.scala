@@ -1,18 +1,15 @@
 package com.hadoop.study.scala.example.items
 
 import com.hadoop.study.scala.example.beans.{ItemViewCount, UserBehavior}
-import com.hadoop.study.scala.streaming.beans.Sensor
 import org.apache.flink.api.common.functions.AggregateFunction
 import org.apache.flink.api.common.state.{ListState, ListStateDescriptor}
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
-import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.function.WindowFunction
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
-import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter
 import org.apache.flink.util.Collector
 
 import java.sql.Timestamp
