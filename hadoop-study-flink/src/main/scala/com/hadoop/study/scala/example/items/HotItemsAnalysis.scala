@@ -49,7 +49,7 @@ object HotItemsAnalysis {
         // aggStream.print("agg: ")
 
         // 计算TopN
-        val resultStream = aggStream.keyBy(_.windowEnd).process(new TopItemFunction(3))
+        val resultStream = aggStream.keyBy(_.windowEnd).process(new TopItemFunction(5))
         resultStream.print()
 
         // 执行
