@@ -27,7 +27,7 @@ object PageViewAnalysis {
 
     def main(args: Array[String]): Unit = {
         val env = StreamExecutionEnvironment.getExecutionEnvironment
-        
+
         // 读取数据
         val inputStream = env.readTextFile("./hadoop-study-datas/flink/input/UserBehavior.csv")
 
