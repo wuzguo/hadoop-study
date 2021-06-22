@@ -1,6 +1,6 @@
 package com.hadoop.study.scala.example.flow
 
-import com.hadoop.study.scala.example.beans.{ItemViewCount, PageViewCount, PageViewEvent}
+import com.hadoop.study.scala.example.beans.{PageViewCount, PageViewEvent}
 import org.apache.flink.api.common.functions.AggregateFunction
 import org.apache.flink.api.common.state.{ListState, ListStateDescriptor}
 import org.apache.flink.configuration.Configuration
@@ -135,6 +135,7 @@ object HotPageFlowAnalysis {
             }
             builder.append("===================================\n")
             // 打印结果
+            Thread.sleep(1000)
             out.collect(builder.toString)
         }
     }
