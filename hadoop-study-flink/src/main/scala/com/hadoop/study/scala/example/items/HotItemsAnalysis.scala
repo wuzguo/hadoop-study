@@ -1,15 +1,18 @@
 package com.hadoop.study.scala.example.items
 
 import com.hadoop.study.scala.example.beans.{ItemViewCount, UserBehavior}
+import com.hadoop.study.scala.streaming.beans.Sensor
 import org.apache.flink.api.common.functions.AggregateFunction
 import org.apache.flink.api.common.state.{ListState, ListStateDescriptor}
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
+import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.function.WindowFunction
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
+import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter
 import org.apache.flink.util.Collector
 
 import java.sql.Timestamp
@@ -84,9 +87,10 @@ object HotItemsAnalysis {
         override def processElement(value: ItemViewCount, ctx: KeyedProcessFunction[Long, ItemViewCount, String]#Context, out: Collector[String]): Unit = {
             // 将数据放在ListState
             viewCountState.add(value)
+            // 打印当前Watermark时间
+            println(s"Watermark: ${new Timestamp(ctx.timerService().currentWatermark())}")
             // 注册一个定时器
-            println(new Timestamp(ctx.timerService().currentWatermark()))
-            ctx.timerService().registerEventTimeTimer(ctx.timerService().currentWatermark() + 1)
+            ctx.timerService().registerEventTimeTimer(value.windowEnd + 1)
         }
 
         override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[Long, ItemViewCount, String]#OnTimerContext, out: Collector[String]): Unit = {
