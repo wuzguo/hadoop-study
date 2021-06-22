@@ -121,9 +121,9 @@ Stream 在算子之间传输数据的形式可以是 **one to one(forwarding)** 
 
     **类似于 spark 中的 窄依赖**
 
-- **Redistributing**：stream（map() 跟 keyBy/window 之间或者 keyBy/window 跟 sink之间）的分区会发生改变。每一个算子的子任务依据所选择的 transformation发送数据到不同的目标任务。
+- **Redistributing**：stream（map() 跟 keyBy/window 之间或者 keyBy/window 跟 sink之间）的分区会发生改变。每一个算子的子任务依据所选择的 transformation 发送数据到不同的目标任务。
 
-    例如，keyBy() 基于 hashCode 重分区、broadcast 和 rebalance会随机重新分区，这些算子都会引起 redistribute 过程，而 redistribute 过程就类似于Spark 中的 shuffle 过程。
+    例如，keyBy() 基于 hashCode 重分区、broadcast 和 rebalance 会随机重新分区，这些算子都会引起 redistribute 过程，而 redistribute 过程就类似于Spark 中的 shuffle 过程。
 
     **类似于 spark 中的 宽依赖**
 

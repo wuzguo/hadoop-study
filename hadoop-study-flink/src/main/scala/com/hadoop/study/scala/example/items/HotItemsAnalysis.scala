@@ -30,7 +30,7 @@ object HotItemsAnalysis {
 
     def main(args: Array[String]): Unit = {
         val env = StreamExecutionEnvironment.getExecutionEnvironment
-        env.setParallelism(1)
+        env.setParallelism(2)
 
         // 读取数据
         val inputStream = env.socketTextStream("hadoop003", 9999)
