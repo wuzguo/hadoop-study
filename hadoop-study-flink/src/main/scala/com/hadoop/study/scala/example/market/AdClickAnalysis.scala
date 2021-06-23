@@ -40,7 +40,8 @@ object AdClickAnalysis {
         // 输出结果
         val outputTag = new OutputTag[String]("user-black-tag")
         val filteredResultStream = dataStream.keyBy(data => (data.userId, data.adId))
-          .process(new UserClickProcessFunction(100, tagId))
+          .process(new UserClickProcessFunction(100, outputTag))
+
         filteredResultStream.getSideOutput(outputTag).print("black")
 
         // 统计每个小时的广告点击量，按省份分组
