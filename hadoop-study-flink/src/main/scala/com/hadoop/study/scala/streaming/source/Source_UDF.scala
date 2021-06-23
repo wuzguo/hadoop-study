@@ -45,8 +45,6 @@ object Source_UDF {
             }
         }
 
-        override def cancel(): Unit = {
-            running = false
-        }
+        override def cancel(): Unit = running = false
     }
 }
