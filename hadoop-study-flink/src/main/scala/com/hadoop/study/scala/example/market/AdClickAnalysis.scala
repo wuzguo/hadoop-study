@@ -38,10 +38,10 @@ object AdClickAnalysis {
         }).assignAscendingTimestamps(_.timestamp)
 
         // 输出结果
-        val tagId = "user-black-list"
+        val outputTag = new OutputTag[String]("user-black-tag")
         val filteredResultStream = dataStream.keyBy(data => (data.userId, data.adId))
           .process(new UserClickProcessFunction(100, tagId))
-        filteredResultStream.getSideOutput(new OutputTag[String](tagId)).print("black")
+        filteredResultStream.getSideOutput(outputTag).print("black")
 
         // 统计每个小时的广告点击量，按省份分组
         val clickCountStream = filteredResultStream.keyBy(_.province)
@@ -53,10 +53,7 @@ object AdClickAnalysis {
         env.execute("Ad Click Analysis")
     }
 
-    class UserClickProcessFunction(maxCount: Int, tagId: String) extends KeyedProcessFunction[(Long, Long),
-      AdClickEvent,
-      AdClickEvent] {
-
+    class UserClickProcessFunction(maxCount: Int, outputTag: OutputTag[String]) extends KeyedProcessFunction[(Long, Long), AdClickEvent, AdClickEvent] {
         // （广告ID，数量）
         private var adClickState: MapState[Long, Int] = _
 
@@ -89,7 +86,7 @@ object AdClickAnalysis {
             adClickState.values().forEach(count => curCount += count)
             if (curCount >= maxCount && !isBlackList) {
                 blackListState.update(true)
-                ctx.output(new OutputTag[String](tagId), s"用户：${ctx.getCurrentKey._1}，点击广告超过 ${curCount} 次，已被拉入黑名单")
+                ctx.output(outputTag, s"用户：${ctx.getCurrentKey._1}，点击广告超过 ${curCount} 次，已被拉入黑名单")
             }
 
             // 输出结果
