@@ -1,11 +1,18 @@
 package com.hadoop.study.scala.example.market
 
-import com.hadoop.study.scala.example.beans.AdClickEvent
+import com.hadoop.study.scala.example.beans.{AdClickEvent, AdClickProvinceCount}
+import org.apache.flink.api.common.functions.AggregateFunction
 import org.apache.flink.api.common.state.{MapState, MapStateDescriptor, ValueState, ValueStateDescriptor}
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
+import org.apache.flink.streaming.api.scala.function.WindowFunction
 import org.apache.flink.streaming.api.scala.{OutputTag, StreamExecutionEnvironment, createTypeInformation}
+import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows
+import org.apache.flink.streaming.api.windowing.time.Time
+import org.apache.flink.streaming.api.windowing.windows.TimeWindow
 import org.apache.flink.util.Collector
+
+import java.sql.Timestamp
 
 /**
  * <B>说明：描述</B>
@@ -31,15 +38,24 @@ object AdClickAnalysis {
         }).assignAscendingTimestamps(_.timestamp)
 
         // 输出结果
+        val tagId = "user-black-list"
         val filteredResultStream = dataStream.keyBy(data => (data.userId, data.adId))
-          .process(new UserClickProcessFunction(100))
-        filteredResultStream.getSideOutput(new OutputTag[String]("user-black-list")).print("black")
+          .process(new UserClickProcessFunction(100, tagId))
+        filteredResultStream.getSideOutput(new OutputTag[String](tagId)).print("black")
 
+        // 统计每个小时的广告点击量，按省份分组
+        val clickCountStream = filteredResultStream.keyBy(_.province)
+          .window(SlidingEventTimeWindows.of(Time.hours(1), Time.seconds(5)))
+          .aggregate(new AggregatorFunction, new ResultWindowFunction)
+
+        clickCountStream.print("click")
         // 执行结果
         env.execute("Ad Click Analysis")
     }
 
-    class UserClickProcessFunction(maxCount: Int) extends KeyedProcessFunction[(Long, Long), AdClickEvent, AdClickEvent] {
+    class UserClickProcessFunction(maxCount: Int, tagId: String) extends KeyedProcessFunction[(Long, Long),
+      AdClickEvent,
+      AdClickEvent] {
 
         // （广告ID，数量）
         private var adClickState: MapState[Long, Int] = _
@@ -73,7 +89,7 @@ object AdClickAnalysis {
             adClickState.values().forEach(count => curCount += count)
             if (curCount >= maxCount && !isBlackList) {
                 blackListState.update(true)
-                ctx.output(new OutputTag[String]("user-black-list"), s"用户：${ctx.getCurrentKey._1}，点击广告超过 ${curCount} 次，已被拉入黑名单")
+                ctx.output(new OutputTag[String](tagId), s"用户：${ctx.getCurrentKey._1}，点击广告超过 ${curCount} 次，已被拉入黑名单")
             }
 
             // 输出结果
@@ -84,6 +100,30 @@ object AdClickAnalysis {
           AdClickEvent]#OnTimerContext, out: Collector[AdClickEvent]): Unit = {
             adClickState.clear()
             blackListState.clear()
+        }
+    }
+
+    class ClickCountProcessFunction extends KeyedProcessFunction[String, AdClickEvent, String] {
+        override def processElement(value: AdClickEvent, ctx: KeyedProcessFunction[String, AdClickEvent,
+          String]#Context, out: Collector[String]): Unit = {
+
+        }
+    }
+
+    class AggregatorFunction extends AggregateFunction[AdClickEvent, Long, Long] {
+
+        override def createAccumulator(): Long = 0
+
+        override def add(value: AdClickEvent, accumulator: Long): Long = accumulator + 1
+
+        override def getResult(accumulator: Long): Long = accumulator
+
+        override def merge(a: Long, b: Long): Long = a + b
+    }
+
+    class ResultWindowFunction extends WindowFunction[Long, AdClickProvinceCount, String, TimeWindow] {
+        override def apply(key: String, window: TimeWindow, input: Iterable[Long], out: Collector[AdClickProvinceCount]): Unit = {
+            out.collect(AdClickProvinceCount(new Timestamp(window.getEnd), key, input.head))
         }
     }
 }
