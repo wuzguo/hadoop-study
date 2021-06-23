@@ -20,7 +20,7 @@ import scala.collection.mutable.ListBuffer
  * @date 2021/6/21 19:15
  */
 
-object LoginFailDetectAnalysis {
+object LoginDetectAnalysis {
 
     def main(args: Array[String]): Unit = {
         val env = StreamExecutionEnvironment.getExecutionEnvironment
