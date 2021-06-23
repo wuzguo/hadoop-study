@@ -67,5 +67,4 @@ object LoginDetectWithCEPAnalysis {
             s"用户: ${firstFailEvent.userId} 在 2S 内登录失败2次，请处理"
         }
     }
-
 }
