@@ -35,7 +35,7 @@ object LoginDetectWithCEPAnalysis {
         val loginFailPattern = Pattern.begin[UserLoginEvent]("login-fail")
           .where(_.result == "fail")
           .times(3)
-          .consecutive()
+          .consecutive()  // 连续的
           .within(Time.seconds(5))
 
         // 2. 将模式应用到数据流上，得到一个PatternStream
