@@ -32,7 +32,9 @@ object LoginDetectWithCEPAnalysis {
             UserLoginEvent(values(0).toLong, values(1), values(2), values(3).toLong * 1000)
         }).assignTimestampsAndWatermarks(new AssignerWithPeriodicWatermarksAdapter.Strategy(new TimestampExtractor(Time.seconds(2))))
 
-        val loginFailPattern = Pattern.begin[UserLoginEvent]("login-fail").where(_.result == "fail").times(3)
+        val loginFailPattern = Pattern.begin[UserLoginEvent]("login-fail")
+          .where(_.result == "fail")
+          .times(3)
           .consecutive()
           .within(Time.seconds(5))
 
@@ -40,11 +42,12 @@ object LoginDetectWithCEPAnalysis {
         val patternStream = CEP.pattern(dataStream.keyBy(_.userId), loginFailPattern)
 
         // 3. 检出符合模式的数据流，需要调用select
-        val failWarningStream = patternStream.select(new LoginFailPatternFunction)
+        val failWarningStream = patternStream.select(new LoginFailSelectFunction)
 
+        // 4. 打印
         failWarningStream.print()
 
-        // 执行
+        // 5. 执行
         env.execute("Login Fail Detect With CEP Analysis")
     }
 
@@ -55,9 +58,8 @@ object LoginDetectWithCEPAnalysis {
         override def extractTimestamp(element: UserLoginEvent): Long = element.timestamp
     }
 
-
     // 实现自定义PatternSelectFunction
-    class LoginFailPatternFunction extends PatternSelectFunction[UserLoginEvent, String] {
+    class LoginFailSelectFunction extends PatternSelectFunction[UserLoginEvent, String] {
 
         override def select(map: util.Map[String, util.List[UserLoginEvent]]): String = {
 

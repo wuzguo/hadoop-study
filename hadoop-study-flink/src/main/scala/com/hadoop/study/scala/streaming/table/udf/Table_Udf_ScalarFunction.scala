@@ -56,7 +56,7 @@ object Table_Udf_ScalarFunction {
         env.execute("Table UDF ScalarFunction")
     }
 
-    // 实现自定义的ScalarFunction
+    // 实现自定义的ScalarFunction（标量函数）
     class HashCode(val factor: Int) extends ScalarFunction {
 
         def eval(str: String): Int = str.hashCode * factor
