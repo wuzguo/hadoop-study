@@ -46,7 +46,7 @@ object OrderReconciliationAnalysis {
         val unmatchedReceiptOutputTag = new OutputTag[ReceiptEvent]("unmatched-receipt")
 
         val resultStream = orderEventStream.connect(receiptEventStream)
-          .process(new ReconciliationProcessFunction(unmatchedPayOutputTag, unmatchedReceiptOutputTag))
+          .process(new OrderReconciliationProcessFunction(unmatchedPayOutputTag, unmatchedReceiptOutputTag))
 
         resultStream.print("matched")
         resultStream.getSideOutput(unmatchedPayOutputTag).print("unmatched pays")
@@ -55,7 +55,7 @@ object OrderReconciliationAnalysis {
         env.execute("Order Reconciliation Analysis")
     }
 
-    class ReconciliationProcessFunction(unmatchedPayOutputTag: OutputTag[OrderEvent], unmatchedReceiptOutputTag: OutputTag[ReceiptEvent])
+    class OrderReconciliationProcessFunction(unmatchedPayOutputTag: OutputTag[OrderEvent], unmatchedReceiptOutputTag: OutputTag[ReceiptEvent])
       extends CoProcessFunction[OrderEvent, ReceiptEvent, (OrderEvent, ReceiptEvent)] {
 
         private var payEventState: ValueState[OrderEvent] = _
