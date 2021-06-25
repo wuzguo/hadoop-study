@@ -50,7 +50,6 @@ object LoginDetectAdvanceAnalysis {
     }
 
     class LoginDetectProcessFunction(times: Int, outputTag: OutputTag[String]) extends KeyedProcessFunction[Long, UserLoginEvent, UserLoginEvent] {
-
         // 状态
         private var loginFailState: ListState[UserLoginEvent] = _
 

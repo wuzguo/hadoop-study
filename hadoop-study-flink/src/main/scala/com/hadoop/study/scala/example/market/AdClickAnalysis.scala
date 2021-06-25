@@ -57,7 +57,6 @@ object AdClickAnalysis {
     class UserClickProcessFunction(maxCount: Int, outputTag: OutputTag[String]) extends KeyedProcessFunction[(Long, Long), AdClickEvent, AdClickEvent] {
         // （广告ID，数量）
         private var adClickState: MapState[Long, Int] = _
-
         // 黑名单状态
         private var blackListState: ValueState[Boolean] = _
 
@@ -98,13 +97,6 @@ object AdClickAnalysis {
           AdClickEvent]#OnTimerContext, out: Collector[AdClickEvent]): Unit = {
             adClickState.clear()
             blackListState.clear()
-        }
-    }
-
-    class ClickCountProcessFunction extends KeyedProcessFunction[String, AdClickEvent, String] {
-        override def processElement(value: AdClickEvent, ctx: KeyedProcessFunction[String, AdClickEvent,
-          String]#Context, out: Collector[String]): Unit = {
-
         }
     }
 

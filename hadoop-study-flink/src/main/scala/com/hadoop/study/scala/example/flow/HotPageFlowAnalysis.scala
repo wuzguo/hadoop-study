@@ -45,9 +45,9 @@ object HotPageFlowAnalysis {
         }).assignTimestampsAndWatermarks(new AssignerWithPeriodicWatermarksAdapter.Strategy(new TimestampExtractor(Time.seconds(1))))
 
         // 打印数据
-        dataStream.print("data: ")
+        dataStream.print("data ")
         // Side Output
-        val lateOutPutTag = new OutputTag[PageViewEvent]("late")
+        val lateOutPutTag = new OutputTag[PageViewEvent]("late-output-tag")
         // 进行开窗聚合，以及排序输出
         val filterUrl = Array(".ico", ".css", ".png", ".jpg", ".js", ".jar", ".html", ".conf", ".ttf", ".jpeg", ".gif", ".xml", ".log", ".txt")
         val aggStream = dataStream.filter(event => {
@@ -64,9 +64,9 @@ object HotPageFlowAnalysis {
           .sideOutputLateData(lateOutPutTag)
           .aggregate(new AggregatorFunction, new ResultWindowFunction)
 
-        aggStream.print("agg: ")
+        aggStream.print("agg ")
         // 打印迟到的数据
-        aggStream.getSideOutput(lateOutPutTag).print("late: ")
+        aggStream.getSideOutput(lateOutPutTag).print("late ")
 
         // 结果
         val resultStream = aggStream.keyBy(_.windowEnd).process(new TopPagesFunction(5))
@@ -118,7 +118,7 @@ object HotPageFlowAnalysis {
         override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[Long, PageViewCount, String]#OnTimerContext, out: Collector[String]): Unit = {
             // 转换
             val pageViewCounts: ListBuffer[PageViewCount] = ListBuffer()
-            viewCountState.get().forEach(_ => pageViewCounts += _)
+            viewCountState.get().forEach(viewCount => pageViewCounts += viewCount)
 
             // 倒序排序，取前几名
             val topViewCounts = pageViewCounts.sortBy(_.count)(Ordering.Long.reverse).take(topSize)

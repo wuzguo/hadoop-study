@@ -53,7 +53,6 @@ object LoginDetectAnalysis {
     }
 
     class LoginDetectProcessFunction(times: Int, outputTag: OutputTag[String]) extends KeyedProcessFunction[Long, UserLoginEvent, UserLoginEvent] {
-
         // 状态
         private var loginFailState: ListState[UserLoginEvent] = _
 
@@ -69,6 +68,7 @@ object LoginDetectAnalysis {
                              out: Collector[UserLoginEvent]): Unit = {
             // 获取
             val loginEvents: ListBuffer[UserLoginEvent] = ListBuffer()
+
             loginFailState.get().forEach(value => loginEvents.append(value))
             // 如果大于两次就输出警告
             if (loginEvents.size > times) {

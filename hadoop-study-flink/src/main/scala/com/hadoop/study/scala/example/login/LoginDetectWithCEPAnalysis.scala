@@ -62,7 +62,6 @@ object LoginDetectWithCEPAnalysis {
     class LoginFailSelectFunction extends PatternSelectFunction[UserLoginEvent, String] {
 
         override def select(map: util.Map[String, util.List[UserLoginEvent]]): String = {
-
             val iter = map.get("login-fail").iterator()
             val firstFailEvent = iter.next()
 
