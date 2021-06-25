@@ -118,7 +118,7 @@ object HotPageFlowAnalysis {
         override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[Long, PageViewCount, String]#OnTimerContext, out: Collector[String]): Unit = {
             // 转换
             val pageViewCounts: ListBuffer[PageViewCount] = ListBuffer()
-            viewCountState.get().forEach(pageViewCount => pageViewCounts += pageViewCount)
+            viewCountState.get().forEach(_ => pageViewCounts += _)
 
             // 倒序排序，取前几名
             val topViewCounts = pageViewCounts.sortBy(_.count)(Ordering.Long.reverse).take(topSize)

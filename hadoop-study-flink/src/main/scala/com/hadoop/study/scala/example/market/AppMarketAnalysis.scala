@@ -70,7 +70,7 @@ object AppMarketAnalysis {
                 val timestamp = System.currentTimeMillis()
                 ctx.collect(MarketUserBehavior(id, action, channel, timestamp))
                 count += 1
-                Thread.sleep(50L)
+                Thread.sleep(50)
             }
 
         }

@@ -93,7 +93,7 @@ object HotItemsAnalysis {
         override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[Long, ItemViewCount, String]#OnTimerContext, out: Collector[String]): Unit = {
             // 转换
             val itemViewCounts: ListBuffer[ItemViewCount] = ListBuffer()
-            viewCountState.get().forEach(viewCountState => itemViewCounts += viewCountState)
+            viewCountState.get().forEach(_ => itemViewCounts += _)
 
             // 倒序排序，取前几名
             val topViewCounts = itemViewCounts.sortBy(_.count)(Ordering.Long.reverse).take(topSize)
