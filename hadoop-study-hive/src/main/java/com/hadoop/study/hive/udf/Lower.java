@@ -12,6 +12,7 @@ import org.apache.hadoop.hive.ql.exec.UDF;
 
 public class Lower extends UDF {
 
+    // 计算方法
     public String evaluate(final String str) {
         return (str == null) ? null : str.toLowerCase();
     }
