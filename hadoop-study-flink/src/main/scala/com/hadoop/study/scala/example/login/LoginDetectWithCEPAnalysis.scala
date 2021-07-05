@@ -1,6 +1,7 @@
 package com.hadoop.study.scala.example.login
 
 import com.hadoop.study.scala.example.beans.UserLoginEvent
+import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.cep.PatternSelectFunction
 import org.apache.flink.cep.scala.CEP
 import org.apache.flink.cep.scala.pattern.Pattern
@@ -9,6 +10,7 @@ import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createT
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter
 
+import java.time.Duration
 import java.util
 
 /**
@@ -30,7 +32,11 @@ object LoginDetectWithCEPAnalysis {
         val dataStream = inputStream.map(line => {
             val values = line.split(",")
             UserLoginEvent(values(0).toLong, values(1), values(2), values(3).toLong * 1000)
-        }).assignTimestampsAndWatermarks(new AssignerWithPeriodicWatermarksAdapter.Strategy(new TimestampExtractor(Time.seconds(2))))
+        }).assignTimestampsAndWatermarks(
+            WatermarkStrategy.forBoundedOutOfOrderness[UserLoginEvent](Duration.ofSeconds(2))
+              .withTimestampAssigner(new SerializableTimestampAssigner[UserLoginEvent] {
+                  override def extractTimestamp(element: UserLoginEvent, recordTimestamp: Long): Long = element.timestamp
+              }))
 
         val loginFailPattern = Pattern.begin[UserLoginEvent]("login-fail")
           .where(_.result == "fail")
@@ -49,13 +55,6 @@ object LoginDetectWithCEPAnalysis {
 
         // 5. 执行
         env.execute("Login Fail Detect With CEP Analysis")
-    }
-
-
-    // 自定义 timestamp extractor
-    class TimestampExtractor(maxOutOfOrderness: Time) extends BoundedOutOfOrdernessTimestampExtractor[UserLoginEvent](maxOutOfOrderness: Time) {
-
-        override def extractTimestamp(element: UserLoginEvent): Long = element.timestamp
     }
 
     // 实现自定义PatternSelectFunction

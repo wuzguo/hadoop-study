@@ -1,13 +1,13 @@
 package com.hadoop.study.scala.streaming.table
 
 import com.hadoop.study.scala.streaming.beans.Sensor
-import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
+import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, createTypeInformation}
-import org.apache.flink.streaming.api.windowing.time.Time
-import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter
 import org.apache.flink.table.api.bridge.scala.{StreamTableEnvironment, tableConversions}
 import org.apache.flink.table.api.{FieldExpression, LiteralIntExpression, Tumble, WithOperations}
 import org.apache.flink.types.Row
+
+import java.time.Duration
 
 /**
  * <B>说明：描述</B>
@@ -33,7 +33,10 @@ object Table_TimeAndWindow {
             val values = line.split(",")
             Sensor(values(0), values(1).trim.toLong, values(2).trim.toDouble)
         }).assignTimestampsAndWatermarks(
-            new AssignerWithPeriodicWatermarksAdapter.Strategy(new TimestampExtractor(Time.seconds(1))))
+            WatermarkStrategy.forBoundedOutOfOrderness[Sensor](Duration.ofSeconds(1))
+              .withTimestampAssigner(new SerializableTimestampAssigner[Sensor] {
+                  override def extractTimestamp(element: Sensor, recordTimestamp: Long): Long = element.timestamp * 1000
+              }))
 
         // 4. 将流转换成表，定义时间特性
         val dataTable = tableEnv.fromDataStream(dataStream, $"id", $"timestamp", $"temp", $"rt".rowtime)
@@ -65,11 +68,5 @@ object Table_TimeAndWindow {
 
         // 6. 执行
         env.execute("Table TimeAndWindow")
-    }
-
-    // 自定义 timestamp extractor
-    class TimestampExtractor(maxOutOfOrderness: Time) extends BoundedOutOfOrdernessTimestampExtractor[Sensor](maxOutOfOrderness: Time) {
-
-        override def extractTimestamp(element: Sensor): Long = element.timestamp * 1000
     }
 }

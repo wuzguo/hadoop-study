@@ -31,7 +31,6 @@ object LoginDetectAnalysis {
             val values = line.split(",")
             UserLoginEvent(values(0).toLong, values(1), values(2), values(3).toLong * 1000)
         }).assignTimestampsAndWatermarks(
-
             WatermarkStrategy.forBoundedOutOfOrderness[UserLoginEvent](Duration.ofSeconds(2))
               .withTimestampAssigner(new SerializableTimestampAssigner[UserLoginEvent] {
                   override def extractTimestamp(element: UserLoginEvent, recordTimestamp: Long): Long = element.timestamp

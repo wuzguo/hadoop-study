@@ -1,11 +1,13 @@
 package com.hadoop.study.scala.streaming.window
 
+import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.java.tuple.Tuple
 import org.apache.flink.streaming.api.datastream.KeyedStream
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
-import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.windowing.assigners.EventTimeSessionWindows
 import org.apache.flink.streaming.api.windowing.time.Time
+
+import java.time.Duration
 
 
 /**
@@ -30,9 +32,10 @@ object Window_Examples {
         }
 
         val textWithEventTimeStream = textWithTsStream.assignTimestampsAndWatermarks(
-            new BoundedOutOfOrdernessTimestampExtractor[(String, Long, Int)](Time.milliseconds(1000)) {
-                override def extractTimestamp(element: (String, Long, Int)): Long = element._2
-            })
+            WatermarkStrategy.forBoundedOutOfOrderness[(String, Long, Int)](Duration.ofSeconds(1))
+              .withTimestampAssigner(new SerializableTimestampAssigner[(String, Long, Int)] {
+                  override def extractTimestamp(element: (String, Long, Int), recordTimestamp: Long): Long = element._2
+              }))
 
         val textKeyStream: KeyedStream[(String, Long, Int), Tuple] = textWithEventTimeStream.keyBy(0)
 
