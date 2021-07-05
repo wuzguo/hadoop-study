@@ -1,14 +1,16 @@
 package com.hadoop.study.scala.example.login
 
 import com.hadoop.study.scala.example.beans.UserLoginEvent
+import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.state.{ListState, ListStateDescriptor}
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.{OutputTag, StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.time.Time
-import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter
 import org.apache.flink.util.Collector
+
+import java.time.Duration
 
 /**
  * <B>说明：描述</B>
@@ -29,7 +31,11 @@ object LoginDetectAdvanceAnalysis {
         val dataStream = inputStream.map(line => {
             val values = line.split(",")
             UserLoginEvent(values(0).toLong, values(1), values(2), values(3).toLong * 1000)
-        }).assignTimestampsAndWatermarks(new AssignerWithPeriodicWatermarksAdapter.Strategy(new TimestampExtractor(Time.seconds(2))))
+        }).assignTimestampsAndWatermarks(
+            WatermarkStrategy.forBoundedOutOfOrderness[UserLoginEvent](Duration.ofSeconds(2))
+              .withTimestampAssigner(new SerializableTimestampAssigner[UserLoginEvent] {
+                  override def extractTimestamp(element: UserLoginEvent, recordTimestamp: Long): Long = element.timestamp
+              }))
 
         // 聚合处理
         val outputTag = new OutputTag[String]("login-fail-tag")

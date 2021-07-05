@@ -1,6 +1,7 @@
 package com.hadoop.study.scala.example.flow
 
 import com.hadoop.study.scala.example.beans.{PageViewCount, PageViewEvent}
+import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.functions.AggregateFunction
 import org.apache.flink.api.common.state.{ListState, ListStateDescriptor}
 import org.apache.flink.configuration.Configuration
@@ -11,11 +12,11 @@ import org.apache.flink.streaming.api.scala.{OutputTag, StreamExecutionEnvironme
 import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
-import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter
 import org.apache.flink.util.Collector
 
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
+import java.time.Duration
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -42,7 +43,11 @@ object HotPageFlowAnalysis {
             val dateFormat = new SimpleDateFormat("dd/MM/yyyy:HH:mm:ss")
             val timestamp = dateFormat.parse(values(3)).getTime
             PageViewEvent(values(0), timestamp, values(5), values(6))
-        }).assignTimestampsAndWatermarks(new AssignerWithPeriodicWatermarksAdapter.Strategy(new TimestampExtractor(Time.seconds(1))))
+        }).assignTimestampsAndWatermarks(
+            WatermarkStrategy.forBoundedOutOfOrderness[PageViewEvent](Duration.ofSeconds(1))
+              .withTimestampAssigner(new SerializableTimestampAssigner[PageViewEvent] {
+                  override def extractTimestamp(element: PageViewEvent, recordTimestamp: Long): Long = element.timestamp
+              }))
 
         // 打印数据
         dataStream.print("data ")

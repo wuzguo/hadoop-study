@@ -1,11 +1,15 @@
 package com.hadoop.study.scala.streaming.window
 
+import com.hadoop.study.scala.example.beans.PageViewEvent
 import com.hadoop.study.scala.streaming.beans.Sensor
+import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.{DataStream, OutputTag, StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter
+
+import java.time.Duration
 
 /**
  * <B>说明：描述</B>
@@ -30,7 +34,10 @@ object Window_EventTime {
             val values = line.split(",")
             Sensor(values(0), values(1).trim.toLong, values(2).trim.toDouble)
         }).assignTimestampsAndWatermarks(
-            new AssignerWithPeriodicWatermarksAdapter.Strategy(new TimestampExtractor(Time.seconds(1))))
+            WatermarkStrategy.forBoundedOutOfOrderness[Sensor](Duration.ofSeconds(1))
+              .withTimestampAssigner(new SerializableTimestampAssigner[Sensor] {
+                  override def extractTimestamp(element: Sensor, recordTimestamp: Long): Long = element.timestamp * 1000
+              }))
 
         // output
         val output = new OutputTag[Sensor]("late")
@@ -48,11 +55,5 @@ object Window_EventTime {
         sensorStream.getSideOutput(output).print("late")
 
         env.execute("Streaming EventTime Window")
-    }
-
-    // 自定义 timestamp extractor
-    class TimestampExtractor(maxOutOfOrderness: Time) extends BoundedOutOfOrdernessTimestampExtractor[Sensor](maxOutOfOrderness: Time) {
-
-        override def extractTimestamp(element: Sensor): Long = element.timestamp * 1000
     }
 }
