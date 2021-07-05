@@ -70,7 +70,10 @@ val dataStream: DataStream[Sensor] = dss.map(line => {
     val values = line.split(",")
     Sensor(values(0), values(1).trim.toLong, values(2).trim.toDouble)
 }).assignTimestampsAndWatermarks(
-    new AssignerWithPeriodicWatermarksAdapter.Strategy(new TimestampExtractor(Time.seconds(1))))
+    WatermarkStrategy.forBoundedOutOfOrderness[Sensor](Duration.ofSeconds(1))
+      .withTimestampAssigner(new SerializableTimestampAssigner[Sensor] {
+          override def extractTimestamp(element: Sensor, recordTimestamp: Long): Long = element.timestamp * 1000
+      }))
 
 val sensors: DataStream[Integer] = dataStream.keyBy(_.id)
 // 滚动窗口15秒
