@@ -1,18 +1,20 @@
 package com.hadoop.study.scala.example.flow
 
 import com.hadoop.study.scala.example.beans.UserBehavior
+import com.hadoop.study.scala.example.utils.WebSocketClient
 import org.apache.flink.api.common.eventtime._
 import org.apache.flink.api.common.functions.RuntimeContext
 import org.apache.flink.api.common.serialization.{DeserializationSchema, SerializationSchema}
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.utils.ParameterTool
+import org.apache.flink.configuration.Configuration
+import org.apache.flink.streaming.api.functions.sink.{RichSinkFunction, SinkFunction}
 import org.apache.flink.streaming.api.scala.function.ProcessAllWindowFunction
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.assigners.SlidingProcessingTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
 import org.apache.flink.streaming.connectors.elasticsearch.{ActionRequestFailureHandler, ElasticsearchSinkFunction, RequestIndexer}
-import org.apache.flink.streaming.connectors.elasticsearch6.ElasticsearchSink
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 import org.apache.flink.util.Collector
 import org.apache.http.HttpHost
@@ -76,13 +78,14 @@ object PageViewAnalysisWithSink {
         httpHosts.add(new HttpHost("hadoop001", 9200))
 
         // 获取Index
-        val index = parameterTool.get("index", "index-behavior-analysis")
-        val esSink = new ElasticsearchSink.Builder[(Long, Long, Long, Integer)](httpHosts, new CustomSinkFunction(index)).build()
-        dataStream.addSink(esSink)
+        //        val index = parameterTool.get("index", "index-behavior-analysis")
+        //        val esSink = new ElasticsearchSink.Builder[(Long, Long, Long, Integer)](httpHosts, new CustomSinkFunction(index)).build()
+        //        dataStream.addSink(esSink)
 
         // 增加 WebSocket Sink
+        val wsUrl = "ws://localhost:18008/ws"
+        dataStream.addSink(new WebsocketSink(wsUrl))
 
-        
         // 执行
         env.execute(parameterTool.get("appName", "Page View Analysis With Sink"))
     }
@@ -164,6 +167,22 @@ object PageViewAnalysisWithSink {
             val request = Requests.indexRequest().index(index).source(dataSource)
             // 用index发送请求
             indexer.add(request)
+        }
+    }
+
+    // 定义WebSocket Sink
+    class WebsocketSink(url: String) extends RichSinkFunction[(Long, Long, Long, Integer)] {
+
+        private var wsClient: WebSocketClient = _
+
+        override def open(parameters: Configuration): Unit = {
+            wsClient = WebSocketClient(url)
+            wsClient.init()
+        }
+
+        override def invoke(value: (Long, Long, Long, Integer), context: SinkFunction.Context): Unit = {
+            val message = s"window_start: ${value._1},window_end:${value._2},pv:${value._3},uv:${value._4}"
+            wsClient.send(message)
         }
     }
 }
