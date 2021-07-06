@@ -5,9 +5,7 @@ import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, Wat
 import org.apache.flink.api.common.state.{ListState, ListStateDescriptor}
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
-import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.{OutputTag, StreamExecutionEnvironment, createTypeInformation}
-import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.util.Collector
 
 import java.time.Duration
@@ -48,11 +46,6 @@ object LoginDetectAdvanceAnalysis {
 
         // 执行
         env.execute("Login Fail Detect Analysis")
-    }
-
-    // 自定义 timestamp extractor
-    class TimestampExtractor(maxOutOfOrderness: Time) extends BoundedOutOfOrdernessTimestampExtractor[UserLoginEvent](maxOutOfOrderness: Time) {
-        override def extractTimestamp(element: UserLoginEvent): Long = element.timestamp
     }
 
     class LoginDetectProcessFunction(times: Int, outputTag: OutputTag[String]) extends KeyedProcessFunction[Long, UserLoginEvent, UserLoginEvent] {

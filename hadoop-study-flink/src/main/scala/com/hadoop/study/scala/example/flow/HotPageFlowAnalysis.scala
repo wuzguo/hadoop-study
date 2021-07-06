@@ -6,7 +6,6 @@ import org.apache.flink.api.common.functions.AggregateFunction
 import org.apache.flink.api.common.state.{ListState, ListStateDescriptor}
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
-import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.function.WindowFunction
 import org.apache.flink.streaming.api.scala.{OutputTag, StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows
@@ -79,12 +78,6 @@ object HotPageFlowAnalysis {
         // 打印结果
         resultStream.print()
         env.execute("Hot Page Flow Analysis")
-    }
-
-
-    class TimestampExtractor(maxOutOfOrderness: Time) extends BoundedOutOfOrdernessTimestampExtractor[PageViewEvent](maxOutOfOrderness: Time) {
-
-        override def extractTimestamp(element: PageViewEvent): Long = element.timestamp
     }
 
     // 预聚合函数

@@ -1,13 +1,10 @@
 package com.hadoop.study.scala.streaming.window
 
-import com.hadoop.study.scala.example.beans.PageViewEvent
 import com.hadoop.study.scala.streaming.beans.Sensor
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
-import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.{DataStream, OutputTag, StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
-import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter
 
 import java.time.Duration
 

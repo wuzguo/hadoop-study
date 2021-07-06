@@ -5,10 +5,8 @@ import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, Wat
 import org.apache.flink.cep.PatternSelectFunction
 import org.apache.flink.cep.scala.CEP
 import org.apache.flink.cep.scala.pattern.Pattern
-import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.time.Time
-import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter
 
 import java.time.Duration
 import java.util
@@ -41,7 +39,7 @@ object LoginDetectWithCEPAnalysis {
         val loginFailPattern = Pattern.begin[UserLoginEvent]("login-fail")
           .where(_.result == "fail")
           .times(3)
-          .consecutive()  // 连续的
+          .consecutive() // 连续的
           .within(Time.seconds(5))
 
         // 2. 将模式应用到数据流上，得到一个PatternStream
