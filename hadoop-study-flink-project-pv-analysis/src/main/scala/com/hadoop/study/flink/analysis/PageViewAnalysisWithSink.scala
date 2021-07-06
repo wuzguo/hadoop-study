@@ -1,16 +1,17 @@
-package com.hadoop.study.scala.example.flow
+package com.hadoop.study.flink.analysis
 
-import com.hadoop.study.scala.example.beans.UserBehavior
-import com.hadoop.study.scala.example.utils.WebSocketClient
-import org.apache.flink.api.common.eventtime._
+import com.hadoop.study.flink.analysis.beans.UserBehavior
+import com.hadoop.study.flink.analysis.utils.WebSocketClient
+import org.apache.flink.api.common.eventtime.{TimestampAssigner, Watermark, WatermarkGenerator, WatermarkOutput, WatermarkStrategy}
 import org.apache.flink.api.common.functions.RuntimeContext
 import org.apache.flink.api.common.serialization.{DeserializationSchema, SerializationSchema}
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.utils.ParameterTool
+import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.sink.{RichSinkFunction, SinkFunction}
+import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala.function.ProcessAllWindowFunction
-import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.assigners.SlidingProcessingTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
@@ -23,6 +24,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.elasticsearch.action.ActionRequest
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.client.Requests
+import org.java_websocket.client.WebSocketClient
 
 import java.sql.Timestamp
 import java.time.Duration

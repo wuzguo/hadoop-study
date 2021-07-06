@@ -1,5 +1,4 @@
-package com.hadoop.study.scala.example.utils
-
+package com.hadoop.study.flink.analysis.utils
 
 import org.slf4j.LoggerFactory
 
@@ -68,8 +67,4 @@ case class WebSocketClient(url: String) {
                 log.error("Websocket关闭报错: {}", e)
         }
     }
-}
-
-object WebSocketClient {
-
 }

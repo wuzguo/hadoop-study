@@ -1,4 +1,4 @@
-package com.hadoop.study.scala.example.flow
+package com.hadoop.study.flink.analysis
 
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
 
