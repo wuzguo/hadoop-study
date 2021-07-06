@@ -2,7 +2,7 @@ package com.hadoop.study.flink.analysis
 
 import com.hadoop.study.flink.analysis.beans.UserBehavior
 import com.hadoop.study.flink.analysis.utils.WebSocketClient
-import org.apache.flink.api.common.eventtime.{TimestampAssigner, Watermark, WatermarkGenerator, WatermarkOutput, WatermarkStrategy}
+import org.apache.flink.api.common.eventtime._
 import org.apache.flink.api.common.functions.RuntimeContext
 import org.apache.flink.api.common.serialization.{DeserializationSchema, SerializationSchema}
 import org.apache.flink.api.common.typeinfo.TypeInformation
