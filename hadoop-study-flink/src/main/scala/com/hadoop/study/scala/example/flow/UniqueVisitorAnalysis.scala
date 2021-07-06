@@ -35,7 +35,7 @@ object UniqueVisitorAnalysis {
         //  计算
         val resultStream = dataStream.filter(_.action == "pv")
           .windowAll(TumblingEventTimeWindows.of(Time.hours(1)))
-          .apply(new UniqueAllWindow)
+          .apply(new UniqueAllWindowFunction)
 
         resultStream.print()
 
@@ -43,7 +43,7 @@ object UniqueVisitorAnalysis {
         env.execute("Unique Visitor Analysis")
     }
 
-    class UniqueAllWindow extends AllWindowFunction[UserBehavior, String, TimeWindow] {
+    class UniqueAllWindowFunction extends AllWindowFunction[UserBehavior, String, TimeWindow] {
 
         override def apply(window: TimeWindow, input: Iterable[UserBehavior], out: Collector[String]): Unit = {
 
