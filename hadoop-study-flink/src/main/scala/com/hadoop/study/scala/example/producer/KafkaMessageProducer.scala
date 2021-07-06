@@ -28,39 +28,35 @@ object KafkaMessageProducer {
 
         // 生产者
         val producer = new KafkaProducer[String, String](properties)
-
         while (true) {
-            mock().foreach(
-                data => {
-                    // 向Kafka中生成数据
-                    val record = new ProducerRecord[String, String]("topic_streaming", data)
-                    producer.send(record)
-                    println(data)
-                    Thread.sleep(100)
-                }
-            )
-
-            Thread.sleep(1000)
+            // 向Kafka中生成数据
+            mockBehavior(1).foreach(behavior => {
+                val record = new ProducerRecord[String, String]("topic_behavior", behavior)
+                producer.send(record)
+                println(behavior)
+                // 随机暂停
+                Thread.sleep(new Random().nextInt(100))
+            })
         }
     }
 
     /**
      * MOCK方法
      *
-     * @return {@link ListBuffer}
+     * @param num 生产的数据个数
+     * @return {ListBuffer}
      */
-    def mock(): ListBuffer[String] = {
-        val list = ListBuffer[String]()
-        val areaList = ListBuffer[String]("华北", "华东", "华南")
-        val cityList = ListBuffer[String]("北京", "上海", "深圳")
-
-        for (i <- 1 to new Random().nextInt(50)) {
-            val area = areaList(new Random().nextInt(3))
-            val city = cityList(new Random().nextInt(3))
-            val userId = new Random().nextInt(6) + 1
-            val adId = new Random().nextInt(6) + 1
-            list.append(s"${System.currentTimeMillis()} ${area} ${city} ${userId} ${adId}")
+    def mockBehavior(num: Int): ListBuffer[String] = {
+        val behaviors = ListBuffer[String]()
+        for (_ <- 1 to num) {
+            val actions = ListBuffer[String]("pv", "fav", "pv", "buy", "pv", "cart", "pv")
+            val action = actions(new Random().nextInt(7))
+            val random = new Random()
+            val userId = random.nextInt(10000)
+            val itemId = random.nextInt(10000)
+            val categoryId = random.nextInt(1000)
+            behaviors.append(s"${userId},${itemId},${categoryId},${action},${System.currentTimeMillis()}")
         }
-        list
+        behaviors
     }
 }
