@@ -1,8 +1,6 @@
 package com.hadoop.study.scala.streaming.wc
 
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, createTypeInformation}
-import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows
-import org.apache.flink.streaming.api.windowing.time.Time
 
 /**
  * <B>说明：描述</B>
@@ -25,7 +23,7 @@ object WordCount {
           .map { word => WordWithCount(word, 1) }
           .keyBy(_.word)
           // 滚动窗口2秒
-         // .window(TumblingProcessingTimeWindows.of(Time.seconds(2)))
+          // .window(TumblingProcessingTimeWindows.of(Time.seconds(2)))
           .sum("count")
 
         // print the results with a single thread, rather than in parallel

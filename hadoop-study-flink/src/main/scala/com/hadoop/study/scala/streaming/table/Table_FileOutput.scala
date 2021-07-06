@@ -1,9 +1,9 @@
 package com.hadoop.study.scala.streaming.table
 
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.table.api.{DataTypes, FieldExpression}
 import org.apache.flink.table.api.Expressions.$
 import org.apache.flink.table.api.bridge.scala.StreamTableEnvironment
+import org.apache.flink.table.api.{DataTypes, FieldExpression}
 import org.apache.flink.table.descriptors.{Csv, FileSystem, Schema}
 
 /**

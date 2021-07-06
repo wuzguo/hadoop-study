@@ -1,6 +1,5 @@
 package com.hadoop.study.scala.streaming.source
 
-import org.apache.flink.api.common.RuntimeExecutionMode
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer

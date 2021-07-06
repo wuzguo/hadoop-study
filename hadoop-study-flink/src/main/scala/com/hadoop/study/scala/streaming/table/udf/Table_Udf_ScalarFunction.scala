@@ -2,7 +2,7 @@ package com.hadoop.study.scala.streaming.table.udf
 
 import com.hadoop.study.scala.streaming.beans.Sensor
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
-import org.apache.flink.table.api.Expressions.{$, call}
+import org.apache.flink.table.api.Expressions.call
 import org.apache.flink.table.api.FieldExpression
 import org.apache.flink.table.api.bridge.scala.{StreamTableEnvironment, tableConversions}
 import org.apache.flink.table.functions.ScalarFunction
@@ -37,7 +37,7 @@ object Table_Udf_ScalarFunction {
         val tableEnv = StreamTableEnvironment.create(env)
 
         // 4. 基于流创建一张表
-        val dataTable = tableEnv.fromDataStream(sensorStream,$"id", $"timestamp", $"temp")
+        val dataTable = tableEnv.fromDataStream(sensorStream, $"id", $"timestamp", $"temp")
 
         // 5. 自定义标量函数，实现求id的hash值
         // 5.1 table API
@@ -46,7 +46,7 @@ object Table_Udf_ScalarFunction {
         tableEnv.createTemporarySystemFunction("hash", hashCode)
         // call registered function in Table API
         val resultTable = dataTable.select($"id", $"timestamp", call("hash", $"id"))
-         resultTable.toAppendStream[Row].print("result ")
+        resultTable.toAppendStream[Row].print("result ")
 
         // 5.2 SQL
         tableEnv.createTemporaryView("sensors", dataTable)

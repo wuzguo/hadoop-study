@@ -46,14 +46,11 @@ object AppMarketAnalysis {
     // 数据源
     class SimulatedSourceFunction extends RichSourceFunction[MarketUserBehavior] {
 
-        private var running = true
-
         // 定义用户行为和渠道的集合
         private val actions: Seq[String] = Seq("view", "download", "install", "uninstall")
-
         private val channels: Seq[String] = Seq("appstore", "weibo", "wechat", "tieba")
-
         private val random: Random = Random
+        private var running = true
 
         override def run(ctx: SourceFunction.SourceContext[MarketUserBehavior]): Unit = {
 

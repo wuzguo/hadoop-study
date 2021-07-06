@@ -53,7 +53,7 @@ object State_FaultTolerance {
 
         // 3. 重启策略配置 // 固定延迟重启（隔一段时间尝试重启一次）
         // (尝试重启次数， 尝试重启的时间间隔)
-        env.setRestartStrategy(RestartStrategies.fixedDelayRestart( 3, 60000))
+        env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, 60000))
 
         // 从文件读取数据
         val socketStream = env.socketTextStream("hadoop003", 9999)

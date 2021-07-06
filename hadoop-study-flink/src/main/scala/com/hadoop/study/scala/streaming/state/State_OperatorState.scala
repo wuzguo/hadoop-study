@@ -3,10 +3,8 @@ package com.hadoop.study.scala.streaming.state
 import com.hadoop.study.scala.streaming.beans.Sensor
 import org.apache.flink.api.common.functions.MapFunction
 import org.apache.flink.runtime.state.{FunctionInitializationContext, FunctionSnapshotContext}
-import org.apache.flink.streaming.api.checkpoint.{CheckpointedFunction, ListCheckpointed}
+import org.apache.flink.streaming.api.checkpoint.CheckpointedFunction
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
-
-import java.util
 
 /**
  * <B>说明：描述</B>
@@ -48,7 +46,7 @@ object State_OperatorState {
             count
         }
 
-        override def snapshotState(context: FunctionSnapshotContext): Unit =  {
+        override def snapshotState(context: FunctionSnapshotContext): Unit = {
 
         }
 

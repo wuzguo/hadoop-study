@@ -49,7 +49,7 @@ object Transform_MultiStreams {
         })
 
         val highStream = mainStream.getSideOutput(highOutput)
-      //  highStream.print("high side ")
+        //  highStream.print("high side ")
 
         // 2. 合流 connect，将高温流转换成二元组类型，与低温流连接合并之后，输出状态信息
         val highTupleStream = highStream.map(new MapFunction[Sensor, (String, Double)] {
@@ -69,11 +69,11 @@ object Transform_MultiStreams {
             override def map2(value: Sensor): (String, Double, String) = (value.id, value.temp, "normal temp")
         })
 
-       // resultStream.print("result ")
+        // resultStream.print("result ")
 
         // 3. union联合多条流
         val unionStream = highStream.union(lowStream, sensorStream)
-       // unionStream.print("union ")
+        // unionStream.print("union ")
 
         env.execute("Streaming Transform MultiStream")
     }
