@@ -26,6 +26,8 @@
         <module>hadoop-study-hive</module>
         <module>hadoop-study-flink</module>
         <module>hadoop-study-flink-project-pv-analysis</module>
+        <module>hadoop-study-flink-project-fraud-detecting/fraud-detecting-job</module>
+        <module>hadoop-study-flink-project-fraud-detecting/fraud-detecting-web</module>
     </modules>
 
     <properties>
