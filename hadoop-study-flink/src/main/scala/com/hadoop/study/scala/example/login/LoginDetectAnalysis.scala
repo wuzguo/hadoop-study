@@ -61,8 +61,7 @@ object LoginDetectAnalysis {
             out.collect(value)
         }
 
-        override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[Long, UserLoginEvent, UserLoginEvent]#OnTimerContext,
-                             out: Collector[UserLoginEvent]): Unit = {
+        override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[Long, UserLoginEvent, UserLoginEvent]#OnTimerContext, out: Collector[UserLoginEvent]): Unit = {
             // 获取
             val loginEvents: ListBuffer[UserLoginEvent] = ListBuffer()
 
