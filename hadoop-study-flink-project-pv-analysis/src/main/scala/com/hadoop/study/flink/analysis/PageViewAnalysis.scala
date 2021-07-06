@@ -38,7 +38,7 @@ import java.util.Properties
  * @date 2021/6/21 19:15
  */
 
-object PageViewAnalysisWithSink {
+object PageViewAnalysis {
 
     def main(args: Array[String]): Unit = {
         val parameterTool = ParameterTool.fromArgs(args)

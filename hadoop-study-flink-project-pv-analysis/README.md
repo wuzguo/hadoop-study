@@ -12,3 +12,9 @@
     node index.js
     ```
 5. 使用浏览器打开webSocket.html文件，确认浏览器中显示已经连接字段；
+
+6. 启动 PageViewAnalysisWithSinkMessageProducer程序。
+
+
+7. 启动 PageViewAnalysisWithSink程序。
+

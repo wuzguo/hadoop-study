@@ -13,7 +13,7 @@ import scala.collection.mutable.ListBuffer
  * @date 2021/7/6 13:42
  */
 
-object PageViewAnalysisWithSinkMessageProducer {
+object PageViewAnalysisMessageProducer {
 
     def main(args: Array[String]): Unit = {
         // 生成模拟数据
