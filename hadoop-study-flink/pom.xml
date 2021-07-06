@@ -83,6 +83,11 @@
             <artifactId>flink-json</artifactId>
             <version>1.12.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.java-websocket</groupId>
+            <artifactId>Java-WebSocket</artifactId>
+            <version>1.5.2</version>
+        </dependency>
 
     </dependencies>
 </project>

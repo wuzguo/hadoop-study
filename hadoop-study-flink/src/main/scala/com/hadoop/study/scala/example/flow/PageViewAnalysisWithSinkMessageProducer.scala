@@ -1,4 +1,4 @@
-package com.hadoop.study.scala.example.producer
+package com.hadoop.study.scala.example.flow
 
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
 
@@ -13,7 +13,7 @@ import scala.collection.mutable.ListBuffer
  * @date 2021/7/6 13:42
  */
 
-object KafkaMessageProducer {
+object PageViewAnalysisWithSinkMessageProducer {
 
     def main(args: Array[String]): Unit = {
         // 生成模拟数据

@@ -1,18 +1,30 @@
 package com.hadoop.study.scala.example.flow
 
-import com.hadoop.study.scala.example.beans.{ItemViewCount, UserBehavior}
-import org.apache.flink.api.common.functions.AggregateFunction
-import org.apache.flink.api.common.state.{ListState, ListStateDescriptor}
-import org.apache.flink.configuration.Configuration
-import org.apache.flink.streaming.api.functions.KeyedProcessFunction
-import org.apache.flink.streaming.api.scala.function.WindowFunction
+import com.hadoop.study.scala.example.beans.UserBehavior
+import org.apache.flink.api.common.eventtime._
+import org.apache.flink.api.common.functions.RuntimeContext
+import org.apache.flink.api.common.serialization.{DeserializationSchema, SerializationSchema}
+import org.apache.flink.api.common.typeinfo.TypeInformation
+import org.apache.flink.api.java.utils.ParameterTool
+import org.apache.flink.streaming.api.scala.function.ProcessAllWindowFunction
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
-import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
+import org.apache.flink.streaming.api.windowing.assigners.SlidingProcessingTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
+import org.apache.flink.streaming.connectors.elasticsearch.{ActionRequestFailureHandler, ElasticsearchSinkFunction, RequestIndexer}
+import org.apache.flink.streaming.connectors.elasticsearch6.ElasticsearchSink
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 import org.apache.flink.util.Collector
+import org.apache.http.HttpHost
+import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.elasticsearch.action.ActionRequest
+import org.elasticsearch.action.index.IndexRequest
+import org.elasticsearch.client.Requests
 
 import java.sql.Timestamp
+import java.time.Duration
+import java.util
+import java.util.Properties
 
 /**
  * <B>说明：描述</B>
@@ -25,74 +37,133 @@ import java.sql.Timestamp
 object PageViewAnalysisWithSink {
 
     def main(args: Array[String]): Unit = {
-        val env = StreamExecutionEnvironment.getExecutionEnvironment
+        val parameterTool = ParameterTool.fromArgs(args)
+        val kafkaTopic = parameterTool.get("topic", "topic_behavior")
+        val brokers = parameterTool.get("broker", "10.20.0.92:9092")
+
+        println(s"reading from kafka topic ${kafkaTopic} @ ${brokers}")
+
+        val properties = new Properties
+        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group-behavior-analysis")
+        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")
+        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")
+        properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")
 
         // 读取数据
-        val inputStream = env.readTextFile("./hadoop-study-datas/flink/input/UserBehavior.csv")
+        val kafkaConsumer = new FlinkKafkaConsumer[UserBehavior](kafkaTopic, new UserBehaviorSchema, properties)
+        kafkaConsumer.setStartFromGroupOffsets()
+        kafkaConsumer.setCommitOffsetsOnCheckpoints(false)
 
-        // 行为数据，加上WaterMarker的数据，由于数据是ETL数据，已经排好序
-        val dataStream = inputStream.map(line => {
-            val values = line.split(",")
-            UserBehavior(values(0).toLong, values(1).toLong, values(2).toInt, values(3), new Timestamp(values(4).toLong * 1000))
-        }).assignAscendingTimestamps(_.timestamp.getTime)
+        kafkaConsumer.assignTimestampsAndWatermarks(
+            WatermarkStrategy.forGenerator(_ => new PeriodicWatermarkGenerator(Duration.ofSeconds(0)))
+              .withTimestampAssigner(_ => new TimeStampExtractor()))
 
-        // 开窗，聚合
-        val aggStream = dataStream.filter(_.action == "pv")
-          .keyBy(_.itemId)
-          .window(TumblingEventTimeWindows.of(Time.hours(1)))
-          .aggregate(new AggregatorFunction, new ResultWindowFunction)
+        val env = StreamExecutionEnvironment.getExecutionEnvironment
+        // 读取数据
+        val inputStream = env.addSource(kafkaConsumer)
 
-        // 计算Page View
-        val resultStream = aggStream.keyBy(_.windowEnd).process(new PageViewFunction)
-        resultStream.print()
+        // 开窗，计算
+        val dataStream = inputStream.filter(_.action == "pv")
+          .windowAll(SlidingProcessingTimeWindows.of(Time.seconds(5), Time.seconds(1)))
+          .allowedLateness(Time.seconds(30))
+          .process(new BehaviorWindowFunction)
 
+        dataStream.print("统计结果： ").setParallelism(1)
+
+        // 增加 ES Sink
+        val httpHosts = new util.ArrayList[HttpHost]
+        httpHosts.add(new HttpHost("hadoop001", 9200))
+
+        // 获取Index
+        val index = parameterTool.get("index", "index-behavior-analysis")
+        val esSink = new ElasticsearchSink.Builder[(Long, Long, Long, Integer)](httpHosts, new CustomSinkFunction(index)).build()
+        dataStream.addSink(esSink)
+
+        // 增加 WebSocket Sink
+
+        
         // 执行
-        env.execute("Page View Analysis")
+        env.execute(parameterTool.get("appName", "Page View Analysis With Sink"))
     }
 
-    // 预聚合函数
-    class AggregatorFunction extends AggregateFunction[UserBehavior, Long, Long] {
+    class PeriodicWatermarkGenerator(maxOutOfOrderness: Duration) extends WatermarkGenerator[UserBehavior] {
 
-        override def createAccumulator(): Long = 0
+        private val outOfOrdernessMillis = maxOutOfOrderness.toMillis
 
-        override def add(value: UserBehavior, accumulator: Long): Long = accumulator + 1
+        private var currentWatermark = Long.MinValue + outOfOrdernessMillis + 1
 
-        override def getResult(accumulator: Long): Long = accumulator
+        override def onEvent(event: UserBehavior, eventTimestamp: Long, output: WatermarkOutput): Unit = {
+            currentWatermark = Math.max(currentWatermark, eventTimestamp)
+        }
 
-        override def merge(a: Long, b: Long): Long = a + b
+        override def onPeriodicEmit(output: WatermarkOutput): Unit = {
+            output.emitWatermark(new Watermark(currentWatermark - outOfOrdernessMillis - 1))
+        }
+    }
+
+    class TimeStampExtractor extends TimestampAssigner[UserBehavior] {
+        override def extractTimestamp(element: UserBehavior, recordTimestamp: Long): Long = element.timestamp.getTime
+    }
+
+    class UserBehaviorSchema extends DeserializationSchema[UserBehavior] with SerializationSchema[UserBehavior] {
+        override def deserialize(message: Array[Byte]): UserBehavior = {
+            val behavior = new String(message)
+            val values = behavior.split(",")
+            UserBehavior(values(0).toLong, values(1).toLong, values(2).toInt, values(3), new Timestamp(values(4).toLong))
+        }
+
+        override def isEndOfStream(nextElement: UserBehavior): Boolean = {
+            false
+        }
+
+        override def serialize(element: UserBehavior): Array[Byte] = {
+            element.toString.getBytes
+        }
+
+        override def getProducedType: TypeInformation[UserBehavior] = {
+            TypeInformation.of(classOf[UserBehavior])
+        }
     }
 
     // 结果函数
-    class ResultWindowFunction extends WindowFunction[Long, ItemViewCount, Long, TimeWindow] {
+    class BehaviorWindowFunction extends ProcessAllWindowFunction[UserBehavior, (Long, Long, Long, Integer), TimeWindow] {
+        override def process(context: Context, elements: Iterable[UserBehavior], out: Collector[(Long, Long, Long, Integer)]): Unit = {
+            var viewCount = 0
+            var userIds = Set[Long]()
+            val iterator = elements.iterator
+            while (iterator.hasNext) {
+                val behavior = iterator.next()
+                viewCount += 1
+                userIds += behavior.userId
+            }
 
-        override def apply(key: Long, window: TimeWindow, input: Iterable[Long], out: Collector[ItemViewCount]): Unit = {
-            out.collect(ItemViewCount(key, window.getEnd, new Timestamp(window.getEnd), input.iterator.next()))
+            val window = context.window
+            out.collect((window.getStart, window.getEnd, viewCount, userIds.size))
         }
     }
 
-    class PageViewFunction extends KeyedProcessFunction[Long, ItemViewCount, String] {
-        // 先定义状态：ListState
-        private var viewCountState: ListState[ItemViewCount] = _
+    class CustomFailureHandler(index: String) extends ActionRequestFailureHandler {
+        override def onFailure(actionRequest: ActionRequest, throwable: Throwable, i: Int, requestIndexer: RequestIndexer): Unit = {
+            actionRequest match {
+                case request: IndexRequest =>
+                    val mapDatas = Map("data" -> request.source())
+                    requestIndexer.add(Requests.indexRequest.index(index).id(request.id).source(mapDatas))
 
-        override def processElement(value: ItemViewCount, ctx: KeyedProcessFunction[Long, ItemViewCount, String]#Context, out: Collector[String]): Unit = {
-            // 将数据放在ListState
-            viewCountState.add(value)
-            // 注册一个定时器
-            ctx.timerService().registerEventTimeTimer(value.windowEnd + 1)
+                case _ => throw new IllegalStateException("unexpected")
+            }
         }
+    }
 
-        override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[Long, ItemViewCount, String]#OnTimerContext, out: Collector[String]): Unit = {
-            // 转换
-            var count = 0L
-            viewCountState.get().forEach(viewCountState => count += viewCountState.count)
-            // 打印结果
-            out.collect(s"时间：${ctx.getCurrentKey} ，数量：${count}")
-            // 清空
-            viewCountState.clear()
-        }
-
-        override def open(parameters: Configuration): Unit = {
-            viewCountState = getRuntimeContext.getListState(new ListStateDescriptor[ItemViewCount]("item-view-count", classOf[ItemViewCount]))
+    // 定义 Sink
+    class CustomSinkFunction(index: String) extends ElasticsearchSinkFunction[(Long, Long, Long, Integer)] {
+        override def process(element: (Long, Long, Long, Integer), ctx: RuntimeContext, indexer: RequestIndexer): Unit = {
+            // 定义写入的数据source
+            val dataSource = Map("window_start" -> element._1, "window_end" -> element._2, "pv" -> element._3, "uv" -> element._4)
+            // 创建请求，作为向es发起的写入命令
+            val request = Requests.indexRequest().index(index).source(dataSource)
+            // 用index发送请求
+            indexer.add(request)
         }
     }
 }
