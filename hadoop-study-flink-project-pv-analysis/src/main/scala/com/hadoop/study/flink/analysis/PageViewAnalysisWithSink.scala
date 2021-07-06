@@ -24,7 +24,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.elasticsearch.action.ActionRequest
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.client.Requests
-import org.java_websocket.client.WebSocketClient
 
 import java.sql.Timestamp
 import java.time.Duration
@@ -74,7 +73,7 @@ object PageViewAnalysisWithSink {
           .allowedLateness(Time.seconds(30))
           .process(new BehaviorWindowFunction)
 
-        dataStream.print("统计结果： ").setParallelism(1)
+        dataStream.print("统计结果：").setParallelism(1)
 
         // 增加 ES Sink
         val httpHosts = new util.ArrayList[HttpHost]
