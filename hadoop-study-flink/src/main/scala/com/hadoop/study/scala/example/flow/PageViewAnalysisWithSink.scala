@@ -15,6 +15,7 @@ import org.apache.flink.streaming.api.windowing.assigners.SlidingProcessingTimeW
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
 import org.apache.flink.streaming.connectors.elasticsearch.{ActionRequestFailureHandler, ElasticsearchSinkFunction, RequestIndexer}
+import org.apache.flink.streaming.connectors.elasticsearch6.ElasticsearchSink
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 import org.apache.flink.util.Collector
 import org.apache.http.HttpHost
@@ -78,13 +79,12 @@ object PageViewAnalysisWithSink {
         httpHosts.add(new HttpHost("hadoop001", 9200))
 
         // 获取Index
-        //        val index = parameterTool.get("index", "index-behavior-analysis")
-        //        val esSink = new ElasticsearchSink.Builder[(Long, Long, Long, Integer)](httpHosts, new CustomSinkFunction(index)).build()
-        //        dataStream.addSink(esSink)
+        val index = parameterTool.get("index", "index-behavior-analysis")
+        val esSink = new ElasticsearchSink.Builder[(Long, Long, Long, Integer)](httpHosts, new CustomSinkFunction(index)).build()
+        dataStream.addSink(esSink).setParallelism(1)
 
         // 增加 WebSocket Sink
-        val wsUrl = "ws://localhost:18008/ws"
-        dataStream.addSink(new WebsocketSink(wsUrl))
+        dataStream.addSink(new WebsocketSink("ws://localhost:18008/ws")).setParallelism(1)
 
         // 执行
         env.execute(parameterTool.get("appName", "Page View Analysis With Sink"))
@@ -176,6 +176,7 @@ object PageViewAnalysisWithSink {
         private var wsClient: WebSocketClient = _
 
         override def open(parameters: Configuration): Unit = {
+            super.open(parameters)
             wsClient = WebSocketClient(url)
             wsClient.init()
         }

@@ -69,3 +69,7 @@ case class WebSocketClient(url: String) {
         }
     }
 }
+
+object WebSocketClient {
+
+}
