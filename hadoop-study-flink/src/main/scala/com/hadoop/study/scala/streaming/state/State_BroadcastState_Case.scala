@@ -42,10 +42,9 @@ object State_BroadcastState_Case {
         val patternStream = env.addSource(new FlinkKafkaConsumer("pattern-topic", new PatternEventSchema(), properties))
 
         val patternDescriptor = new MapStateDescriptor[Void, Pattern]("patterns", classOf[Void], classOf[Pattern])
-
         val broadcastPatterns = patternStream.broadcast(patternDescriptor)
-        val dataStream = actionStream.keyBy(_.userId).connect(broadcastPatterns).process(new PatternEvaluatorFunction(patternDescriptor))
 
+        val dataStream = actionStream.keyBy(_.userId).connect(broadcastPatterns).process(new PatternEvaluatorFunction(patternDescriptor))
         dataStream.print.setParallelism(1)
 
         env.execute("Streaming State Broadcast State")
