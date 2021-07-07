@@ -41,7 +41,7 @@ object State_BroadcastState_Case {
         val actionStream = env.addSource(new FlinkKafkaConsumer("action-topic", new ActionEventSchema(), properties))
         val patternStream = env.addSource(new FlinkKafkaConsumer("pattern-topic", new PatternEventSchema(), properties))
 
-        val patternDescriptor = new MapStateDescriptor[Void, Pattern]("patterns", classOf[Void], classOf[Pattern])
+        val patternDescriptor = new MapStateDescriptor[Void, Pattern]("pattern-state", classOf[Void], classOf[Pattern])
         val broadcastPatterns = patternStream.broadcast(patternDescriptor)
 
         val dataStream = actionStream.keyBy(_.userId).connect(broadcastPatterns).process(new PatternEvaluatorFunction(patternDescriptor))
@@ -109,7 +109,7 @@ object State_BroadcastState_Case {
 
         override def open(parameters: Configuration): Unit = {
             // initialize keyed state
-            preActionState = getRuntimeContext().getState(new ValueStateDescriptor[String]("last-Action-state", classOf[String]))
+            preActionState = getRuntimeContext().getState(new ValueStateDescriptor[String]("last-action-state", classOf[String]))
         }
     }
 }
