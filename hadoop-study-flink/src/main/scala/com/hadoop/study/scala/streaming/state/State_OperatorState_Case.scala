@@ -49,7 +49,7 @@ object State_OperatorState_Case {
             checkpointState = context.getOperatorStateStore.getListState(descriptor)
 
             if (context.isRestored) {
-                checkpointState.get.forEach(_ => bufferedElements.append(_))
+                checkpointState.get.forEach(value => bufferedElements.append(value))
             }
         }
     }

@@ -57,7 +57,7 @@ object State_OperatorState {
         override def initializeState(context: FunctionInitializationContext): Unit = {
             val valuesState = new ListStateDescriptor[Int]("values-count-state", classOf[Int])
             valuesCount = context.getOperatorStateStore.getListState(valuesState)
-            valuesCount.get().forEach(_ => count += _)
+            valuesCount.get().forEach(value => count += value)
         }
     }
 }
