@@ -14,7 +14,7 @@ case class Param[T](name: String, cls: Class[T], default: T)
 object Param {
 
     def string(name: String, default: String): Param[String] = {
-        Param(name, classOf[String], default = default)
+        Param(name, classOf[String], default)
     }
 
     def integer(name: String, default: Integer): Param[Integer] = {
