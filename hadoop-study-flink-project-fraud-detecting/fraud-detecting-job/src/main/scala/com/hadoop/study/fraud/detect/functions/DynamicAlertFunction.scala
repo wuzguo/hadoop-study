@@ -21,7 +21,7 @@ import scala.collection.mutable
  * @date 2021/7/8 13:48
  */
 
-class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent] {
+class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]] {
 
     private val log = LoggerFactory.getLogger(classOf[DynamicAlertFunction])
 
@@ -37,7 +37,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
 
     private val windowStateDescriptor = new MapStateDescriptor[Long, Set[Transaction]]("windowState", classOf[Long], classOf[Set[Transaction]])
 
-    override def processElement(value: Keyed[Transaction, String, Int], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent]#ReadOnlyContext, out: Collector[AlertEvent]): Unit = {
+    override def processElement(value: Keyed[Transaction, String, Int], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#ReadOnlyContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
 
         val currentEventTime = value.wrapped.eventTime
         ProcessingUtils.addToStateValuesSet(windowState, currentEventTime, value.wrapped)
@@ -79,7 +79,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
         }
     }
 
-    override def processBroadcastElement(rule: Rule, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent]#Context, out: Collector[AlertEvent]): Unit = {
+    override def processBroadcastElement(rule: Rule, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
         log.trace("Processing {}", rule)
         val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
         ProcessingUtils.handleRuleBroadcast(rule, broadcastState)
@@ -94,7 +94,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
     }
 
     @throws[Exception]
-    private def handleControlCommand(command: Rule, rulesState: BroadcastState[Integer, Rule], ctx: Context): Unit = {
+    private def handleControlCommand(command: Rule, rulesState: BroadcastState[Int, Rule], ctx: Context): Unit = {
         val controlType = command.controlType
         controlType match {
             case EXPORT_RULES_CURRENT =>
@@ -138,7 +138,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
     }
 
     override def onTimer(timestamp: Long, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int],
-      Rule, AlertEvent]#OnTimerContext, out: Collector[AlertEvent]): Unit = {
+      Rule, AlertEvent[Transaction, BigDecimal]]#OnTimerContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
         val widestWindowRule = ctx.getBroadcastState(Descriptors.rulesDescriptor).get(WIDEST_RULE_KEY)
 
         if (widestWindowRule != null) {
