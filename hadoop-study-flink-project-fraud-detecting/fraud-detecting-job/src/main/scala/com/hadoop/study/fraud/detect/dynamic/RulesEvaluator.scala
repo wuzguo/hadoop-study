@@ -1,5 +1,9 @@
 package com.hadoop.study.fraud.detect.dynamic
 
+import com.hadoop.study.fraud.detect.beans.Rule
+import org.apache.flink.api.common.state.MapStateDescriptor
+import org.apache.flink.api.scala.createTypeInformation
+import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.kafka.common.config.Config
 
 /**
@@ -12,4 +16,18 @@ import org.apache.kafka.common.config.Config
 
 case class RulesEvaluator(config: Config) {
 
+}
+
+object RulesEvaluator {
+
+
+}
+
+
+object Descriptors {
+    val rulesDescriptor = new MapStateDescriptor[Int, Rule]("rules", classOf[Int], classOf[Rule])
+
+    val latencySinkTag: OutputTag[Long] = new OutputTag[Long]("latency-sink")
+
+    val currentRulesSinkTag: OutputTag[Rule] = new OutputTag[Rule]("current-rules-sink")
 }

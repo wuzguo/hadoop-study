@@ -17,7 +17,7 @@ import scala.collection.mutable
 object ProcessingUtils {
 
     @throws[Exception]
-    def handleRuleBroadcast(rule: Rule, broadcastState: BroadcastState[Integer, Rule]): Unit = {
+    def handleRuleBroadcast(rule: Rule, broadcastState: BroadcastState[Int, Rule]): Unit = {
         rule.ruleState match {
             case ACTIVE =>
             case PAUSE =>

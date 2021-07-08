@@ -1,6 +1,7 @@
 package com.hadoop.study.fraud.detect.beans
 
 import com.hadoop.study.fraud.detect.beans.AggregatorFunctionType.AggregatorFunctionType
+import com.hadoop.study.fraud.detect.beans.ControlType.ControlType
 import com.hadoop.study.fraud.detect.beans.LimitOperatorType._
 import com.hadoop.study.fraud.detect.beans.RuleState.RuleState
 import org.apache.flink.streaming.api.windowing.time.Time
@@ -16,6 +17,8 @@ import org.apache.flink.streaming.api.windowing.time.Time
 case class Rule(ruleId: Int, ruleState: RuleState, groupingKeyNames: List[String], aggregateFieldName: String,
                 aggregatorFunctionType: AggregatorFunctionType, limitOperatorType: LimitOperatorType,
                 limit: BigDecimal, windowMinutes: Int) {
+
+    var controlType: ControlType = _
 
     def getWindowMillis: Long = Time.minutes(this.windowMinutes).toMilliseconds
 
