@@ -7,6 +7,9 @@ import org.apache.flink.streaming.api.checkpoint.CheckpointedFunction
 import org.apache.flink.streaming.api.functions.source.{RichParallelSourceFunction, SourceFunction}
 import org.apache.flink.util.Preconditions.checkArgument
 
+import java.util.SplittableRandom
+import scala.language.postfixOps
+
 /**
  * <B>说明：描述</B>
  *
@@ -44,7 +47,26 @@ abstract class BaseGenerator[T](var maxRecordsPerSecond: Int = -1) extends RichP
         }
     }
 
-    override def run(ctx: SourceFunction.SourceContext[T]): Unit = ???
+    override def run(ctx: SourceFunction.SourceContext[T]): Unit = {
+
+        val numberOfParallelSubtasks = getRuntimeContext.getNumberOfParallelSubtasks
+
+        val throttler = new Throttler(maxRecordsPerSecond, numberOfParallelSubtasks)
+
+        val rnd = new SplittableRandom
+
+        val lock = ctx.getCheckpointLock
+
+        while (running) {
+            val event = randomEvent(rnd, id)
+            // noinspection SynchronizationOnLocalVariableOrMethodParameter
+            lock.synchronized {
+                if (event != null) ctx.collect(event)
+                id += numberOfParallelSubtasks
+            }
+            throttler.throttle()
+        }
+    }
 
     override def cancel(): Unit = running = false
 
@@ -53,4 +75,8 @@ abstract class BaseGenerator[T](var maxRecordsPerSecond: Int = -1) extends RichP
             id = getRuntimeContext.getIndexOfThisSubtask
         }
     }
+
+    def randomEvent(splitRandom: SplittableRandom, id: Long): T
+
+    def getMaxRecordsPerSecond: Int = maxRecordsPerSecond
 }

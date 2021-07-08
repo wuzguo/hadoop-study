@@ -14,7 +14,7 @@ import java.util.SplittableRandom
 
 case class RulesStaticJsonGenerator() extends BaseGenerator[String] {
 
-    def randomEvent(rnd: SplittableRandom, id: Long): String = if (id >= 0 && id < RULES.length) RULES(id.toInt) else null
+    def randomEvent(splitRandom: SplittableRandom, id: Long): String = if (id >= 0 && id < RULES.length) RULES(id.toInt) else null
 }
 
 object RulesStaticJsonGenerator {
