@@ -66,14 +66,12 @@ object Parameters {
 
     val RECORDS_PER_SECOND: Param[Integer] = Param.integer("records-per-second", 2)
 
-    val LOCAL_MODE_DISABLE_WEB_UI = "-1"
-
-    val LOCAL_EXECUTION: Param[String] = Param.string("local", LOCAL_MODE_DISABLE_WEB_UI)
+    val LOCAL_EXECUTION: Param[String] = Param.string("local", "-1")
 
     val SOURCE_PARALLELISM: Param[Integer] = Param.integer("source-parallelism", 2)
     val SINK_PARALLELISM: Param[Integer] = Param.integer("sink-parallelism", 1)
     val CHECKPOINT_INTERVAL: Param[Integer] = Param.integer("checkpoint-interval", 600000)
-    val MIN_PAUSE_BETWEEN_CHECKPOINTS: Param[Integer] = Param.integer("min-pause-btwn-checkpoints", 600000)
+    val MIN_PAUSE_BETWEEN_CHECKPOINTS: Param[Integer] = Param.integer("min-pause-between-checkpoints", 600000)
     val OUT_OF_ORDERLESS: Param[Integer] = Param.integer("out-of-orderliness", 500)
 
 
