@@ -1,4 +1,4 @@
-package com.hadoop.study.fraud.detect
+package com.hadoop.study.fraud.detect.dynamic
 
 import org.apache.kafka.common.config.Config
 

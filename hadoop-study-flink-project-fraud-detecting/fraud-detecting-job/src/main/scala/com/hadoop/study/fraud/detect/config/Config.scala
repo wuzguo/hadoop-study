@@ -12,7 +12,7 @@ import scala.collection.mutable
 
 case class Config() {
 
-    private val values = new mutable.HashMap[Param[Any], Any]
+    private val values = new mutable.HashMap[Any, Any]
 
     def this(inputParams: Parameters, stringParams: List[Param[String]], intParams: List[Param[Integer]], boolParams: List[Param[Boolean]]) {
         this()
@@ -25,7 +25,7 @@ case class Config() {
         values(key) = value
     }
 
-    def get[T](param: Param[Any]): T = {
+    def get[T](param: Param[T]): T = {
         values.get(param).asInstanceOf[T]
     }
 
@@ -38,6 +38,5 @@ case class Config() {
 }
 
 object Config {
-
-    def fromParameters(parameters: Parameters) = new Config(parameters, Parameters.STRING_PARAMS, Parameters.INT_PARAMS, Parameters.BOOL_PARAMS)
+    def from(parameters: Parameters) = new Config(parameters, Parameters.STRING_PARAMS, Parameters.INT_PARAMS, Parameters.BOOL_PARAMS)
 }
