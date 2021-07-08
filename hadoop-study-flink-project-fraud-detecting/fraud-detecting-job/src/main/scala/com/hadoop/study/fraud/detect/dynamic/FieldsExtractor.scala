@@ -12,31 +12,31 @@ object FieldsExtractor {
 
     @throws[IllegalAccessException]
     @throws[NoSuchFieldException]
-    def getFieldAsString(`object`: Any, fieldName: String): String = {
-        val cls = `object`.getClass
+    def getFieldAsString(value: Any, fieldName: String): String = {
+        val cls = value.getClass
         val field = cls.getField(fieldName)
-        field.get(`object`).toString
+        field.get(value).toString
     }
 
     @throws[NoSuchFieldException]
     @throws[IllegalAccessException]
-    def getDoubleByName(fieldName: String, `object`: Any): Double = {
-        val field = `object`.getClass.getField(fieldName)
-        field.get(`object`).asInstanceOf[Double]
+    def getDoubleByName(fieldName: String, value: Any): Double = {
+        val field = value.getClass.getField(fieldName)
+        field.get(value).asInstanceOf[Double]
     }
 
     @throws[NoSuchFieldException]
     @throws[IllegalAccessException]
-    def getBigDecimalByName(fieldName: String, `object`: Any): Nothing = {
-        val field = `object`.getClass.getField(fieldName)
-        new Nothing(field.get(`object`).toString)
+    def getBigDecimalByName(fieldName: String, value: Any): BigDecimal = {
+        val field = value.getClass.getField(fieldName)
+        BigDecimal(field.get(value).toString)
     }
 
     @SuppressWarnings(Array("unchecked"))
     @throws[NoSuchFieldException]
     @throws[IllegalAccessException]
-    def getByKeyAs[T](keyName: String, `object`: Any): T = {
-        val field = `object`.getClass.getField(keyName)
-        field.get(`object`).asInstanceOf[T]
+    def getByKeyAs[T](keyName: String, value: Any): T = {
+        val field = value.getClass.getField(keyName)
+        field.get(value).asInstanceOf[T]
     }
 }

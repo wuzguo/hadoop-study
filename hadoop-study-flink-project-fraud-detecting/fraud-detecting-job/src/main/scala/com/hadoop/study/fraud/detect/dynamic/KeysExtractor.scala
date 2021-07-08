@@ -1,5 +1,7 @@
 package com.hadoop.study.fraud.detect.dynamic
 
+import scala.collection.mutable.ListBuffer
+
 /**
  * <B>说明：描述</B>
  *
@@ -10,38 +12,35 @@ package com.hadoop.study.fraud.detect.dynamic
 
 object KeysExtractor {
 
-    import com.hadoop.study.fraud.detect.dynamic.FieldsExtractor
-
     /**
      * Extracts and concatenates field values by names.
      *
      * @param keyNames list of field names
-     * @param object   target for values extraction
+     * @param value    target for values extraction
      */
     @throws[NoSuchFieldException]
     @throws[IllegalAccessException]
-    def getKey(keyNames: Nothing, `object`: Any): String = {
-        val sb = new StringBuilder
-        sb.append("{")
-        if (keyNames.size > 0) {
+    def getKey(keyNames: List[String], value: Any): String = {
+        val buffer: ListBuffer[String] = ListBuffer()
+
+        buffer.append("{")
+        if (keyNames.nonEmpty) {
             val it = keyNames.iterator
-            appendKeyValue(sb, `object`, it.next)
-            while ( {
-                it.hasNext
-            }) {
-                sb.append(";")
-                appendKeyValue(sb, `object`, it.next)
+            appendKeyValue(buffer, value, it.next)
+            while (it.hasNext) {
+                buffer.append(";")
+                appendKeyValue(buffer, value, it.next)
             }
         }
-        sb.append("}")
-        sb.toString
+        buffer.append("}")
+        buffer.toString
     }
 
     @throws[IllegalAccessException]
     @throws[NoSuchFieldException]
-    private def appendKeyValue(sb: StringBuilder, `object`: Any, fieldName: String): Unit = {
-        sb.append(fieldName)
-        sb.append("=")
-        sb.append(FieldsExtractor.getFieldAsString(`object`, fieldName))
+    private def appendKeyValue(buffer: ListBuffer[String], value: Any, fieldName: String): Unit = {
+        buffer.append(fieldName)
+        buffer.append("=")
+        buffer.append(FieldsExtractor.getFieldAsString(value, fieldName))
     }
 }
