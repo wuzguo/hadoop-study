@@ -14,8 +14,6 @@ import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSink
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
 import org.slf4j.LoggerFactory
 
-import java.io.IOException
-
 /**
  * <B>说明：描述</B>
  *
@@ -28,7 +26,6 @@ object CurrentRulesSink {
 
     private val log = LoggerFactory.getLogger("CurrentRulesSink")
 
-    @throws[IOException]
     def createRulesSink(config: Config): SinkFunction[String] = {
         val sinkType = config.get(RULES_EXPORT_SINK)
         val currentRulesSinkType = CurrentRulesType.withName(sinkType.toUpperCase)

@@ -2,8 +2,6 @@ package com.hadoop.study.fraud.detect.dynamic
 
 import com.fasterxml.jackson.databind.ObjectMapper
 
-import java.io.IOException
-
 /**
  * <B>说明：描述</B>
  *
@@ -14,11 +12,9 @@ import java.io.IOException
 
 case class JsonMapper[T](targetClass: Class[T]) {
 
-    private val objectMapper: ObjectMapper = new ObjectMapper()
+    private val objectMapper = new ObjectMapper()
 
-    @throws[IOException]
     def from(line: String): T = objectMapper.readValue(line, targetClass)
 
-    @throws[IOException]
     def to(line: T): String = objectMapper.writeValueAsString(line)
 }

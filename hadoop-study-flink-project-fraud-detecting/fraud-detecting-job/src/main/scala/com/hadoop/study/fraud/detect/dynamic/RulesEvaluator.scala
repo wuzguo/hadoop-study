@@ -14,7 +14,6 @@ import org.apache.flink.streaming.api.scala.{DataStream, OutputTag, StreamExecut
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.slf4j.LoggerFactory
 
-import java.io.IOException
 import java.time.Duration
 
 /**
@@ -84,7 +83,6 @@ case class RulesEvaluator(config: Config) {
         )
     }
 
-    @throws[IOException]
     private def getRulesUpdateStream(env: StreamExecutionEnvironment) = {
         val rulesSourceEnumType = getRulesSourceType
         val rulesSource = RulesSource.create(config)

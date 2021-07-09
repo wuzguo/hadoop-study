@@ -14,8 +14,6 @@ import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSink
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
 import org.slf4j.LoggerFactory
 
-import java.io.IOException
-
 /**
  * <B>说明：描述</B>
  *
@@ -28,7 +26,6 @@ object AlertsSink {
 
     private val log = LoggerFactory.getLogger("AlertsSink")
 
-    @throws[IOException]
     def createAlertsSink(config: Config): SinkFunction[String] = {
         val sinkType = config.get(ALERTS_SINK)
         val alertsSinkType = AlertsType.withName(sinkType.toUpperCase)

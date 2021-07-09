@@ -1,6 +1,5 @@
 package com.hadoop.study.fraud.detect.functions
 
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hadoop.study.fraud.detect.sources.BaseGenerator
 
@@ -20,12 +19,6 @@ case class JsonGeneratorWrapper[T](wrappedGenerator: BaseGenerator[T]) extends B
 
     override def randomEvent(splitRandom: SplittableRandom, id: Long): String = {
         val transaction = wrappedGenerator.randomEvent(splitRandom, id)
-
-        var json: String = null
-        try json = objectMapper.writeValueAsString(transaction)
-        catch {
-            case e: JsonProcessingException => throw new RuntimeException(e)
-        }
-        json
+        objectMapper.writeValueAsString(transaction)
     }
 }
