@@ -20,7 +20,7 @@ case class BigDecimalCounter(var local: BigDecimal = BigDecimal(0)) extends Simp
 
     override def merge(other: Accumulator[BigDecimal, BigDecimal]): Unit = local += other.getLocalValue
 
-    override def clone(): AnyRef = BigDecimalCounter(local)
+    override def clone(): BigDecimalCounter = BigDecimalCounter(local)
 
     override def toString: String = s"BigDecimalCounter ${local}"
 }

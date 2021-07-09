@@ -23,7 +23,7 @@ case class BigDecimalMaximum(var max: BigDecimal = BigDecimal.decimal(Double.Min
 
     override def merge(other: Accumulator[BigDecimal, BigDecimal]): Unit = max = max.max(other.getLocalValue)
 
-    override def clone(): AnyRef = BigDecimalMaximum(max)
+    override def clone(): BigDecimalMaximum = BigDecimalMaximum(max)
 
     override def toString: String = s"BigDecimal ${max}"
 }

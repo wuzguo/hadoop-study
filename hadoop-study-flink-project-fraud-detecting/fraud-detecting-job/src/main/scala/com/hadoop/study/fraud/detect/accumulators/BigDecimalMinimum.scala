@@ -23,7 +23,7 @@ case class BigDecimalMinimum(var min: BigDecimal = BigDecimal.decimal(Double.Max
 
     override def merge(other: Accumulator[BigDecimal, BigDecimal]): Unit = min = min.min(other.getLocalValue)
 
-    override def clone(): AnyRef = BigDecimalMinimum(min)
+    override def clone(): BigDecimalMinimum = BigDecimalMinimum(min)
 
     override def toString: String = s"BigDecimal ${min}"
 }

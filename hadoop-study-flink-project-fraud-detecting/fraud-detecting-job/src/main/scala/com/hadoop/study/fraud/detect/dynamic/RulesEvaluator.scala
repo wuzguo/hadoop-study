@@ -6,18 +6,16 @@ import com.hadoop.study.fraud.detect.config.Parameters._
 import com.hadoop.study.fraud.detect.functions.{AverageAggregate, DynamicAlertFunction, DynamicKeyFunction}
 import com.hadoop.study.fraud.detect.sinks.{AlertsSink, CurrentRulesSink, LatencySink}
 import com.hadoop.study.fraud.detect.sources.{RuleType, RulesSource, TransactionsSource}
+import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.state.MapStateDescriptor
-import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.configuration.{Configuration, RestOptions}
-import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
-import org.apache.flink.streaming.api.scala.{DataStream, OutputTag, StreamExecutionEnvironment}
-import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
+import org.apache.flink.streaming.api.scala.{DataStream, OutputTag, StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.slf4j.LoggerFactory
 
 import java.io.IOException
-import java.util.concurrent.TimeUnit
+import java.time.Duration
 
 /**
  * <B>说明：描述</B>
@@ -61,11 +59,12 @@ case class RulesEvaluator(config: Config) {
         alertsJson.addSink(AlertsSink.createAlertsSink(config)).setParallelism(sinkParallelism).name("Alerts JSON Sink")
 
         val latency = alertSteam.getSideOutput(Descriptors.latencySinkTag)
-        latency.windowAll(TumblingEventTimeWindows.of(Time.seconds(10)))
+        latency.timeWindowAll(Time.seconds(10))
           .aggregate(AverageAggregate())
           .map(_.toString)
           .addSink(LatencySink.createLatencySink(config))
           .name("Latency Sink")
+
 
         env.execute("Fraud Detection Engine")
     }
@@ -76,8 +75,13 @@ case class RulesEvaluator(config: Config) {
         val sourceParallelism = config.get(SOURCE_PARALLELISM)
         val transactionsStringsStream = env.addSource(transactionSource).name("Transactions Source").setParallelism(sourceParallelism)
 
-        val transactionsStream = TransactionsSource.streamToTransactions(transactionsStringsStream, log)
-        transactionsStream.assignTimestampsAndWatermarks(SimpleBoundedOutOfOrdernessTimestampExtractor[Transaction](config.get(OUT_OF_ORDERLESS)))
+        val transactionsStream = TransactionsSource.streamToTransactions(transactionsStringsStream)
+        transactionsStream.assignTimestampsAndWatermarks(
+            WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofMillis(config.get(OUT_OF_ORDERLESS).longValue()))
+              .withTimestampAssigner(new SerializableTimestampAssigner[Transaction] {
+                  override def extractTimestamp(element: Transaction, recordTimestamp: Long): Long = element.eventTime
+              })
+        )
     }
 
     @throws[IOException]
@@ -111,13 +115,9 @@ case class RulesEvaluator(config: Config) {
         }
         env.getCheckpointConfig.setCheckpointInterval(config.get(CHECKPOINT_INTERVAL).longValue())
         env.getCheckpointConfig.setMinPauseBetweenCheckpoints(config.get(MIN_PAUSE_BETWEEN_CHECKPOINTS).longValue())
+
         env
     }
-}
-
-case class SimpleBoundedOutOfOrdernessTimestampExtractor[T <: Transaction](val outOfOrderdnessMillis: Int) extends
-  BoundedOutOfOrdernessTimestampExtractor[T](Time.of(outOfOrderdnessMillis, TimeUnit.MILLISECONDS)) {
-    override def extractTimestamp(element: T): Long = element.eventTime
 }
 
 object Descriptors {

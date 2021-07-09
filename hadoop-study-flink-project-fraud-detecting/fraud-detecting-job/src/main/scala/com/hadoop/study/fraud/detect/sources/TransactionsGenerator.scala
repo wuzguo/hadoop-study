@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom
  * @date 2021/7/8 16:50
  */
 
-case class TransactionsGenerator(override var maxRecordsPerSecond: Int) extends BaseGenerator[Transaction] {
+case class TransactionsGenerator(var maxRecordsPerSecond: Int) extends BaseGenerator[Transaction] {
 
     private val MAX_PAYEE_ID = 100000
     private val MAX_BENEFICIARY_ID = 100000

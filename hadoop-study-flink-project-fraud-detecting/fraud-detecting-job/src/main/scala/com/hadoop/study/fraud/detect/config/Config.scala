@@ -25,8 +25,8 @@ case class Config() {
         values(key) = value
     }
 
-    def get[T](param: Param[T]): T = {
-        values.get(param).asInstanceOf[T]
+    def get[T](key: Param[T]): T = {
+        key.cls.cast(values(key))
     }
 
     private def overrideDefaults[T](inputParams: Parameters, params: List[Param[T]]): Unit = {
