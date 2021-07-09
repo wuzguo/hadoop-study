@@ -1,6 +1,6 @@
 package com.hadoop.study.fraud.detect.functions
 
-import com.hadoop.study.fraud.detect.beans.ControlType.ControlType
+import com.hadoop.study.fraud.detect.beans.ControlType.Type
 import com.hadoop.study.fraud.detect.beans.{ControlType, Keyed, Rule}
 import com.hadoop.study.fraud.detect.dynamic.{Descriptors, KeysExtractor, Transaction}
 import org.apache.flink.api.common.state.{BroadcastState, ReadOnlyBroadcastState}
@@ -53,7 +53,7 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
     }
 
 
-    private def handleControlCommand(controlType: ControlType, rulesState: BroadcastState[Integer, Nothing]): Unit = {
+    private def handleControlCommand(controlType: Type, rulesState: BroadcastState[Integer, Nothing]): Unit = {
         if (controlType eq ControlType.DELETE_RULES_ALL) {
             val entriesIterator = rulesState.iterator
             while (entriesIterator.hasNext) {

@@ -1,7 +1,7 @@
 package com.hadoop.study.fraud.detect.dynamic
 
 
-import com.hadoop.study.fraud.detect.dynamic.PaymentType.PaymentType
+import com.hadoop.study.fraud.detect.dynamic.PaymentType.Type
 
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneOffset, ZonedDateTime}
@@ -16,7 +16,7 @@ import java.util.Locale
  */
 
 case class Transaction(transactionId: Long, eventTime: Long, payeeId: Long, beneficiaryId: Long,
-                       paymentAmount: BigDecimal, paymentType: PaymentType, var ingestionTimestamp: Long) extends TimestampAssignable[Long] {
+                       paymentAmount: BigDecimal, paymentType: Type, var ingestionTimestamp: Long) extends TimestampAssignable[Long] {
 
     def assignIngestionTimestamp(timestamp: Long): Unit = {
         this.ingestionTimestamp = timestamp
@@ -46,7 +46,7 @@ object Transaction {
 
 object PaymentType extends Enumeration {
 
-    type PaymentType = Value
+    type Type = Value
 
     val CSH: Value = Value("CSH")
 

@@ -1,9 +1,9 @@
 package com.hadoop.study.fraud.detect.beans
 
-import com.hadoop.study.fraud.detect.beans.AggregatorFunctionType.AggregatorFunctionType
-import com.hadoop.study.fraud.detect.beans.ControlType.ControlType
+import com.hadoop.study.fraud.detect.beans.AggregatorFunctionType.Type
+import com.hadoop.study.fraud.detect.beans.ControlType.Type
 import com.hadoop.study.fraud.detect.beans.LimitOperatorType._
-import com.hadoop.study.fraud.detect.beans.RuleState.RuleState
+import com.hadoop.study.fraud.detect.beans.RuleState.Type
 import org.apache.flink.streaming.api.windowing.time.Time
 
 /**
@@ -14,11 +14,11 @@ import org.apache.flink.streaming.api.windowing.time.Time
  * @date 2021/7/8 11:10
  */
 
-case class Rule(ruleId: Int, ruleState: RuleState, groupingKeyNames: List[String], aggregateFieldName: String,
-                aggregatorFunctionType: AggregatorFunctionType, limitOperatorType: LimitOperatorType,
+case class Rule(ruleId: Int, ruleState: Type, groupingKeyNames: List[String], aggregateFieldName: String,
+                aggregatorFunctionType: Type, limitOperatorType: Type,
                 limit: BigDecimal, windowMinutes: Int) {
 
-    var controlType: ControlType = _
+    var controlType: Type = _
 
     def getWindowMillis: Long = Time.minutes(this.windowMinutes).toMilliseconds
 
@@ -48,21 +48,25 @@ case class Rule(ruleId: Int, ruleState: RuleState, groupingKeyNames: List[String
 
 
 object AggregatorFunctionType extends Enumeration {
-    type AggregatorFunctionType = Value
+    type Type = Value
+
     val SUM, AVG, MIN, MAX = Value
 }
 
 object LimitOperatorType extends Enumeration {
-    type LimitOperatorType = Value
+    type Type = Value
+
     val EQUAL, NOT_EQUAL, GREATER_EQUAL, LESS_EQUAL, GREATER, LESS = Value
 }
 
 object RuleState extends Enumeration {
-    type RuleState = Value
+    type Type = Value
+
     val ACTIVE, PAUSE, DELETE, CONTROL = Value
 }
 
 object ControlType extends Enumeration {
-    type ControlType = Value
+    type Type = Value
+
     val CLEAR_STATE_ALL, DELETE_RULES_ALL, EXPORT_RULES_CURRENT = Value
 }

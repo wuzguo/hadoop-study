@@ -1,6 +1,6 @@
 package com.hadoop.study.fraud.detect.sources
 
-import com.hadoop.study.fraud.detect.dynamic.PaymentType.PaymentType
+import com.hadoop.study.fraud.detect.dynamic.PaymentType.Type
 import com.hadoop.study.fraud.detect.dynamic.{PaymentType, Transaction}
 
 import java.util.SplittableRandom
@@ -41,7 +41,7 @@ case class TransactionsGenerator(override var maxRecordsPerSecond: Int) extends 
     }
 
 
-    private def paymentType(id: Long): PaymentType = {
+    private def paymentType(id: Long): Type = {
         val name = (id % 2).toInt
         name match {
             case 0 =>
