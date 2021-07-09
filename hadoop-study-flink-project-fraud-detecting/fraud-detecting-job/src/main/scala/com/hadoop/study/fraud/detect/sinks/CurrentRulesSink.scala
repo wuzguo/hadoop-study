@@ -8,8 +8,8 @@ import com.hadoop.study.fraud.detect.functions.JsonSerializer
 import com.hadoop.study.fraud.detect.sinks.RulesType._
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
+import org.apache.flink.streaming.api.datastream.DataStream
 import org.apache.flink.streaming.api.functions.sink.{PrintSinkFunction, SinkFunction}
-import org.apache.flink.streaming.api.scala.DataStream
 import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSink
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
 import org.slf4j.LoggerFactory
