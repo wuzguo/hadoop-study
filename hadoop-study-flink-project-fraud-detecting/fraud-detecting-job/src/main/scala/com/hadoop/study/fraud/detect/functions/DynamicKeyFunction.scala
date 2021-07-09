@@ -3,10 +3,10 @@ package com.hadoop.study.fraud.detect.functions
 import com.hadoop.study.fraud.detect.beans.ControlType.ControlType
 import com.hadoop.study.fraud.detect.beans.{ControlType, Keyed, Rule, RuleState}
 import com.hadoop.study.fraud.detect.dynamic.{Descriptors, KeysExtractor, Transaction}
-import com.hadoop.study.fraud.detect.functions.ProcessingUtils.handleRuleBroadcast
+import com.hadoop.study.fraud.detect.functions.ProcessingUtils.handleBroadcast
 import org.apache.flink.api.common.state.{BroadcastState, ReadOnlyBroadcastState}
+import org.apache.flink.api.scala.metrics.ScalaGauge
 import org.apache.flink.configuration.Configuration
-import org.apache.flink.metrics.Gauge
 import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction
 import org.apache.flink.util.Collector
 import org.slf4j.LoggerFactory
@@ -23,16 +23,13 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
 
     private val log = LoggerFactory.getLogger(classOf[DynamicKeyFunction])
 
-    private var ruleCounterGauge: RuleCounterGauge = _
+    private var ruleCounterGauge = 0
 
     override def open(parameters: Configuration): Unit = {
-        ruleCounterGauge = RuleCounterGauge()
-        getRuntimeContext.getMetricGroup.gauge("numberOfActiveRules", ruleCounterGauge)
+        getRuntimeContext.getMetricGroup.gauge[Int, ScalaGauge[Int]]("numberOfActiveRules", ScalaGauge[Int](() => ruleCounterGauge))
     }
 
-    override def processElement(event: Transaction, ctx: BroadcastProcessFunction[Transaction, Rule,
-      Keyed[Transaction, String, Int]]#ReadOnlyContext, out: Collector[Keyed[Transaction, String, Int]]): Unit = {
-
+    override def processElement(event: Transaction, ctx: BroadcastProcessFunction[Transaction, Rule, Keyed[Transaction, String, Int]]#ReadOnlyContext, out: Collector[Keyed[Transaction, String, Int]]): Unit = {
         val rulesState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
         forkEventForEachGroupingKey(event, rulesState, out)
     }
@@ -40,7 +37,7 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
     override def processBroadcastElement(value: Rule, ctx: BroadcastProcessFunction[Transaction, Rule, Keyed[Transaction, String, Int]]#Context, out: Collector[Keyed[Transaction, String, Int]]): Unit = {
         log.trace(s"processBroadcastElement ${value}")
         val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
-        handleRuleBroadcast(value, broadcastState)
+        handleBroadcast(value, broadcastState)
         if (value.ruleState eq RuleState.CONTROL)
             handleControlCommand(value.controlType, broadcastState)
     }
@@ -54,7 +51,7 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
             ruleCounter += 1
         })
 
-        ruleCounterGauge.setValue(ruleCounter)
+        ruleCounterGauge += ruleCounter
     }
 
 
@@ -68,16 +65,4 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
             }
         }
     }
-}
-
-
-case class RuleCounterGauge() extends Gauge[Int] {
-
-    private var value = 0
-
-    def setValue(value: Int): Unit = {
-        this.value = value
-    }
-
-    def getValue: Int = value
 }

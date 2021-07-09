@@ -3,10 +3,9 @@ package com.hadoop.study.fraud.detect.functions
 import com.hadoop.study.fraud.detect.beans.ControlType.{CLEAR_STATE_ALL, DELETE_RULES_ALL, EXPORT_RULES_CURRENT}
 import com.hadoop.study.fraud.detect.beans.{AlertEvent, Keyed, Rule, RuleState}
 import com.hadoop.study.fraud.detect.dynamic.{Descriptors, FieldsExtractor, RuleHelper, Transaction}
-import com.hadoop.study.fraud.detect.functions.ProcessingUtils.handleRuleBroadcast
+import com.hadoop.study.fraud.detect.functions.ProcessingUtils.handleBroadcast
 import org.apache.flink.api.common.accumulators.SimpleAccumulator
 import org.apache.flink.api.common.state.{BroadcastState, MapState, MapStateDescriptor, State}
-import org.apache.flink.api.common.typeinfo.{BasicTypeInfo, TypeHint, TypeInformation}
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.metrics.{Meter, MeterView}
 import org.apache.flink.streaming.api.functions.co.KeyedBroadcastProcessFunction
@@ -33,16 +32,16 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
 
     private val WIDEST_RULE_KEY = Int.MinValue
 
-    private var windowState: MapState[Long, mutable.Set[Transaction]] = _
+    private var windowState: MapState[Long, Set[Transaction]] = _
 
     private var alertMeter: Meter = _
 
-    private val windowStateDescriptor = new MapStateDescriptor[Long, mutable.Set[Transaction]]("windowState", classOf[Long], classOf[mutable.Set[Transaction]])
+    private val windowStateDescriptor = new MapStateDescriptor[Long, Set[Transaction]]("windowState", classOf[Long], classOf[Set[Transaction]])
 
     override def processElement(value: Keyed[Transaction, String, Int], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#ReadOnlyContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
         log.trace("processElement value: {}, alert: {}", value)
         val currentEventTime = value.wrapped.eventTime
-        ProcessingUtils.addToStateValuesSet(windowState, currentEventTime, value.wrapped)
+        ProcessingUtils.addValues(windowState, currentEventTime, value.wrapped)
 
         val ingestionTime = value.wrapped.ingestionTimestamp
         ctx.output(Descriptors.latencySinkTag, System.currentTimeMillis - ingestionTime)
@@ -84,7 +83,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
     override def processBroadcastElement(value: Rule, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
         log.trace(s"processBroadcastElement ${value}")
         val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
-        handleRuleBroadcast(value, broadcastState)
+        handleBroadcast(value, broadcastState)
         updateWidestWindowRule(value, broadcastState)
         if (value.ruleState eq RuleState.CONTROL)
             handleControlCommand(value, broadcastState, ctx)
@@ -96,12 +95,12 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
         getRuntimeContext.getMetricGroup.meter("alertsPerSecond", alertMeter)
     }
 
-    private def handleControlCommand(command: Rule, rulesState: BroadcastState[Int, Rule], ctx: Context): Unit = {
+    private def handleControlCommand(command: Rule, rulesState: BroadcastState[Int, Rule], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context): Unit = {
         command.controlType match {
             case EXPORT_RULES_CURRENT =>
                 rulesState.entries.forEach(entry => ctx.output(Descriptors.currentRulesSinkTag, entry.getValue))
             case CLEAR_STATE_ALL =>
-                ctx.applyToKeyedState(windowStateDescriptor, (_, state) => state.clear())
+                ctx.applyToKeyedState(windowStateDescriptor, (_, state: MapState[Long, Set[Transaction]]) => state.clear())
             case DELETE_RULES_ALL =>
                 val entriesIterator = rulesState.iterator
                 while (entriesIterator.hasNext) {

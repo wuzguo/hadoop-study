@@ -4,8 +4,6 @@ import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.beans.RuleState._
 import org.apache.flink.api.common.state.{BroadcastState, MapState}
 
-import scala.collection.mutable
-
 /**
  * <B>说明：描述</B>
  *
@@ -16,7 +14,7 @@ import scala.collection.mutable
 
 object ProcessingUtils {
 
-    def handleRuleBroadcast(rule: Rule, broadcastState: BroadcastState[Int, Rule]): Unit = {
+    def handleBroadcast(rule: Rule, broadcastState: BroadcastState[Int, Rule]): Unit = {
         rule.ruleState match {
             case ACTIVE =>
             case PAUSE =>
@@ -26,12 +24,12 @@ object ProcessingUtils {
         }
     }
 
-    def addToStateValuesSet[K, V](mapState: MapState[K, mutable.Set[V]], key: K, value: V): mutable.Set[V] = {
+    def addValues[K, V](mapState: MapState[K, Set[V]], key: K, value: V): Set[V] = {
         var values = mapState.get(key)
-        if (values != null) values.add(value)
+        if (values != null) values += value
         else {
-            values = mutable.Set[V]()
-            values.add(value)
+            values = Set[V]()
+            values += value
         }
         mapState.put(key, values)
         values

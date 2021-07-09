@@ -17,7 +17,7 @@ import java.util.SplittableRandom
  * @date 2021/7/8 14:14
  */
 
-abstract class BaseGenerator[T](var maxRecordsPerSecond: Int = -1) extends RichParallelSourceFunction[T] with CheckpointedFunction {
+abstract class BaseGenerator[T](maxRecordsPerSecond: Int = -1) extends RichParallelSourceFunction[T] with CheckpointedFunction {
 
     private var running = true
 
@@ -27,8 +27,7 @@ abstract class BaseGenerator[T](var maxRecordsPerSecond: Int = -1) extends RichP
 
     protected var recordsPerSecond = 0
 
-    checkArgument((maxRecordsPerSecond - 1) || maxRecordsPerSecond > 0, ("maxRecordsPerSecond must be positive or -1 (infinite)").asInstanceOf[Any])
-
+    checkArgument((maxRecordsPerSecond == -1) || maxRecordsPerSecond > 0, ("maxRecordsPerSecond must be positive or -1 infinite)").asInstanceOf[Any])
     this.recordsPerSecond = maxRecordsPerSecond
 
     override def snapshotState(context: FunctionSnapshotContext): Unit = {
