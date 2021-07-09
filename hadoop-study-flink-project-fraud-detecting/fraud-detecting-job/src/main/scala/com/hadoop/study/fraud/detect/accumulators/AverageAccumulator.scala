@@ -15,18 +15,18 @@ import java.math.MathContext
 case class AverageAccumulator(var count: Long, var sum: BigDecimal) extends SimpleAccumulator[BigDecimal] {
 
     override def add(value: BigDecimal): Unit = {
-        count += 1
+        count += 1L
         sum += value
     }
 
     override def getLocalValue: BigDecimal = {
-        if (count eq 0L) return BigDecimal(0)
+        if (count == 0L) return BigDecimal(0)
 
         this.sum / BigDecimal(count) round MathContext.UNLIMITED
     }
 
     override def resetLocal(): Unit = {
-        count = 0
+        count = 0L
         sum = BigDecimal(0)
     }
 

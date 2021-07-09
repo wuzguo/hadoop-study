@@ -1,7 +1,5 @@
 package com.hadoop.study.fraud.detect.beans
 
-import com.hadoop.study.fraud.detect.beans.AggregatorFunctionType.Type
-import com.hadoop.study.fraud.detect.beans.ControlType.Type
 import com.hadoop.study.fraud.detect.beans.LimitOperatorType._
 import com.hadoop.study.fraud.detect.beans.RuleState.Type
 import org.apache.flink.streaming.api.windowing.time.Time
