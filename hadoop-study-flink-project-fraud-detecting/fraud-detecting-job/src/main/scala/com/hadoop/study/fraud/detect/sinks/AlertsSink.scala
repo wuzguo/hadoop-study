@@ -7,9 +7,8 @@ import com.hadoop.study.fraud.detect.functions.JsonSerializer
 import com.hadoop.study.fraud.detect.sinks.AlertsType.{DISCARD, KAFKA, PUBSUB, STDOUT}
 import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema
-import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.functions.sink.{DiscardingSink, PrintSinkFunction, SinkFunction}
-import org.apache.flink.streaming.api.scala.DataStream
+import org.apache.flink.streaming.api.scala.{DataStream, createTypeInformation}
 import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSink
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
 import org.slf4j.LoggerFactory
@@ -50,7 +49,7 @@ object AlertsSink {
     }
 
     def alertsStreamToJson(alerts: DataStream[AlertEvent[Transaction, BigDecimal]]): DataStream[String] =
-        alerts.flatMap(JsonSerializer(classOf[AlertEvent[Transaction, BigDecimal]], log))
+        alerts.flatMap(JsonSerializer(classOf[AlertEvent[Transaction, BigDecimal]]))
           .name("Alerts Serialization")
 }
 

@@ -27,7 +27,5 @@ case class RuleDeserializer() extends RichFlatMapFunction[String, Rule] {
         out.collect(rule)
     }
 
-    override def open(parameters: Configuration): Unit = {
-        ruleParser = new RuleParser()
-    }
+    override def open(parameters: Configuration): Unit = ruleParser = RuleParser()
 }

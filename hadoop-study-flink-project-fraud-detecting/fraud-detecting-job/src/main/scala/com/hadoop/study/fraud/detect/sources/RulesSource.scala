@@ -26,8 +26,6 @@ import java.time.Duration
 
 object RulesSource {
 
-    private val RULES_STREAM_PARALLELISM = 1
-
     def create(config: Config): SourceFunction[String] = {
         val sourceType: String = config.get(RULES_SOURCE)
         val rulesSourceType = RuleType.withName(sourceType.toUpperCase)
@@ -57,7 +55,7 @@ object RulesSource {
     def streamToRules(ruleStream: DataStream[String]): DataStream[Rule] =
         ruleStream.flatMap(RuleDeserializer())
           .name("Rule Deserialization")
-          .setParallelism(RULES_STREAM_PARALLELISM)
+          .setParallelism(1)
           .assignTimestampsAndWatermarks(
               WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofMillis(0))
                 .withTimestampAssigner(new SerializableTimestampAssigner[Rule] {

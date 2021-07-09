@@ -23,8 +23,8 @@ object TransactionsSource {
 
     def createTransactionsSource(config: Config): SourceFunction[String] = {
         val sourceType = config.get(TRANSACTIONS_SOURCE)
-        val transactionsSourceType = TransactionsType.withName(sourceType.toUpperCase)
 
+        val transactionsSourceType = TransactionsType.withName(sourceType.toUpperCase)
         if (transactionsSourceType eq TransactionsType.KAFKA) {
             val kafkaProps = KafkaUtils.initConsumerProperties(config)
             val transactionsTopic = config.get(DATA_TOPIC)
@@ -42,7 +42,6 @@ object TransactionsSource {
           .map(new TimeStamper[Transaction])
           .name("Transactions Deserialization")
 }
-
 
 object TransactionsType extends Enumeration {
     type TransactionsType = Value

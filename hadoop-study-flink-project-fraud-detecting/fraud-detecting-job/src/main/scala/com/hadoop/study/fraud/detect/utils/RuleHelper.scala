@@ -27,7 +27,7 @@ object RuleHelper {
             case MIN =>
                 BigDecimalMinimum()
             case _ =>
-                throw new RuntimeException("Unsupported aggregation function type: " + rule.aggregatorType)
+                throw new RuntimeException(s"Unsupported aggregation function type: ${rule.aggregatorType}")
         }
 
 }

@@ -17,16 +17,18 @@ import java.util.concurrent.ThreadLocalRandom
 case class TransactionsGenerator(var maxRecordsPerSecond: Int) extends BaseGenerator[Transaction] {
 
     private val MAX_PAYEE_ID = 100000
+
     private val MAX_BENEFICIARY_ID = 100000
 
     private val MIN_PAYMENT_AMOUNT = 5d
+
     private val MAX_PAYMENT_AMOUNT = 20d
 
     override def randomEvent(splitRandom: SplittableRandom, id: Long): Transaction = {
-
         val transactionId = splitRandom.nextLong(Long.MaxValue)
         val payeeId = splitRandom.nextLong(MAX_PAYEE_ID)
         val beneficiaryId = splitRandom.nextLong(MAX_BENEFICIARY_ID)
+
         var paymentAmountDouble = ThreadLocalRandom.current.nextDouble(MIN_PAYMENT_AMOUNT, MAX_PAYMENT_AMOUNT)
         paymentAmountDouble = Math.floor(paymentAmountDouble * 100) / 100
         val paymentAmount = BigDecimal.valueOf(paymentAmountDouble)
@@ -41,7 +43,6 @@ case class TransactionsGenerator(var maxRecordsPerSecond: Int) extends BaseGener
         transaction.ingestionTimestamp = System.currentTimeMillis
         transaction
     }
-
 
     private def paymentType(id: Long): PaymentType = {
         val name = (id % 2).toInt

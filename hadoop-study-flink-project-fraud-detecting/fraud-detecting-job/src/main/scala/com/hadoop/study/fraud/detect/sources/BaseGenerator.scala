@@ -57,7 +57,7 @@ abstract class BaseGenerator[T](maxRecordsPerSecond: Int = -1) extends RichParal
 
         while (running) {
             val event = randomEvent(rnd, id)
-            // noinspection SynchronizationOnLocalVariableOrMethodParameter
+            // Synchronization On Local Variable Or Method Parameter
             lock.synchronized {
                 if (event != null) ctx.collect(event)
                 id += numberOfParallelSubtasks

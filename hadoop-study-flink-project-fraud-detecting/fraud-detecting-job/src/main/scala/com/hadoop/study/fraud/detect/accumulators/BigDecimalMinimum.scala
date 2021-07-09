@@ -13,7 +13,8 @@ import org.apache.flink.api.common.accumulators.{Accumulator, SimpleAccumulator}
 case class BigDecimalMinimum(var min: BigDecimal = BigDecimal.decimal(Double.MaxValue), limit: BigDecimal = BigDecimal.decimal(Double.MaxValue)) extends SimpleAccumulator[BigDecimal] {
 
     override def add(value: BigDecimal): Unit = {
-        if (value.compareTo(limit) > 0) throw new IllegalArgumentException("BigDecimalMinimum accumulator only supports values less than Double.MAX_VALUE")
+        if (value.compareTo(limit) > 0)
+            throw new IllegalArgumentException("BigDecimalMinimum accumulator only supports values less than Double.MAX_VALUE")
         this.min = min.min(value)
     }
 
@@ -25,6 +26,6 @@ case class BigDecimalMinimum(var min: BigDecimal = BigDecimal.decimal(Double.Max
 
     override def clone(): BigDecimalMinimum = BigDecimalMinimum(min)
 
-    override def toString: String = s"BigDecimal ${min}"
+    override def toString: String = s"BigDecimal Minimum ${min}"
 }
 

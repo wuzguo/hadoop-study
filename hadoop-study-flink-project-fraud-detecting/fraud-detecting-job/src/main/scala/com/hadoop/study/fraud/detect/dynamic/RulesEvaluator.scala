@@ -49,7 +49,7 @@ case class RulesEvaluator(config: Config) {
           .uid("Dynamic Alert Function")
           .name("Dynamic Rule Evaluation Function")
 
-        val currentRules = alertSteam.getSideOutput(Descriptors.currentRulesSinkTag)
+        val currentRules = alertSteam.getSideOutput(Tags.currentRulesSinkTag)
         val currentRulesJson = CurrentRulesSink.rulesStreamToJson(currentRules)
         val sinkParallelism = config.get(SINK_PARALLELISM)
         currentRulesJson.addSink(CurrentRulesSink.createRulesSink(config)).setParallelism(sinkParallelism).name("Rules Export Sink")
@@ -57,7 +57,7 @@ case class RulesEvaluator(config: Config) {
         val alertsJson = AlertsSink.alertsStreamToJson(alertSteam)
         alertsJson.addSink(AlertsSink.createAlertsSink(config)).setParallelism(sinkParallelism).name("Alerts JSON Sink")
 
-        val latency = alertSteam.getSideOutput(Descriptors.latencySinkTag)
+        val latency = alertSteam.getSideOutput(Tags.latencySinkTag)
         latency.timeWindowAll(Time.seconds(10))
           .aggregate(AverageAggregate())
           .map(_.toString)
@@ -119,7 +119,11 @@ case class RulesEvaluator(config: Config) {
 }
 
 object Descriptors {
+
     val rulesDescriptor = new MapStateDescriptor[Int, Rule]("rules", classOf[Int], classOf[Rule])
+}
+
+object Tags {
 
     val latencySinkTag: OutputTag[Long] = new OutputTag[Long]("latency-sink")
 

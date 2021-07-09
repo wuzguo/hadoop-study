@@ -1,19 +1,17 @@
 package com.hadoop.study.fraud.detect.functions
 
 import com.hadoop.study.fraud.detect.beans.ControlType.{CLEAR_STATE_ALL, DELETE_RULES_ALL, EXPORT_RULES_CURRENT}
-import com.hadoop.study.fraud.detect.beans.{AlertEvent, Keyed, Rule, RuleState, Transaction}
-import com.hadoop.study.fraud.detect.dynamic.Descriptors
-import com.hadoop.study.fraud.detect.utils.{FieldsExtractor, StateUtils, RuleHelper}
+import com.hadoop.study.fraud.detect.beans._
+import com.hadoop.study.fraud.detect.dynamic.{Descriptors, Tags}
 import com.hadoop.study.fraud.detect.utils.StateUtils.handleBroadcast
+import com.hadoop.study.fraud.detect.utils.{FieldsExtractor, RuleHelper, StateUtils}
 import org.apache.flink.api.common.accumulators.SimpleAccumulator
-import org.apache.flink.api.common.state.{BroadcastState, MapState, MapStateDescriptor, State}
+import org.apache.flink.api.common.state.{BroadcastState, MapState, MapStateDescriptor}
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.metrics.{Meter, MeterView}
 import org.apache.flink.streaming.api.functions.co.KeyedBroadcastProcessFunction
 import org.apache.flink.util.Collector
 import org.slf4j.LoggerFactory
-
-import scala.collection.mutable
 
 /**
  * <B>说明：描述</B>
@@ -45,7 +43,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
         StateUtils.addValues(windowState, currentEventTime, value.wrapped)
 
         val ingestionTime = value.wrapped.ingestionTimestamp
-        ctx.output(Descriptors.latencySinkTag, System.currentTimeMillis - ingestionTime)
+        ctx.output(Tags.latencySinkTag, System.currentTimeMillis - ingestionTime)
 
         val rule = ctx.getBroadcastState(Descriptors.rulesDescriptor).get(value.id)
 
@@ -99,7 +97,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
     private def handleControlCommand(command: Rule, rulesState: BroadcastState[Int, Rule], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context): Unit = {
         command.controlType match {
             case EXPORT_RULES_CURRENT =>
-                rulesState.entries.forEach(entry => ctx.output(Descriptors.currentRulesSinkTag, entry.getValue))
+                rulesState.entries.forEach(entry => ctx.output(Tags.currentRulesSinkTag, entry.getValue))
             case CLEAR_STATE_ALL =>
                 ctx.applyToKeyedState(windowStateDescriptor, (_, state: MapState[Long, Set[Transaction]]) => state.clear())
             case DELETE_RULES_ALL =>
