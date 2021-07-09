@@ -67,7 +67,7 @@ object RulesSource {
 
 
 object RuleType extends Enumeration {
-    type Type = Value
+    type RuleType = Value
 
     val KAFKA, PUBSUB, SOCKET, STATIC = Value
 }

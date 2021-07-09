@@ -47,7 +47,7 @@ object LatencySink {
 }
 
 object LatencyType extends Enumeration {
-    type Type = Value
+    type LatencyType = Value
 
     val KAFKA, PUBSUB, STDOUT, DISCARD = Value
 }

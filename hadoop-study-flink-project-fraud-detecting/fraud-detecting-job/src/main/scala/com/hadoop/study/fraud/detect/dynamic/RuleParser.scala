@@ -1,7 +1,7 @@
 package com.hadoop.study.fraud.detect.dynamic
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.hadoop.study.fraud.detect.beans.{AggregatorFunctionType, LimitOperatorType, Rule, RuleState}
+import com.hadoop.study.fraud.detect.beans.{AggregatorType, OperatorType, Rule, RuleState}
 import com.hadoop.study.fraud.detect.dynamic.RuleParser.parsePlain
 
 import java.io.IOException
@@ -35,8 +35,8 @@ object RuleParser {
             RuleState.withName(stripBrackets(iter.next).toUpperCase),
             getNames(iter.next),
             stripBrackets(iter.next),
-            AggregatorFunctionType.withName(stripBrackets(iter.next).toUpperCase),
-            LimitOperatorType.withName(stripBrackets(iter.next)),
+            AggregatorType.withName(stripBrackets(iter.next).toUpperCase),
+            OperatorType.withName(stripBrackets(iter.next)),
             BigDecimal(stripBrackets(iter.next)),
             stripBrackets(iter.next).toInt
         )

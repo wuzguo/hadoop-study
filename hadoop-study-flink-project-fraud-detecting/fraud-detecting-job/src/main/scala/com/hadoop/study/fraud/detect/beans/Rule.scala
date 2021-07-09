@@ -1,7 +1,7 @@
 package com.hadoop.study.fraud.detect.beans
 
-import com.hadoop.study.fraud.detect.beans.LimitOperatorType._
-import com.hadoop.study.fraud.detect.beans.RuleState.Type
+import com.hadoop.study.fraud.detect.beans.OperatorType._
+import com.hadoop.study.fraud.detect.beans.RuleState.RuleState
 import org.apache.flink.streaming.api.windowing.time.Time
 
 /**
@@ -12,11 +12,11 @@ import org.apache.flink.streaming.api.windowing.time.Time
  * @date 2021/7/8 11:10
  */
 
-case class Rule(ruleId: Int, ruleState: Type, groupingKeyNames: List[String], aggregateFieldName: String,
-                aggregatorFunctionType: Type, limitOperatorType: Type,
+case class Rule(ruleId: Int, ruleState: RuleState, groupingKeyNames: List[String], aggregateFieldName: String,
+                aggregatorFunctionType: RuleState, limitOperatorType: RuleState,
                 limit: BigDecimal, windowMinutes: Int) {
 
-    var controlType: Type = _
+    var controlType: RuleState = _
 
     def getWindowMillis: Long = Time.minutes(this.windowMinutes).toMilliseconds
 
@@ -45,26 +45,26 @@ case class Rule(ruleId: Int, ruleState: Type, groupingKeyNames: List[String], ag
 }
 
 
-object AggregatorFunctionType extends Enumeration {
-    type Type = Value
+object AggregatorType extends Enumeration {
+    type AggregatorType = Value
 
     val SUM, AVG, MIN, MAX = Value
 }
 
-object LimitOperatorType extends Enumeration {
-    type Type = Value
+object OperatorType extends Enumeration {
+    type OperatorType = Value
 
     val EQUAL, NOT_EQUAL, GREATER_EQUAL, LESS_EQUAL, GREATER, LESS = Value
 }
 
 object RuleState extends Enumeration {
-    type Type = Value
+    type RuleState = Value
 
     val ACTIVE, PAUSE, DELETE, CONTROL = Value
 }
 
 object ControlType extends Enumeration {
-    type Type = Value
+    type ControlType = Value
 
     val CLEAR_STATE_ALL, DELETE_RULES_ALL, EXPORT_RULES_CURRENT = Value
 }

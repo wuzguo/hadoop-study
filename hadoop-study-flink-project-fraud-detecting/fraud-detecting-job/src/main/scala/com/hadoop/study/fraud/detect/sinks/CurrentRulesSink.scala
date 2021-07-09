@@ -55,7 +55,7 @@ object CurrentRulesSink {
 }
 
 object CurrentRulesType extends Enumeration {
-    type Type = Value
+    type CurrentRulesType = Value
 
     val KAFKA, PUBSUB, STDOUT, DISCARD = Value
 }

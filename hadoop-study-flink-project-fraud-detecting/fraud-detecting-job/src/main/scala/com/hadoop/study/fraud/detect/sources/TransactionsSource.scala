@@ -48,7 +48,7 @@ object TransactionsSource {
 
 
 object TransactionsType extends Enumeration {
-    type Type = Value
+    type TransactionsType = Value
 
     val GENERATOR, KAFKA = Value
 }

@@ -58,7 +58,7 @@ object AlertsSink {
 }
 
 object AlertsType extends Enumeration {
-    type Type = Value
+    type AlertsType = Value
 
     val KAFKA, PUBSUB, STDOUT, DISCARD = Value
 }
