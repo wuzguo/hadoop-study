@@ -1,4 +1,4 @@
-package com.hadoop.study.fraud.detect.dynamic
+package com.hadoop.study.fraud.detect.utils
 
 import scala.collection.mutable.ListBuffer
 

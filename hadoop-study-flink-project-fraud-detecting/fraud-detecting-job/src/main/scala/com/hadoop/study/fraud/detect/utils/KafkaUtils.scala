@@ -1,4 +1,4 @@
-package com.hadoop.study.fraud.detect.dynamic
+package com.hadoop.study.fraud.detect.utils
 
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{KAFKA_HOST, KAFKA_PORT, OFFSET}

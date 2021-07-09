@@ -2,8 +2,8 @@ package com.hadoop.study.fraud.detect.sinks
 
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{GCP_PROJECT_NAME, GCP_PUBSUB_LATENCY_SUBSCRIPTION, LATENCY_SINK, LATENCY_TOPIC}
-import com.hadoop.study.fraud.detect.dynamic.KafkaUtils
 import com.hadoop.study.fraud.detect.sinks.LatencyType.{DISCARD, KAFKA, PUBSUB, STDOUT}
+import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.functions.sink.{DiscardingSink, PrintSinkFunction, SinkFunction}
 import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSink

@@ -2,8 +2,9 @@ package com.hadoop.study.fraud.detect.functions
 
 import com.hadoop.study.fraud.detect.beans.ControlType.{CLEAR_STATE_ALL, DELETE_RULES_ALL, EXPORT_RULES_CURRENT}
 import com.hadoop.study.fraud.detect.beans.{AlertEvent, Keyed, Rule, RuleState, Transaction}
-import com.hadoop.study.fraud.detect.dynamic.{Descriptors, FieldsExtractor, RuleHelper}
-import com.hadoop.study.fraud.detect.functions.ProcessingUtils.handleBroadcast
+import com.hadoop.study.fraud.detect.dynamic.Descriptors
+import com.hadoop.study.fraud.detect.utils.{FieldsExtractor, StateUtils, RuleHelper}
+import com.hadoop.study.fraud.detect.utils.StateUtils.handleBroadcast
 import org.apache.flink.api.common.accumulators.SimpleAccumulator
 import org.apache.flink.api.common.state.{BroadcastState, MapState, MapStateDescriptor, State}
 import org.apache.flink.configuration.Configuration
@@ -41,7 +42,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
     override def processElement(value: Keyed[Transaction, String, Int], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#ReadOnlyContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
         log.trace("processElement value: {}, alert: {}", value)
         val currentEventTime = value.wrapped.eventTime
-        ProcessingUtils.addValues(windowState, currentEventTime, value.wrapped)
+        StateUtils.addValues(windowState, currentEventTime, value.wrapped)
 
         val ingestionTime = value.wrapped.ingestionTimestamp
         ctx.output(Descriptors.latencySinkTag, System.currentTimeMillis - ingestionTime)

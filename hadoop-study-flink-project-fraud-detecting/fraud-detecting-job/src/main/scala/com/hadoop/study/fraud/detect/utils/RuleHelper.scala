@@ -1,4 +1,4 @@
-package com.hadoop.study.fraud.detect.dynamic
+package com.hadoop.study.fraud.detect.utils
 
 import com.hadoop.study.fraud.detect.accumulators.{AverageAccumulator, BigDecimalCounter, BigDecimalMaximum, BigDecimalMinimum}
 import com.hadoop.study.fraud.detect.beans.AggregatorType.{AVG, MAX, MIN, SUM}

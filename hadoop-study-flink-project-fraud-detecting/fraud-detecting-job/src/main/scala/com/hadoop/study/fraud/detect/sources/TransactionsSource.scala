@@ -3,8 +3,8 @@ package com.hadoop.study.fraud.detect.sources
 import com.hadoop.study.fraud.detect.beans.Transaction
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{DATA_TOPIC, RECORDS_PER_SECOND, TRANSACTIONS_SOURCE}
-import com.hadoop.study.fraud.detect.dynamic.KafkaUtils
 import com.hadoop.study.fraud.detect.functions.{JsonDeserializer, JsonGeneratorWrapper, TimeStamper}
+import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.functions.source.SourceFunction

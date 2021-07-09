@@ -3,9 +3,9 @@ package com.hadoop.study.fraud.detect.sources
 import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters._
-import com.hadoop.study.fraud.detect.dynamic.KafkaUtils
 import com.hadoop.study.fraud.detect.functions.RuleDeserializer
 import com.hadoop.study.fraud.detect.sources.RuleType.{KAFKA, PUBSUB, SOCKET, STATIC}
+import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation

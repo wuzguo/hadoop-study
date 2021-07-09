@@ -1,7 +1,7 @@
-package com.hadoop.study.fraud.detect.functions
+package com.hadoop.study.fraud.detect.utils
 
 import com.hadoop.study.fraud.detect.beans.Rule
-import com.hadoop.study.fraud.detect.beans.RuleState._
+import com.hadoop.study.fraud.detect.beans.RuleState.{ACTIVE, DELETE, PAUSE}
 import org.apache.flink.api.common.state.{BroadcastState, MapState}
 
 /**
@@ -12,7 +12,7 @@ import org.apache.flink.api.common.state.{BroadcastState, MapState}
  * @date 2021/7/8 16:26
  */
 
-object ProcessingUtils {
+object StateUtils {
 
     def handleBroadcast(rule: Rule, broadcastState: BroadcastState[Int, Rule]): Unit = {
         rule.ruleState match {
