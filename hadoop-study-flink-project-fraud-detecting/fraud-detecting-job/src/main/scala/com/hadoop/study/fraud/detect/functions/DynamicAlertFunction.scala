@@ -3,6 +3,7 @@ package com.hadoop.study.fraud.detect.functions
 import com.hadoop.study.fraud.detect.beans.ControlType._
 import com.hadoop.study.fraud.detect.beans.{AlertEvent, Keyed, Rule, RuleState}
 import com.hadoop.study.fraud.detect.dynamic.{Descriptors, FieldsExtractor, RuleHelper, Transaction}
+import com.hadoop.study.fraud.detect.functions.ProcessingUtils.handleRuleBroadcast
 import org.apache.flink.api.common.accumulators.SimpleAccumulator
 import org.apache.flink.api.common.state.{BroadcastState, MapState, MapStateDescriptor}
 import org.apache.flink.configuration.Configuration
@@ -38,7 +39,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
     private val windowStateDescriptor = new MapStateDescriptor[Long, Set[Transaction]]("windowState", classOf[Long], classOf[Set[Transaction]])
 
     override def processElement(value: Keyed[Transaction, String, Int], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#ReadOnlyContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
-
+        log.trace("processElement value: {}, alert: {}", value)
         val currentEventTime = value.wrapped.eventTime
         ProcessingUtils.addToStateValuesSet(windowState, currentEventTime, value.wrapped)
 
@@ -79,12 +80,13 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
         }
     }
 
-    override def processBroadcastElement(rule: Rule, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
-        log.trace("Processing {}", rule)
+    override def processBroadcastElement(value: Rule, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
+        log.trace("processBroadcastElement {}", value)
         val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
-        ProcessingUtils.handleRuleBroadcast(rule, broadcastState)
-        updateWidestWindowRule(rule, broadcastState)
-        if (rule.ruleState eq RuleState.CONTROL) handleControlCommand(rule, broadcastState, ctx)
+        handleRuleBroadcast(value, broadcastState)
+        updateWidestWindowRule(value, broadcastState)
+        if (value.ruleState eq RuleState.CONTROL)
+            handleControlCommand(value, broadcastState, ctx)
     }
 
     override def open(parameters: Configuration): Unit = {
@@ -94,14 +96,13 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
     }
 
     @throws[Exception]
-    private def handleControlCommand(command: Rule, rulesState: BroadcastState[Int, Rule], ctx: Context): Unit = {
-        val controlType = command.controlType
-        controlType match {
+    private def handleControlCommand(command: Rule, rulesState: BroadcastState[Int, Rule], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction,
+      String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context): Unit = {
+        command.controlType match {
             case EXPORT_RULES_CURRENT =>
                 rulesState.entries.forEach(entry => ctx.output(Descriptors.currentRulesSinkTag, entry.getValue))
             case CLEAR_STATE_ALL =>
                 ctx.applyToKeyedState(windowStateDescriptor, (_, state) => state.clear())
-
             case DELETE_RULES_ALL =>
                 val entriesIterator = rulesState.iterator
                 while (entriesIterator.hasNext) {
@@ -137,10 +138,8 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
                 broadcastState.put(WIDEST_RULE_KEY, rule)
     }
 
-    override def onTimer(timestamp: Long, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int],
-      Rule, AlertEvent[Transaction, BigDecimal]]#OnTimerContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
+    override def onTimer(timestamp: Long, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#OnTimerContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
         val widestWindowRule = ctx.getBroadcastState(Descriptors.rulesDescriptor).get(WIDEST_RULE_KEY)
-
         if (widestWindowRule != null) {
             val cleanupEventTimeThreshold = timestamp - widestWindowRule.getWindowMillis
             if (cleanupEventTimeThreshold > 0L) {
