@@ -2,16 +2,17 @@ package com.hadoop.study.fraud.detect.dynamic
 
 import com.hadoop.study.fraud.detect.beans.{AlertEvent, Rule}
 import com.hadoop.study.fraud.detect.config.Config
-import com.hadoop.study.fraud.detect.config.Parameters.{CHECKPOINT_INTERVAL, LOCAL_EXECUTION, LOCAL_MODE_DISABLE_WEB_UI, MIN_PAUSE_BETWEEN_CHECKPOINTS, OUT_OF_ORDERLESS, RULES_SOURCE, SINK_PARALLELISM, SOURCE_PARALLELISM}
+import com.hadoop.study.fraud.detect.config.Parameters._
 import com.hadoop.study.fraud.detect.functions.{AverageAggregate, DynamicAlertFunction, DynamicKeyFunction}
 import com.hadoop.study.fraud.detect.sinks.{AlertsSink, CurrentRulesSink, LatencySink}
-import com.hadoop.study.fraud.detect.sources.{RulesSource, SourceType, TransactionsSource}
+import com.hadoop.study.fraud.detect.sources.{RulesSource, RuleType, TransactionsSource}
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.state.MapStateDescriptor
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.configuration.{Configuration, RestOptions}
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.{DataStream, OutputTag, StreamExecutionEnvironment}
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.slf4j.LoggerFactory
 
@@ -29,49 +30,52 @@ case class RulesEvaluator(config: Config) {
 
     private val log = LoggerFactory.getLogger(classOf[RulesEvaluator])
 
-    @throws[Exception]
     def run(): Unit = {
         // Environment setup
         val env = configureStreamExecutionEnvironment()
-
+        log.info("rules run env: {}", env)
         // Streams setup
         val rulesUpdateStream = getRulesUpdateStream(env)
 
         val transactions = getTransactionsStream(env)
-
         val rulesStream = rulesUpdateStream.broadcast(Descriptors.rulesDescriptor)
 
         // Processing pipeline setup
-        val alerts = transactions.connect(rulesStream)
+        val alertSteam = transactions.connect(rulesStream)
           .process(new DynamicKeyFunction)
-          .uid("DynamicKeyFunction")
+          .uid("Dynamic Key Function")
           .name("Dynamic Partitioning Function")
           .keyBy(_.key)
           .connect(rulesStream)
           .process(new DynamicAlertFunction)
-          .uid("DynamicAlertFunction")
+          .uid("Dynamic Alert Function")
           .name("Dynamic Rule Evaluation Function")
 
-        val latency:DataStream[Long] = alerts.asInstanceOf[SingleOutputStreamOperator[AlertEvent]].getSideOutput(Descriptors.latencySinkTag)
-        val currentRules: DataStream[Rule] = alerts.asInstanceOf[SingleOutputStreamOperator[AlertEvent]].getSideOutput(Descriptors.currentRulesSinkTag)
-        val alertsJson: DataStream[String] = AlertsSink.alertsStreamToJson(alerts)
+        val currentRules = alertSteam.getSideOutput(Descriptors.currentRulesSinkTag)
         val currentRulesJson = CurrentRulesSink.rulesStreamToJson(currentRules)
         val sinkParallelism = config.get(SINK_PARALLELISM)
-        alertsJson.addSink(AlertsSink.createAlertsSink(config)).setParallelism(sinkParallelism).name("Alerts JSON Sink")
         currentRulesJson.addSink(CurrentRulesSink.createRulesSink(config)).setParallelism(sinkParallelism).name("Rules Export Sink")
 
-        val latencies = latency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate).map(value => value.toString)
-        latencies.addSink(LatencySink.createLatencySink(config)).name("Latency Sink")
+        val alertsJson = AlertsSink.alertsStreamToJson(alertSteam)
+        alertsJson.addSink(AlertsSink.createAlertsSink(config)).setParallelism(sinkParallelism).name("Alerts JSON Sink")
+
+        val latency = alertSteam.getSideOutput(Descriptors.latencySinkTag)
+        latency.windowAll(TumblingEventTimeWindows.of(Time.seconds(10)))
+          .aggregate(AverageAggregate())
+          .map(_.toString)
+          .addSink(LatencySink.createLatencySink(config))
+          .name("Latency Sink")
 
         env.execute("Fraud Detection Engine")
     }
 
-    private def getTransactionsStream(env: StreamExecutionEnvironment): DataStream[Transaction] = { // Data stream setup
+    private def getTransactionsStream(env: StreamExecutionEnvironment): DataStream[Transaction] = {
+        // Data stream setup
         val transactionSource = TransactionsSource.createTransactionsSource(config)
         val sourceParallelism = config.get(SOURCE_PARALLELISM)
         val transactionsStringsStream = env.addSource(transactionSource).name("Transactions Source").setParallelism(sourceParallelism)
 
-        val transactionsStream = TransactionsSource.stringsStreamToTransactions(transactionsStringsStream)
+        val transactionsStream = TransactionsSource.streamToTransactions(transactionsStringsStream, log)
         transactionsStream.assignTimestampsAndWatermarks(SimpleBoundedOutOfOrdernessTimestampExtractor[Transaction](config.get(OUT_OF_ORDERLESS)))
     }
 
@@ -85,13 +89,15 @@ case class RulesEvaluator(config: Config) {
 
     private def getRulesSourceType = {
         val rulesSource = config.get(RULES_SOURCE)
-        SourceType.withName(rulesSource.toUpperCase)
+        RuleType.withName(rulesSource.toUpperCase)
     }
 
     private def configureStreamExecutionEnvironment() = {
         val localMode = config.get(LOCAL_EXECUTION)
         var env: StreamExecutionEnvironment = null
-        if (localMode.isEmpty || localMode == LOCAL_MODE_DISABLE_WEB_UI) { // cluster mode or disabled web UI
+
+        // cluster mode or disabled web UI
+        if (localMode.isEmpty || localMode == LOCAL_MODE_DISABLE_WEB_UI) {
             env = StreamExecutionEnvironment.getExecutionEnvironment
         } else {
             val flinkConfig = new Configuration

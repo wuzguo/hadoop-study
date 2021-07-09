@@ -5,7 +5,7 @@ import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{GCP_PROJECT_NAME, GCP_PUBSUB_RULES_SUBSCRIPTION, RULES_EXPORT_SINK, RULES_EXPORT_TOPIC}
 import com.hadoop.study.fraud.detect.dynamic.KafkaUtils
 import com.hadoop.study.fraud.detect.functions.JsonSerializer
-import com.hadoop.study.fraud.detect.sinks.RulesType._
+import com.hadoop.study.fraud.detect.sinks.CurrentRulesType._
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.functions.sink.{PrintSinkFunction, SinkFunction}
@@ -31,7 +31,7 @@ object CurrentRulesSink {
     @throws[IOException]
     def createRulesSink(config: Config): SinkFunction[String] = {
         val sinkType = config.get(RULES_EXPORT_SINK)
-        val currentRulesSinkType = RulesType.withName(sinkType.toUpperCase)
+        val currentRulesSinkType = CurrentRulesType.withName(sinkType.toUpperCase)
         currentRulesSinkType match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initProducerProperties(config)
@@ -46,7 +46,7 @@ object CurrentRulesSink {
             case STDOUT =>
                 new PrintSinkFunction[String](true)
             case _ =>
-                throw new IllegalArgumentException(s"Source ${currentRulesSinkType} unknown. Known values are: ${RulesType.values}")
+                throw new IllegalArgumentException(s"Source ${currentRulesSinkType} unknown. Known values are: ${CurrentRulesType.values}")
         }
     }
 
@@ -54,7 +54,7 @@ object CurrentRulesSink {
         alerts.flatMap(JsonSerializer(classOf[Rule], log)).name("Rules Serialization")
 }
 
-object RulesType extends Enumeration {
+object CurrentRulesType extends Enumeration {
     type RulesType = Value
 
     val KAFKA, PUBSUB, STDOUT, DISCARD = Value

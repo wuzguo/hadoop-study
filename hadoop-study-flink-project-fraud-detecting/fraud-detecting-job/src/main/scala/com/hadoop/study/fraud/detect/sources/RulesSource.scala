@@ -5,7 +5,7 @@ import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters._
 import com.hadoop.study.fraud.detect.dynamic.KafkaUtils
 import com.hadoop.study.fraud.detect.functions.RuleDeserializer
-import com.hadoop.study.fraud.detect.sources.SourceType.{KAFKA, PUBSUB, SOCKET, STATIC}
+import com.hadoop.study.fraud.detect.sources.RuleType.{KAFKA, PUBSUB, SOCKET, STATIC}
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
@@ -30,7 +30,7 @@ object RulesSource {
 
     def create(config: Config): SourceFunction[String] = {
         val sourceType: String = config.get(RULES_SOURCE)
-        val rulesSourceType = SourceType.withName(sourceType.toUpperCase)
+        val rulesSourceType = RuleType.withName(sourceType.toUpperCase)
 
         rulesSourceType match {
             case KAFKA =>
@@ -50,13 +50,12 @@ object RulesSource {
             case STATIC =>
                 RulesStaticJsonGenerator()
             case _ =>
-                throw new IllegalArgumentException(s"Source ${rulesSourceType} unknown. Known values are: ${SourceType.values}")
+                throw new IllegalArgumentException(s"Source ${rulesSourceType} unknown. Known values are: ${RuleType.values}")
         }
     }
 
     def streamToRules(ruleStream: DataStream[String]): DataStream[Rule] =
-        ruleStream
-          .flatMap(RuleDeserializer())
+        ruleStream.flatMap(RuleDeserializer())
           .name("Rule Deserialization")
           .setParallelism(RULES_STREAM_PARALLELISM)
           .assignTimestampsAndWatermarks(
@@ -67,7 +66,8 @@ object RulesSource {
 }
 
 
-object SourceType extends Enumeration {
+object RuleType extends Enumeration {
     type Type = Value
+
     val KAFKA, PUBSUB, SOCKET, STATIC = Value
 }

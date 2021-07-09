@@ -3,7 +3,7 @@ package com.hadoop.study.fraud.detect.sinks
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{GCP_PROJECT_NAME, GCP_PUBSUB_LATENCY_SUBSCRIPTION, LATENCY_SINK, LATENCY_TOPIC}
 import com.hadoop.study.fraud.detect.dynamic.KafkaUtils
-import com.hadoop.study.fraud.detect.sinks.LatencySink.LatencyType._
+import com.hadoop.study.fraud.detect.sinks.LatencyType._
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.functions.sink.{DiscardingSink, PrintSinkFunction, SinkFunction}
 import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSink
@@ -44,10 +44,10 @@ object LatencySink {
                 throw new IllegalArgumentException(s"Source ${latencySinkType} unknown. Known values are: ${LatencyType.values}")
         }
     }
+}
 
-    object LatencyType extends Enumeration {
-        type Type = Value
+object LatencyType extends Enumeration {
+    type Type = Value
 
-        val KAFKA, PUBSUB, STDOUT, DISCARD = Value
-    }
+    val KAFKA, PUBSUB, STDOUT, DISCARD = Value
 }

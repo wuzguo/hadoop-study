@@ -5,7 +5,7 @@ import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{ALERTS_SINK, ALERTS_TOPIC, GCP_PROJECT_NAME, GCP_PUBSUB_ALERTS_SUBSCRIPTION}
 import com.hadoop.study.fraud.detect.dynamic.{KafkaUtils, Transaction}
 import com.hadoop.study.fraud.detect.functions.JsonSerializer
-import com.hadoop.study.fraud.detect.sinks.SinkType._
+import com.hadoop.study.fraud.detect.sinks.AlertsType._
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.functions.sink.{DiscardingSink, PrintSinkFunction, SinkFunction}
@@ -31,7 +31,7 @@ object AlertsSink {
     @throws[IOException]
     def createAlertsSink(config: Config): SinkFunction[String] = {
         val sinkType = config.get(ALERTS_SINK)
-        val alertsSinkType = SinkType.withName(sinkType.toUpperCase)
+        val alertsSinkType = AlertsType.withName(sinkType.toUpperCase)
         alertsSinkType match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initProducerProperties(config)
@@ -48,7 +48,7 @@ object AlertsSink {
             case DISCARD =>
                 new DiscardingSink[String]
             case _ =>
-                throw new IllegalArgumentException(s"Source ${alertsSinkType} unknown. Known values are: ${SinkType.values}")
+                throw new IllegalArgumentException(s"Source ${alertsSinkType} unknown. Known values are: ${AlertsType.values}")
         }
     }
 
@@ -57,7 +57,7 @@ object AlertsSink {
           .name("Alerts Serialization")
 }
 
-object SinkType extends Enumeration {
+object AlertsType extends Enumeration {
     type Type = Value
 
     val KAFKA, PUBSUB, STDOUT, DISCARD = Value

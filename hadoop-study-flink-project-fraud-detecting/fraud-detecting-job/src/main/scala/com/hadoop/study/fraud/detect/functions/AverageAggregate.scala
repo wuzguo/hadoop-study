@@ -10,7 +10,7 @@ import org.apache.flink.api.common.functions.AggregateFunction
  * @date 2021/7/8 13:45
  */
 
-class AverageAggregate extends AggregateFunction[Long, (Long, Long), Double] {
+case class AverageAggregate() extends AggregateFunction[Long, (Long, Long), Double] {
 
     override def createAccumulator(): (Long, Long) = (0, 0)
 

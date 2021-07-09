@@ -23,9 +23,9 @@ object TransactionsSource {
 
     def createTransactionsSource(config: Config): SourceFunction[String] = {
         val sourceType = config.get(TRANSACTIONS_SOURCE)
-        val transactionsSourceType = SourceType.withName(sourceType.toUpperCase)
+        val transactionsSourceType = RuleType.withName(sourceType.toUpperCase)
 
-        if (transactionsSourceType eq SourceType.KAFKA) {
+        if (transactionsSourceType eq RuleType.KAFKA) {
             val kafkaProps = KafkaUtils.initConsumerProperties(config)
             val transactionsTopic = config.get(DATA_TOPIC)
             val kafkaConsumer = new FlinkKafkaConsumer[String](transactionsTopic, new SimpleStringSchema, kafkaProps)
@@ -38,18 +38,17 @@ object TransactionsSource {
         }
     }
 
-    def stringsStreamToTransactions(stringStream: DataStream[String], log: Logger): DataStream[Transaction] =
-        stringStream
-          .flatMap(JsonDeserializer[Transaction](classOf[Transaction], log))
+    def streamToTransactions(stringStream: DataStream[String], log: Logger): DataStream[Transaction] =
+        stringStream.flatMap(JsonDeserializer(classOf[Transaction], log))
           .returns(classOf[Transaction])
-          .flatMap(new TimeStamper)
+          .map(new TimeStamper)
           .returns(classOf[Transaction])
           .name("Transactions Deserialization")
 }
 
 
-object SourceType extends Enumeration {
-    type SourceType = Value
+object TransactionsType extends Enumeration {
+    type Type = Value
 
     val GENERATOR, KAFKA = Value
 }

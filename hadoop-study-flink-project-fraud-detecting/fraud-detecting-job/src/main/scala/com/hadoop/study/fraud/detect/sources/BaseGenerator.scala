@@ -37,7 +37,6 @@ abstract class BaseGenerator[T](var maxRecordsPerSecond: Int = -1) extends RichP
     }
 
     override def initializeState(context: FunctionInitializationContext): Unit = {
-
         idState = context.getOperatorStateStore.getUnionListState(new ListStateDescriptor[Long]("id-state", classOf[Long]))
 
         if (context.isRestored) {
