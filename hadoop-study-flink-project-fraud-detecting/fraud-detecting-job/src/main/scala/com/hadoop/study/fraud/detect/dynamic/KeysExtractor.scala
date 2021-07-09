@@ -18,8 +18,6 @@ object KeysExtractor {
      * @param keyNames list of field names
      * @param value    target for values extraction
      */
-    @throws[NoSuchFieldException]
-    @throws[IllegalAccessException]
     def getKey(keyNames: List[String], value: Any): String = {
         val buffer: ListBuffer[String] = ListBuffer()
 
@@ -36,8 +34,6 @@ object KeysExtractor {
         buffer.toString
     }
 
-    @throws[IllegalAccessException]
-    @throws[NoSuchFieldException]
     private def appendKeyValue(buffer: ListBuffer[String], value: Any, fieldName: String): Unit = {
         buffer.append(fieldName)
         buffer.append("=")

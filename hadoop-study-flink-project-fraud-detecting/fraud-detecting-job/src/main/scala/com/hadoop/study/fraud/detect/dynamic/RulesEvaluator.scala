@@ -1,6 +1,6 @@
 package com.hadoop.study.fraud.detect.dynamic
 
-import com.hadoop.study.fraud.detect.beans.Rule
+import com.hadoop.study.fraud.detect.beans.{Rule, Transaction}
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters._
 import com.hadoop.study.fraud.detect.functions.{AverageAggregate, DynamicAlertFunction, DynamicKeyFunction}

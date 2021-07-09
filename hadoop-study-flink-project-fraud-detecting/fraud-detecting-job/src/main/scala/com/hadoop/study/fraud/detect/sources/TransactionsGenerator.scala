@@ -1,7 +1,7 @@
 package com.hadoop.study.fraud.detect.sources
 
-import com.hadoop.study.fraud.detect.dynamic.PaymentType.PaymentType
-import com.hadoop.study.fraud.detect.dynamic.{PaymentType, Transaction}
+import com.hadoop.study.fraud.detect.beans.PaymentType.PaymentType
+import com.hadoop.study.fraud.detect.beans.{PaymentType, Transaction}
 
 import java.util.SplittableRandom
 import java.util.concurrent.ThreadLocalRandom
@@ -31,13 +31,15 @@ case class TransactionsGenerator(var maxRecordsPerSecond: Int) extends BaseGener
         paymentAmountDouble = Math.floor(paymentAmountDouble * 100) / 100
         val paymentAmount = BigDecimal.valueOf(paymentAmountDouble)
 
-        Transaction(transactionId,
-            System.currentTimeMillis,
-            payeeId,
-            beneficiaryId,
-            paymentAmount,
-            paymentType(transactionId),
-            System.currentTimeMillis)
+        val transaction = new Transaction()
+        transaction.transactionId = transactionId
+        transaction.eventTime = System.currentTimeMillis
+        transaction.payeeId = payeeId
+        transaction.beneficiaryId = beneficiaryId
+        transaction.paymentAmount = paymentAmount
+        transaction.paymentType = paymentType(transactionId)
+        transaction.ingestionTimestamp = System.currentTimeMillis
+        transaction
     }
 
 

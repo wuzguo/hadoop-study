@@ -17,7 +17,7 @@ object RuleHelper {
 
     /* Picks and returns a new accumulator, based on the Rule's aggregator function type. */
     def getAggregator(rule: Rule): SimpleAccumulator[BigDecimal] =
-        rule.aggregatorFunctionType match {
+        rule.aggregatorType match {
             case SUM =>
                 BigDecimalCounter()
             case AVG =>
@@ -27,7 +27,7 @@ object RuleHelper {
             case MIN =>
                 BigDecimalMinimum()
             case _ =>
-                throw new RuntimeException("Unsupported aggregation function type: " + rule.aggregatorFunctionType)
+                throw new RuntimeException("Unsupported aggregation function type: " + rule.aggregatorType)
         }
 
 }

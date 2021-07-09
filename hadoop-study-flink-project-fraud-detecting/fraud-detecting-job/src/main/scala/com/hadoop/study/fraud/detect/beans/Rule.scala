@@ -13,10 +13,23 @@ import org.apache.flink.streaming.api.windowing.time.Time
  * @version 1.0.0
  * @date 2021/7/8 11:10
  */
+class Rule {
 
-case class Rule(ruleId: Int, ruleState: RuleState, groupingKeyNames: List[String], aggregateFieldName: String,
-                aggregatorFunctionType: AggregatorType, limitOperatorType: OperatorType,
-                limit: BigDecimal, windowMinutes: Int) {
+    var ruleId: Int = 0
+
+    var ruleState: RuleState = _
+
+    var groupingKeyNames: List[String] = List()
+
+    var aggregateFieldName: String = _
+
+    var aggregatorType: AggregatorType = _
+
+    var limitOperatorType: OperatorType = _
+
+    var limit: BigDecimal = _
+
+    var windowMinutes: Int = 0
 
     var controlType: ControlType = _
 
@@ -45,7 +58,6 @@ case class Rule(ruleId: Int, ruleState: RuleState, groupingKeyNames: List[String
         timestamp - ruleWindowMillis
     }
 }
-
 
 object AggregatorType extends Enumeration {
     type AggregatorType = Value

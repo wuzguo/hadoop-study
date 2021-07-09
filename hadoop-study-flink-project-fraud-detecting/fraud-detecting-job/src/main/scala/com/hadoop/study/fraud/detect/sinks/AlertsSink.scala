@@ -1,9 +1,9 @@
 package com.hadoop.study.fraud.detect.sinks
 
-import com.hadoop.study.fraud.detect.beans.AlertEvent
+import com.hadoop.study.fraud.detect.beans.{AlertEvent, Transaction}
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{ALERTS_SINK, ALERTS_TOPIC, GCP_PROJECT_NAME, GCP_PUBSUB_ALERTS_SUBSCRIPTION}
-import com.hadoop.study.fraud.detect.dynamic.{KafkaUtils, Transaction}
+import com.hadoop.study.fraud.detect.dynamic.KafkaUtils
 import com.hadoop.study.fraud.detect.functions.JsonSerializer
 import com.hadoop.study.fraud.detect.sinks.AlertsType.{DISCARD, KAFKA, PUBSUB, STDOUT}
 import org.apache.flink.api.common.serialization.SimpleStringSchema

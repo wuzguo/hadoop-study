@@ -30,16 +30,16 @@ object RuleParser {
         if (tokens.size != 8) throw new IOException(s"Invalid rule (wrong number of tokens): ${rules}")
 
         val iter = tokens.iterator
-        Rule(
-            stripBrackets(iter.next).toInt,
-            RuleState.withName(stripBrackets(iter.next).toUpperCase),
-            getNames(iter.next),
-            stripBrackets(iter.next),
-            AggregatorType.withName(stripBrackets(iter.next).toUpperCase),
-            OperatorType.withName(stripBrackets(iter.next)),
-            BigDecimal(stripBrackets(iter.next)),
-            stripBrackets(iter.next).toInt
-        )
+        val rule = new Rule()
+        rule.ruleId = stripBrackets(iter.next).toInt
+        rule.ruleState = RuleState.withName(stripBrackets(iter.next).toUpperCase)
+        rule.groupingKeyNames = getNames(iter.next)
+        rule.aggregateFieldName = stripBrackets(iter.next)
+        rule.aggregatorType = AggregatorType.withName(stripBrackets(iter.next).toUpperCase)
+        rule.limitOperatorType = OperatorType.withName(stripBrackets(iter.next))
+        rule.limit = BigDecimal(stripBrackets(iter.next))
+        rule.windowMinutes =  stripBrackets(iter.next).toInt
+        rule
     }
 
     private def stripBrackets(expr: String) = expr.replaceAll("[()]", "")

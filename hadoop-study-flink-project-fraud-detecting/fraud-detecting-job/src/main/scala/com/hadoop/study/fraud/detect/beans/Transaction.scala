@@ -1,7 +1,7 @@
-package com.hadoop.study.fraud.detect.dynamic
+package com.hadoop.study.fraud.detect.beans
 
-
-import com.hadoop.study.fraud.detect.dynamic.PaymentType.PaymentType
+import com.hadoop.study.fraud.detect.beans.PaymentType.PaymentType
+import com.hadoop.study.fraud.detect.dynamic.TimestampAssignable
 
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneOffset, ZonedDateTime}
@@ -15,8 +15,21 @@ import java.util.Locale
  * @date 2021/7/8 13:50
  */
 
-case class Transaction(transactionId: Long, eventTime: Long, payeeId: Long, beneficiaryId: Long,
-                       paymentAmount: BigDecimal, paymentType: PaymentType, var ingestionTimestamp: Long) extends TimestampAssignable[Long] {
+class Transaction extends TimestampAssignable[Long] {
+
+    var transactionId: Long = 0L
+
+    var eventTime: Long = 0L
+
+    var payeeId: Long = 0L
+
+    var beneficiaryId: Long = 0L
+
+    var paymentAmount: BigDecimal = _
+
+    var paymentType: PaymentType = _
+
+    var ingestionTimestamp: Long = 0L
 
     def assignIngestionTimestamp(timestamp: Long): Unit = {
         this.ingestionTimestamp = timestamp
@@ -33,14 +46,15 @@ object Transaction {
         if (tokens.size != numArgs) throw new RuntimeException("Invalid transaction: " + line + ". Required number of arguments: " + numArgs + " found " + tokens.size)
 
         val iter = tokens.iterator
-        Transaction(iter.next.toLong,
-            ZonedDateTime.parse(iter.next, timeFormatter).toInstant.toEpochMilli,
-            iter.next.toLong,
-            iter.next.toLong,
-            BigDecimal(iter.next),
-            PaymentType.withName(iter.next),
-            iter.next.toLong
-        )
+        val transaction = new Transaction()
+        transaction.transactionId = iter.next.toLong
+        transaction.eventTime = ZonedDateTime.parse(iter.next, timeFormatter).toInstant.toEpochMilli
+        transaction.payeeId = iter.next.toLong
+        transaction.beneficiaryId = iter.next.toLong
+        transaction.paymentAmount = BigDecimal(iter.next)
+        transaction.paymentType = PaymentType.withName(iter.next)
+        transaction.ingestionTimestamp = iter.next.toLong
+        transaction
     }
 }
 
