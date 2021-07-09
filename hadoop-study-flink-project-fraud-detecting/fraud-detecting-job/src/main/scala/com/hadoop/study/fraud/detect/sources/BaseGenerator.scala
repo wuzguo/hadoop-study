@@ -19,13 +19,10 @@ import java.util.SplittableRandom
 
 abstract class BaseGenerator[T](maxRecordsPerSecond: Int = -1) extends RichParallelSourceFunction[T] with CheckpointedFunction {
 
-    private var running = true
-
-    private var id = -1L
-
-    private var idState: ListState[Long] = _
-
     protected var recordsPerSecond = 0
+    private var running = true
+    private var id = -1L
+    private var idState: ListState[Long] = _
 
     checkArgument((maxRecordsPerSecond == -1) || maxRecordsPerSecond > 0, ("maxRecordsPerSecond must be positive or -1 infinite)").asInstanceOf[Any])
     this.recordsPerSecond = maxRecordsPerSecond

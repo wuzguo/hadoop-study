@@ -21,18 +21,18 @@ case class Config() {
         overrideDefaults(inputParams, boolParams)
     }
 
+    private def overrideDefaults[T](inputParams: Parameters, params: List[Param[T]]): Unit = {
+        for (param <- params) {
+            put(param, inputParams.getOrDefault(param))
+        }
+    }
+
     def put[T](key: Param[T], value: T): Unit = {
         values(key) = value
     }
 
     def get[T](key: Param[T]): T = {
         key.cls.cast(values(key))
-    }
-
-    private def overrideDefaults[T](inputParams: Parameters, params: List[Param[T]]): Unit = {
-        for (param <- params) {
-            put(param, inputParams.getOrDefault(param))
-        }
     }
 
 }

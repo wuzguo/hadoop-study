@@ -1,7 +1,7 @@
 package com.hadoop.study.fraud.detect.functions
 
 import com.hadoop.study.fraud.detect.beans.ControlType.ControlType
-import com.hadoop.study.fraud.detect.beans.{ControlType, Keyed, Rule, RuleState, Transaction}
+import com.hadoop.study.fraud.detect.beans._
 import com.hadoop.study.fraud.detect.dynamic.Descriptors
 import com.hadoop.study.fraud.detect.utils.KeysExtractor
 import com.hadoop.study.fraud.detect.utils.StateUtils.handleBroadcast
@@ -35,14 +35,6 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
         forkEventForEachGroupingKey(event, rulesState, out)
     }
 
-    override def processBroadcastElement(value: Rule, ctx: BroadcastProcessFunction[Transaction, Rule, Keyed[Transaction, String, Int]]#Context, out: Collector[Keyed[Transaction, String, Int]]): Unit = {
-        log.trace(s"processBroadcastElement ${value}")
-        val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
-        handleBroadcast(value, broadcastState)
-        if (value.ruleState eq RuleState.CONTROL)
-            handleControlCommand(value.controlType, broadcastState)
-    }
-
     private def forkEventForEachGroupingKey(event: Transaction, rulesState: ReadOnlyBroadcastState[Int, Rule], out: Collector[Keyed[Transaction, String, Int]]): Unit = {
         var ruleCounter = 0
 
@@ -55,6 +47,13 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
         ruleCounterGauge += ruleCounter
     }
 
+    override def processBroadcastElement(value: Rule, ctx: BroadcastProcessFunction[Transaction, Rule, Keyed[Transaction, String, Int]]#Context, out: Collector[Keyed[Transaction, String, Int]]): Unit = {
+        log.trace(s"processBroadcastElement ${value}")
+        val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
+        handleBroadcast(value, broadcastState)
+        if (value.ruleState eq RuleState.CONTROL)
+            handleControlCommand(value.controlType, broadcastState)
+    }
 
     private def handleControlCommand(controlType: ControlType, rulesState: BroadcastState[Int, Rule]): Unit = {
         if (controlType eq ControlType.DELETE_RULES_ALL) {

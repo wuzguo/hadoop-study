@@ -33,8 +33,6 @@ class Rule {
 
     var controlType: ControlType = _
 
-    def getWindowMillis: Long = Time.minutes(this.windowMinutes).toMilliseconds
-
     def apply(comparisonValue: BigDecimal): Boolean =
         limitOperatorType match {
             case EQUAL =>
@@ -57,6 +55,8 @@ class Rule {
         val ruleWindowMillis = getWindowMillis
         timestamp - ruleWindowMillis
     }
+
+    def getWindowMillis: Long = Time.minutes(this.windowMinutes).toMilliseconds
 }
 
 object AggregatorType extends Enumeration {

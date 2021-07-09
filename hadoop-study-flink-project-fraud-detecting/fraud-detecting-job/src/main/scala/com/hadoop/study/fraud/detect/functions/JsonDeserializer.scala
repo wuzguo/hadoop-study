@@ -4,7 +4,6 @@ import com.hadoop.study.fraud.detect.dynamic.JsonMapper
 import org.apache.flink.api.common.functions.RichFlatMapFunction
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.util.Collector
-import org.slf4j.Logger
 
 /**
  * <B>说明：描述</B>

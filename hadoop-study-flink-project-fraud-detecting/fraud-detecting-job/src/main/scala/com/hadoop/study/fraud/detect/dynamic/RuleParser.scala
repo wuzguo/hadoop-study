@@ -38,7 +38,7 @@ object RuleParser {
         rule.aggregatorType = AggregatorType.withName(stripBrackets(iter.next).toUpperCase)
         rule.limitOperatorType = OperatorType.withName(stripBrackets(iter.next))
         rule.limit = BigDecimal(stripBrackets(iter.next))
-        rule.windowMinutes =  stripBrackets(iter.next).toInt
+        rule.windowMinutes = stripBrackets(iter.next).toInt
         rule
     }
 

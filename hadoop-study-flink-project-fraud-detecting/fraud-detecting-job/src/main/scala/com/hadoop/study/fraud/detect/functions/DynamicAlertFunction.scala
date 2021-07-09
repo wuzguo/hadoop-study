@@ -30,12 +30,9 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
     private val COUNT_WITH_RESET = "COUNT_WITH_RESET_FLINK"
 
     private val WIDEST_RULE_KEY = Int.MinValue
-
-    private var windowState: MapState[Long, Set[Transaction]] = _
-
-    private var alertMeter: Meter = _
-
     private val windowStateDescriptor = new MapStateDescriptor[Long, Set[Transaction]]("windowState", classOf[Long], classOf[Set[Transaction]])
+    private var windowState: MapState[Long, Set[Transaction]] = _
+    private var alertMeter: Meter = _
 
     override def processElement(value: Keyed[Transaction, String, Int], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#ReadOnlyContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
         log.trace("processElement value: {}, alert: {}", value)
@@ -79,6 +76,34 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
         }
     }
 
+    private def isStateValueInWindow(stateEventTime: Long, windowStartForEvent: Long, currentEventTime: Long) = stateEventTime >= windowStartForEvent && stateEventTime <= currentEventTime
+
+    private def aggregateValuesInState(stateEventTime: Long, aggregator: SimpleAccumulator[BigDecimal], rule: Rule): Unit = {
+        val inWindow = windowState.get(stateEventTime)
+        if (COUNT.equals(rule.aggregateFieldName) || COUNT_WITH_RESET.equals(rule.aggregateFieldName)) {
+            for (_ <- inWindow) {
+                aggregator.add(BigDecimal(1))
+            }
+        } else {
+            for (event <- inWindow) {
+                val aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.aggregateFieldName, event)
+                aggregator.add(aggregatedValue)
+            }
+        }
+    }
+
+    private def evictAllStateElements(): Unit = {
+        try {
+            val keys = windowState.keys.iterator
+            while (keys.hasNext) {
+                keys.next
+                keys.remove()
+            }
+        } catch {
+            case ex: Exception => throw new RuntimeException(ex)
+        }
+    }
+
     override def processBroadcastElement(value: Rule, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
         log.trace(s"processBroadcastElement ${value}")
         val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
@@ -86,12 +111,6 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
         updateWidestWindowRule(value, broadcastState)
         if (value.ruleState eq RuleState.CONTROL)
             handleControlCommand(value, broadcastState, ctx)
-    }
-
-    override def open(parameters: Configuration): Unit = {
-        windowState = getRuntimeContext.getMapState(windowStateDescriptor)
-        alertMeter = new MeterView(60)
-        getRuntimeContext.getMetricGroup.meter("alertsPerSecond", alertMeter)
     }
 
     private def handleControlCommand(command: Rule, rulesState: BroadcastState[Int, Rule], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context): Unit = {
@@ -110,27 +129,17 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
         }
     }
 
-    private def isStateValueInWindow(stateEventTime: Long, windowStartForEvent: Long, currentEventTime: Long) = stateEventTime >= windowStartForEvent && stateEventTime <= currentEventTime
-
-    private def aggregateValuesInState(stateEventTime: Long, aggregator: SimpleAccumulator[BigDecimal], rule: Rule): Unit = {
-        val inWindow = windowState.get(stateEventTime)
-        if (COUNT.equals(rule.aggregateFieldName) || COUNT_WITH_RESET.equals(rule.aggregateFieldName)) {
-            for (_ <- inWindow) {
-                aggregator.add(BigDecimal(1))
-            }
-        } else {
-            for (event <- inWindow) {
-                val aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.aggregateFieldName, event)
-                aggregator.add(aggregatedValue)
-            }
-        }
-    }
-
     private def updateWidestWindowRule(rule: Rule, broadcastState: BroadcastState[Int, Rule]): Unit = {
         val widestWindowRule = broadcastState.get(WIDEST_RULE_KEY)
         if (widestWindowRule != null && (widestWindowRule.ruleState eq RuleState.ACTIVE))
             if (widestWindowRule.getWindowMillis < rule.getWindowMillis)
                 broadcastState.put(WIDEST_RULE_KEY, rule)
+    }
+
+    override def open(parameters: Configuration): Unit = {
+        windowState = getRuntimeContext.getMapState(windowStateDescriptor)
+        alertMeter = new MeterView(60)
+        getRuntimeContext.getMetricGroup.meter("alertsPerSecond", alertMeter)
     }
 
     override def onTimer(timestamp: Long, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#OnTimerContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
@@ -149,18 +158,6 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
             while (keys.hasNext) {
                 val stateEventTime = keys.next
                 if (stateEventTime < threshold) keys.remove()
-            }
-        } catch {
-            case ex: Exception => throw new RuntimeException(ex)
-        }
-    }
-
-    private def evictAllStateElements(): Unit = {
-        try {
-            val keys = windowState.keys.iterator
-            while (keys.hasNext) {
-                keys.next
-                keys.remove()
             }
         } catch {
             case ex: Exception => throw new RuntimeException(ex)

@@ -19,12 +19,6 @@ case class AverageAccumulator(var count: Long, var sum: BigDecimal) extends Simp
         sum += value
     }
 
-    override def getLocalValue: BigDecimal = {
-        if (count == 0L) return BigDecimal(0)
-
-        this.sum / BigDecimal(count) round MathContext.UNLIMITED
-    }
-
     override def resetLocal(): Unit = {
         count = 0L
         sum = BigDecimal(0)
@@ -40,4 +34,10 @@ case class AverageAccumulator(var count: Long, var sum: BigDecimal) extends Simp
     }
 
     override def toString: String = s"AverageAccumulator ${getLocalValue} for ${count} elements"
+
+    override def getLocalValue: BigDecimal = {
+        if (count == 0L) return BigDecimal(0)
+
+        this.sum / BigDecimal(count) round MathContext.UNLIMITED
+    }
 }

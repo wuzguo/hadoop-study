@@ -22,8 +22,6 @@ object KafkaUtils {
         kafkaProps
     }
 
-    def initProducerProperties(params: Config): Properties = initProperties(params)
-
     private def initProperties(config: Config): Properties = {
         val kafkaProps = new Properties()
         val kafkaHost = config.get(KAFKA_HOST)
@@ -32,4 +30,6 @@ object KafkaUtils {
         kafkaProps.setProperty("bootstrap.servers", servers)
         kafkaProps
     }
+
+    def initProducerProperties(params: Config): Properties = initProperties(params)
 }
