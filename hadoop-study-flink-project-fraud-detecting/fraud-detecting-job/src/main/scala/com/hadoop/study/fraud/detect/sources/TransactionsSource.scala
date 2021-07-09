@@ -5,8 +5,9 @@ import com.hadoop.study.fraud.detect.config.Parameters.{DATA_TOPIC, RECORDS_PER_
 import com.hadoop.study.fraud.detect.dynamic.{KafkaUtils, Transaction}
 import com.hadoop.study.fraud.detect.functions.{JsonDeserializer, JsonGeneratorWrapper, TimeStamper}
 import org.apache.flink.api.common.serialization.SimpleStringSchema
-import org.apache.flink.streaming.api.datastream.DataStream
+import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.functions.source.SourceFunction
+import org.apache.flink.streaming.api.scala.DataStream
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 import org.slf4j.Logger
 
@@ -22,8 +23,8 @@ object TransactionsSource {
 
     def createTransactionsSource(config: Config): SourceFunction[String] = {
         val sourceType = config.get(TRANSACTIONS_SOURCE)
-
         val transactionsSourceType = SourceType.withName(sourceType.toUpperCase)
+
         if (transactionsSourceType eq SourceType.KAFKA) {
             val kafkaProps = KafkaUtils.initConsumerProperties(config)
             val transactionsTopic = config.get(DATA_TOPIC)
@@ -39,7 +40,7 @@ object TransactionsSource {
 
     def stringsStreamToTransactions(stringStream: DataStream[String], log: Logger): DataStream[Transaction] =
         stringStream
-          .flatMap(JsonDeserializer(classOf[Transaction], log))
+          .flatMap(JsonDeserializer[Transaction](classOf[Transaction], log))
           .returns(classOf[Transaction])
           .flatMap(new TimeStamper)
           .returns(classOf[Transaction])

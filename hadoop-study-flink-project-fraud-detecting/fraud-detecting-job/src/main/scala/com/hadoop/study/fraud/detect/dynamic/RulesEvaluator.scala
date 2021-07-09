@@ -10,14 +10,12 @@ import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.state.MapStateDescriptor
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.configuration.{Configuration, RestOptions}
-import org.apache.flink.streaming.api.datastream.{DataStream, SingleOutputStreamOperator}
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
-import org.apache.flink.streaming.api.scala.{OutputTag, StreamExecutionEnvironment}
+import org.apache.flink.streaming.api.scala.{DataStream, OutputTag, StreamExecutionEnvironment}
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.slf4j.LoggerFactory
 
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 
 /**
  * <B>说明：描述</B>
