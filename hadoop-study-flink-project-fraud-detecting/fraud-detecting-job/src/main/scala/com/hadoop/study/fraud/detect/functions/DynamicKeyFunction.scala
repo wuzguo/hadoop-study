@@ -26,7 +26,7 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
     private var ruleCounterGauge: RuleCounterGauge = _
 
     override def open(parameters: Configuration): Unit = {
-        ruleCounterGauge = new RuleCounterGauge
+        ruleCounterGauge = RuleCounterGauge()
         getRuntimeContext.getMetricGroup.gauge("numberOfActiveRules", ruleCounterGauge)
     }
 
@@ -38,7 +38,7 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
     }
 
     override def processBroadcastElement(value: Rule, ctx: BroadcastProcessFunction[Transaction, Rule, Keyed[Transaction, String, Int]]#Context, out: Collector[Keyed[Transaction, String, Int]]): Unit = {
-        log.trace("processBroadcastElement {}", value)
+        log.trace(s"processBroadcastElement ${value}")
         val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
         handleRuleBroadcast(value, broadcastState)
         if (value.ruleState eq RuleState.CONTROL)
@@ -64,19 +64,20 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
             while (iter.hasNext) {
                 val ruleEntry = iter.next
                 rulesState.remove(ruleEntry.getKey)
-                log.trace("Removed {}", ruleEntry.getValue)
+                log.trace(s"Removed ${ruleEntry.getValue}")
             }
         }
     }
 }
 
 
-private class RuleCounterGauge extends Gauge[String] {
+case class RuleCounterGauge() extends Gauge[Int] {
+
     private var value = 0
 
     def setValue(value: Int): Unit = {
         this.value = value
     }
 
-    def getValue: Integer = value
+    def getValue: Int = value
 }

@@ -25,11 +25,11 @@ abstract class BaseGenerator[T](var maxRecordsPerSecond: Int = -1) extends RichP
 
     private var idState: ListState[Long] = _
 
-    protected var maxRecordsPerSecond = 0
+    protected var recordsPerSecond = 0
 
-    checkArgument((maxRecordsPerSecond - 1) || maxRecordsPerSecond > 0, "maxRecordsPerSecond must be positive or -1 (infinite)")
+    checkArgument((maxRecordsPerSecond - 1) || maxRecordsPerSecond > 0, ("maxRecordsPerSecond must be positive or -1 (infinite)").asInstanceOf[Any])
 
-    this.maxRecordsPerSecond = maxRecordsPerSecond
+    this.recordsPerSecond = maxRecordsPerSecond
 
     override def snapshotState(context: FunctionSnapshotContext): Unit = {
         idState.clear()

@@ -24,7 +24,7 @@ case class JsonSerializer[T](sourceClass: Class[T], log: Logger) extends RichFla
             val serialized = parser.to(value)
             out.collect(serialized)
         } catch {
-            case e: Exception => log.warn("Failed serializing {} to JSON, dropping it: {}", sourceClass, e)
+            case e: Exception => log.warn(s"Failed serializing ${sourceClass} to JSON, dropping it: ${e}")
         }
     }
 

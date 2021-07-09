@@ -5,7 +5,8 @@ import com.hadoop.study.fraud.detect.beans.{AlertEvent, Keyed, Rule, RuleState}
 import com.hadoop.study.fraud.detect.dynamic.{Descriptors, FieldsExtractor, RuleHelper, Transaction}
 import com.hadoop.study.fraud.detect.functions.ProcessingUtils.handleRuleBroadcast
 import org.apache.flink.api.common.accumulators.SimpleAccumulator
-import org.apache.flink.api.common.state.{BroadcastState, MapState, MapStateDescriptor}
+import org.apache.flink.api.common.state.{BroadcastState, MapState, MapStateDescriptor, State}
+import org.apache.flink.api.common.typeinfo.{BasicTypeInfo, TypeHint, TypeInformation}
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.metrics.{Meter, MeterView}
 import org.apache.flink.streaming.api.functions.co.KeyedBroadcastProcessFunction
@@ -70,7 +71,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
 
             val aggregateResult = aggregator.getLocalValue
             val ruleResult = rule.apply(aggregateResult)
-            log.info("Rule {} | {} : {} -> {}", rule.ruleId, value.key, aggregateResult, ruleResult)
+            log.trace(s"Rule ${rule.ruleId} | ${value.key} : ${aggregateResult} -> ${ruleResult}")
             if (ruleResult) {
                 if (COUNT_WITH_RESET.equals(rule.aggregateFieldName))
                     evictAllStateElements()
@@ -81,7 +82,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
     }
 
     override def processBroadcastElement(value: Rule, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
-        log.trace("processBroadcastElement {}", value)
+        log.trace(s"processBroadcastElement ${value}")
         val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
         handleRuleBroadcast(value, broadcastState)
         updateWidestWindowRule(value, broadcastState)
@@ -95,19 +96,18 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
         getRuntimeContext.getMetricGroup.meter("alertsPerSecond", alertMeter)
     }
 
-    private def handleControlCommand(command: Rule, rulesState: BroadcastState[Int, Rule], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction,
-      String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context): Unit = {
+    private def handleControlCommand(command: Rule, rulesState: BroadcastState[Int, Rule], ctx: Context): Unit = {
         command.controlType match {
             case EXPORT_RULES_CURRENT =>
                 rulesState.entries.forEach(entry => ctx.output(Descriptors.currentRulesSinkTag, entry.getValue))
             case CLEAR_STATE_ALL =>
-                ctx.applyToKeyedState(windowStateDescriptor, (_, state: mutable.Set[Transaction]) => state.clear())
+                ctx.applyToKeyedState(windowStateDescriptor, (_, state) => state.clear())
             case DELETE_RULES_ALL =>
                 val entriesIterator = rulesState.iterator
                 while (entriesIterator.hasNext) {
                     val ruleEntry = entriesIterator.next
                     rulesState.remove(ruleEntry.getKey)
-                    log.trace("Removed {}", ruleEntry.getValue)
+                    log.trace(s"Removed ${ruleEntry.getValue}")
                 }
         }
     }
