@@ -14,17 +14,13 @@ import org.slf4j.Logger
  * @date 2021/7/8 15:35
  */
 
-case class JsonDeserializer[T](targetClass: Class[T], log: Logger) extends RichFlatMapFunction[String, T] {
+case class JsonDeserializer[T](targetClass: Class[T]) extends RichFlatMapFunction[String, T] {
 
     private var parser: JsonMapper[T] = _
 
     override def flatMap(value: String, out: Collector[T]): Unit = {
-        try {
-            val parsed = parser.from(value)
-            out.collect(parsed)
-        } catch {
-            case e: Exception => log.warn(s"Failed parsing ${targetClass}, dropping it: ${e}")
-        }
+        val parsed = parser.from(value)
+        out.collect(parsed)
     }
 
     override def open(parameters: Configuration): Unit = parser = JsonMapper(targetClass)

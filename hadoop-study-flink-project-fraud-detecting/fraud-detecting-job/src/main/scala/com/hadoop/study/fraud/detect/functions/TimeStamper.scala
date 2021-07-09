@@ -1,8 +1,7 @@
 package com.hadoop.study.fraud.detect.functions
 
 import com.hadoop.study.fraud.detect.dynamic.TimestampAssignable
-import org.apache.flink.api.common.functions.RichFlatMapFunction
-import org.apache.flink.util.Collector
+import org.apache.flink.api.common.functions.MapFunction
 
 /**
  * <B>说明：描述</B>
@@ -12,10 +11,10 @@ import org.apache.flink.util.Collector
  * @date 2021/7/8 16:46
  */
 
-class TimeStamper[T <: TimestampAssignable[Long]] extends RichFlatMapFunction[T, T] {
+class TimeStamper[T <: TimestampAssignable[Long]] extends MapFunction[T, T] {
 
-    override def flatMap(value: T, out: Collector[T]): Unit = {
+    override def map(value: T): T = {
         value.assignIngestionTimestamp(System.currentTimeMillis)
-        out.collect(value)
+        value
     }
 }

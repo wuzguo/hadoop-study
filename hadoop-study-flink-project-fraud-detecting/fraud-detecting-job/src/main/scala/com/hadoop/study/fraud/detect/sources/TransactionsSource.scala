@@ -9,7 +9,6 @@ import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.scala.DataStream
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
-import org.slf4j.Logger
 
 /**
  * <B>说明：描述</B>
@@ -38,11 +37,9 @@ object TransactionsSource {
         }
     }
 
-    def streamToTransactions(stringStream: DataStream[String], log: Logger): DataStream[Transaction] =
-        stringStream.flatMap(JsonDeserializer(classOf[Transaction], log))
-          .returns(classOf[Transaction])
-          .map(new TimeStamper)
-          .returns(classOf[Transaction])
+    def streamToTransactions(stringStream: DataStream[String]): DataStream[Transaction] =
+        stringStream.flatMap(JsonDeserializer(classOf[Transaction]))
+          .map(new TimeStamper[Transaction])
           .name("Transactions Deserialization")
 }
 
