@@ -16,7 +16,7 @@ import java.util.SplittableRandom
 
 case class JsonGeneratorWrapper[T](wrappedGenerator: BaseGenerator[T]) extends BaseGenerator[String] {
 
-    private val objectMapper = new ObjectMapper
+    private val objectMapper = new ObjectMapper()
 
     override def randomEvent(splitRandom: SplittableRandom, id: Long): String = {
         val transaction = wrappedGenerator.randomEvent(splitRandom, id)

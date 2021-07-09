@@ -22,16 +22,15 @@ object TransactionsSource {
 
     def createTransactionsSource(config: Config): SourceFunction[String] = {
         val sourceType = config.get(TRANSACTIONS_SOURCE)
-        val transactionsSourceType = RuleType.withName(sourceType.toUpperCase)
+        val transactionsSourceType = TransactionsType.withName(sourceType.toUpperCase)
 
-        if (transactionsSourceType eq RuleType.KAFKA) {
+        if (transactionsSourceType eq TransactionsType.KAFKA) {
             val kafkaProps = KafkaUtils.initConsumerProperties(config)
             val transactionsTopic = config.get(DATA_TOPIC)
             val kafkaConsumer = new FlinkKafkaConsumer[String](transactionsTopic, new SimpleStringSchema, kafkaProps)
             kafkaConsumer.setStartFromLatest()
             kafkaConsumer
-        }
-        else {
+        } else {
             val transactionsPerSecond = config.get(RECORDS_PER_SECOND)
             JsonGeneratorWrapper(TransactionsGenerator(transactionsPerSecond))
         }
