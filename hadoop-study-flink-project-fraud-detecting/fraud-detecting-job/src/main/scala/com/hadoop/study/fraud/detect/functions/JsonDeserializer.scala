@@ -23,7 +23,7 @@ case class JsonDeserializer[T](targetClass: Class[T], log: Logger) extends RichF
             val parsed = parser.from(value)
             out.collect(parsed)
         } catch {
-            case e: Exception => log.warn("Failed parsing {}, dropping it: ", targetClass, e)
+            case e: Exception => log.warn("Failed parsing {}, dropping it: {}", targetClass, e)
         }
     }
 

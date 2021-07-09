@@ -1,6 +1,6 @@
 package com.hadoop.study.fraud.detect.sources
 
-import org.apache.flink.util.Preconditions
+import org.apache.flink.util.Preconditions.checkArgument
 
 /**
  * <B>说明：描述</B>
@@ -14,8 +14,10 @@ final class Throttler(var throttleBatchSize: Long = 0L, var nanosPerBatch: Long 
 
     def this(maxRecordsPerSecond: Long, numberOfParallelSubtasks: Int) {
         this()
-        Preconditions.checkArgument(maxRecordsPerSecond == -1 || maxRecordsPerSecond > 0, "maxRecordsPerSecond must be positive or -1 (infinite)")
-        Preconditions.checkArgument(numberOfParallelSubtasks > 0, "numberOfParallelSubtasks must be greater than 0")
+
+        checkArgument(maxRecordsPerSecond == -1L || maxRecordsPerSecond > 0L, "maxRecordsPerSecond must be positive or -1 (infinite)")
+        checkArgument(numberOfParallelSubtasks > 0, "numberOfParallelSubtasks must be greater than 0")
+
         // unlimited speed
         if (maxRecordsPerSecond == -1) {
             throttleBatchSize = -1

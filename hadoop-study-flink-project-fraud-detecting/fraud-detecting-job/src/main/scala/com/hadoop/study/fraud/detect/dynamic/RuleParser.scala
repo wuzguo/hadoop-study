@@ -27,7 +27,7 @@ object RuleParser {
 
     private def parsePlain(rules: String): Rule = {
         val tokens = rules.split(",")
-        if (tokens.size ne 8) throw new IOException(s"Invalid rule (wrong number of tokens): ${rules}")
+        if (tokens.size != 8) throw new IOException(s"Invalid rule (wrong number of tokens): ${rules}")
 
         val iter = tokens.iterator
         Rule(

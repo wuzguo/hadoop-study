@@ -1,6 +1,6 @@
 package com.hadoop.study.fraud.detect.functions
 
-import com.hadoop.study.fraud.detect.beans.ControlType._
+import com.hadoop.study.fraud.detect.beans.ControlType.{CLEAR_STATE_ALL, DELETE_RULES_ALL, EXPORT_RULES_CURRENT}
 import com.hadoop.study.fraud.detect.beans.{AlertEvent, Keyed, Rule, RuleState}
 import com.hadoop.study.fraud.detect.dynamic.{Descriptors, FieldsExtractor, RuleHelper, Transaction}
 import com.hadoop.study.fraud.detect.functions.ProcessingUtils.handleRuleBroadcast
@@ -30,13 +30,13 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
 
     private val COUNT_WITH_RESET = "COUNT_WITH_RESET_FLINK"
 
-    private val WIDEST_RULE_KEY = Integer.MIN_VALUE
+    private val WIDEST_RULE_KEY = Int.MinValue
 
     private var windowState: MapState[Long, mutable.Set[Transaction]] = _
 
     private var alertMeter: Meter = _
 
-    private val windowStateDescriptor = new MapStateDescriptor[Long, Set[Transaction]]("windowState", classOf[Long], classOf[Set[Transaction]])
+    private val windowStateDescriptor = new MapStateDescriptor[Long, mutable.Set[Transaction]]("windowState", classOf[Long], classOf[mutable.Set[Transaction]])
 
     override def processElement(value: Keyed[Transaction, String, Int], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#ReadOnlyContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
         log.trace("processElement value: {}, alert: {}", value)
@@ -70,7 +70,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
 
             val aggregateResult = aggregator.getLocalValue
             val ruleResult = rule.apply(aggregateResult)
-            log.trace("Rule {} | {} : {} -> {}", rule.ruleId, value.key, aggregateResult, ruleResult)
+            log.info("Rule {} | {} : {} -> {}", rule.ruleId, value.key, aggregateResult, ruleResult)
             if (ruleResult) {
                 if (COUNT_WITH_RESET.equals(rule.aggregateFieldName))
                     evictAllStateElements()
@@ -95,14 +95,13 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
         getRuntimeContext.getMetricGroup.meter("alertsPerSecond", alertMeter)
     }
 
-    @throws[Exception]
     private def handleControlCommand(command: Rule, rulesState: BroadcastState[Int, Rule], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction,
       String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context): Unit = {
         command.controlType match {
             case EXPORT_RULES_CURRENT =>
                 rulesState.entries.forEach(entry => ctx.output(Descriptors.currentRulesSinkTag, entry.getValue))
             case CLEAR_STATE_ALL =>
-                ctx.applyToKeyedState(windowStateDescriptor, (_, state) => state.clear())
+                ctx.applyToKeyedState(windowStateDescriptor, (_, state: mutable.Set[Transaction]) => state.clear())
             case DELETE_RULES_ALL =>
                 val entriesIterator = rulesState.iterator
                 while (entriesIterator.hasNext) {
@@ -115,7 +114,6 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
 
     private def isStateValueInWindow(stateEventTime: Long, windowStartForEvent: Long, currentEventTime: Long) = stateEventTime >= windowStartForEvent && stateEventTime <= currentEventTime
 
-    @throws[Exception]
     private def aggregateValuesInState(stateEventTime: Long, aggregator: SimpleAccumulator[BigDecimal], rule: Rule): Unit = {
         val inWindow = windowState.get(stateEventTime)
         if (COUNT.equals(rule.aggregateFieldName) || COUNT_WITH_RESET.equals(rule.aggregateFieldName)) {
@@ -130,7 +128,6 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
         }
     }
 
-    @throws[Exception]
     private def updateWidestWindowRule(rule: Rule, broadcastState: BroadcastState[Int, Rule]): Unit = {
         val widestWindowRule = broadcastState.get(WIDEST_RULE_KEY)
         if (widestWindowRule != null && (widestWindowRule.ruleState eq RuleState.ACTIVE))

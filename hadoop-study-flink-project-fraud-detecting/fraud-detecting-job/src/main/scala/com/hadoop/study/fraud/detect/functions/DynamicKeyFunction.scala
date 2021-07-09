@@ -1,9 +1,11 @@
 package com.hadoop.study.fraud.detect.functions
 
 import com.hadoop.study.fraud.detect.beans.ControlType.ControlType
-import com.hadoop.study.fraud.detect.beans.{ControlType, Keyed, Rule}
+import com.hadoop.study.fraud.detect.beans.{ControlType, Keyed, Rule, RuleState}
 import com.hadoop.study.fraud.detect.dynamic.{Descriptors, KeysExtractor, Transaction}
+import com.hadoop.study.fraud.detect.functions.ProcessingUtils.handleRuleBroadcast
 import org.apache.flink.api.common.state.{BroadcastState, ReadOnlyBroadcastState}
+import org.apache.flink.configuration.Configuration
 import org.apache.flink.metrics.Gauge
 import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction
 import org.apache.flink.util.Collector
@@ -23,7 +25,7 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
 
     private var ruleCounterGauge: RuleCounterGauge = _
 
-    def open(parameters: Nothing): Unit = {
+    override def open(parameters: Configuration): Unit = {
         ruleCounterGauge = new RuleCounterGauge
         getRuntimeContext.getMetricGroup.gauge("numberOfActiveRules", ruleCounterGauge)
     }
@@ -35,9 +37,12 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
         forkEventForEachGroupingKey(event, rulesState, out)
     }
 
-    override def processBroadcastElement(value: Rule, ctx: BroadcastProcessFunction[Transaction, Rule,
-      Keyed[Transaction, String, Int]]#Context, out: Collector[Keyed[Transaction, String, Int]]): Unit = {
-
+    override def processBroadcastElement(value: Rule, ctx: BroadcastProcessFunction[Transaction, Rule, Keyed[Transaction, String, Int]]#Context, out: Collector[Keyed[Transaction, String, Int]]): Unit = {
+        log.trace("processBroadcastElement {}", value)
+        val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
+        handleRuleBroadcast(value, broadcastState)
+        if (value.ruleState eq RuleState.CONTROL)
+            handleControlCommand(value.controlType, broadcastState)
     }
 
     private def forkEventForEachGroupingKey(event: Transaction, rulesState: ReadOnlyBroadcastState[Int, Rule], out: Collector[Keyed[Transaction, String, Int]]): Unit = {
@@ -53,11 +58,11 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
     }
 
 
-    private def handleControlCommand(controlType: ControlType, rulesState: BroadcastState[Integer, Nothing]): Unit = {
+    private def handleControlCommand(controlType: ControlType, rulesState: BroadcastState[Int, Rule]): Unit = {
         if (controlType eq ControlType.DELETE_RULES_ALL) {
-            val entriesIterator = rulesState.iterator
-            while (entriesIterator.hasNext) {
-                val ruleEntry = entriesIterator.next
+            val iter = rulesState.iterator
+            while (iter.hasNext) {
+                val ruleEntry = iter.next
                 rulesState.remove(ruleEntry.getKey)
                 log.trace("Removed {}", ruleEntry.getValue)
             }

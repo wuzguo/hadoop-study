@@ -16,7 +16,6 @@ import scala.collection.mutable
 
 object ProcessingUtils {
 
-    @throws[Exception]
     def handleRuleBroadcast(rule: Rule, broadcastState: BroadcastState[Int, Rule]): Unit = {
         rule.ruleState match {
             case ACTIVE =>
@@ -27,7 +26,6 @@ object ProcessingUtils {
         }
     }
 
-    @throws[Exception]
     def addToStateValuesSet[K, V](mapState: MapState[K, mutable.Set[V]], key: K, value: V): mutable.Set[V] = {
         var values = mapState.get(key)
         if (values != null) values.add(value)

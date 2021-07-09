@@ -21,6 +21,10 @@ object Param {
         Param(name, classOf[Integer], default)
     }
 
+    def long(name: String, default: Long): Param[Long] = {
+        Param(name, classOf[Long], default)
+    }
+
     def bool(name: String, default: Boolean): Param[Boolean] = {
         Param(name, classOf[Boolean], default)
     }

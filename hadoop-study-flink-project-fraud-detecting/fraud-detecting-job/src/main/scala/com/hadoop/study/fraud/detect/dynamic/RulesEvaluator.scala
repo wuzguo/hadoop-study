@@ -1,11 +1,11 @@
 package com.hadoop.study.fraud.detect.dynamic
 
-import com.hadoop.study.fraud.detect.beans.{AlertEvent, Rule}
+import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters._
 import com.hadoop.study.fraud.detect.functions.{AverageAggregate, DynamicAlertFunction, DynamicKeyFunction}
 import com.hadoop.study.fraud.detect.sinks.{AlertsSink, CurrentRulesSink, LatencySink}
-import com.hadoop.study.fraud.detect.sources.{RulesSource, RuleType, TransactionsSource}
+import com.hadoop.study.fraud.detect.sources.{RuleType, RulesSource, TransactionsSource}
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.state.MapStateDescriptor
 import org.apache.flink.api.scala.createTypeInformation
@@ -17,6 +17,7 @@ import org.apache.flink.streaming.api.windowing.time.Time
 import org.slf4j.LoggerFactory
 
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 /**
  * <B>说明：描述</B>
@@ -94,21 +95,22 @@ case class RulesEvaluator(config: Config) {
 
     private def configureStreamExecutionEnvironment() = {
         val localMode = config.get(LOCAL_EXECUTION)
-        var env: StreamExecutionEnvironment = null
 
-        // cluster mode or disabled web UI
-        if (localMode.isEmpty || localMode == LOCAL_MODE_DISABLE_WEB_UI) {
-            env = StreamExecutionEnvironment.getExecutionEnvironment
-        } else {
-            val flinkConfig = new Configuration
-            flinkConfig.set(RestOptions.BIND_PORT, localMode)
-            env = StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(flinkConfig)
+        val env: StreamExecutionEnvironment =
+            if (localMode.isEmpty || localMode == LOCAL_MODE_DISABLE_WEB_UI) {
+                StreamExecutionEnvironment.getExecutionEnvironment
+            } else {
+                val flinkConfig = new Configuration
+                flinkConfig.set(RestOptions.BIND_PORT, localMode)
+                StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(flinkConfig)
+            }
+
+        // slower restarts inside the IDE and other local runs 10s
+        if (localMode.nonEmpty) {
+            env.setRestartStrategy(RestartStrategies.fixedDelayRestart(10, 10 * 1000))
         }
-        if (localMode.nonEmpty) { // slower restarts inside the IDE and other local runs
-            env.setRestartStrategy(RestartStrategies.fixedDelayRestart(10, org.apache.flink.api.common.time.Time.of(10, TimeUnit.SECONDS)))
-        }
-        env.getCheckpointConfig.setCheckpointInterval(config.get(CHECKPOINT_INTERVAL))
-        env.getCheckpointConfig.setMinPauseBetweenCheckpoints(config.get(MIN_PAUSE_BETWEEN_CHECKPOINTS))
+        env.getCheckpointConfig.setCheckpointInterval(config.get(CHECKPOINT_INTERVAL).longValue())
+        env.getCheckpointConfig.setMinPauseBetweenCheckpoints(config.get(MIN_PAUSE_BETWEEN_CHECKPOINTS).longValue())
         env
     }
 }

@@ -8,7 +8,6 @@ import org.apache.flink.streaming.api.functions.source.{RichParallelSourceFuncti
 import org.apache.flink.util.Preconditions.checkArgument
 
 import java.util.SplittableRandom
-import scala.language.postfixOps
 
 /**
  * <B>说明：描述</B>
@@ -28,7 +27,8 @@ abstract class BaseGenerator[T](var maxRecordsPerSecond: Int = -1) extends RichP
 
     protected var maxRecordsPerSecond = 0
 
-    checkArgument((maxRecordsPerSecond - 1) || maxRecordsPerSecond > 0, "maxRecordsPerSecond must be positive or -1" + " (infinite)")
+    checkArgument((maxRecordsPerSecond - 1) || maxRecordsPerSecond > 0, "maxRecordsPerSecond must be positive or -1 (infinite)")
+
     this.maxRecordsPerSecond = maxRecordsPerSecond
 
     override def snapshotState(context: FunctionSnapshotContext): Unit = {

@@ -5,7 +5,7 @@ import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{GCP_PROJECT_NAME, GCP_PUBSUB_RULES_SUBSCRIPTION, RULES_EXPORT_SINK, RULES_EXPORT_TOPIC}
 import com.hadoop.study.fraud.detect.dynamic.KafkaUtils
 import com.hadoop.study.fraud.detect.functions.JsonSerializer
-import com.hadoop.study.fraud.detect.sinks.CurrentRulesType._
+import com.hadoop.study.fraud.detect.sinks.CurrentRulesType.{KAFKA, PUBSUB, STDOUT}
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.functions.sink.{PrintSinkFunction, SinkFunction}

@@ -1,6 +1,8 @@
 package com.hadoop.study.fraud.detect.beans
 
-import com.hadoop.study.fraud.detect.beans.OperatorType._
+import com.hadoop.study.fraud.detect.beans.AggregatorType.AggregatorType
+import com.hadoop.study.fraud.detect.beans.ControlType.ControlType
+import com.hadoop.study.fraud.detect.beans.OperatorType.{EQUAL, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL, NOT_EQUAL, OperatorType}
 import com.hadoop.study.fraud.detect.beans.RuleState.RuleState
 import org.apache.flink.streaming.api.windowing.time.Time
 
@@ -13,19 +15,19 @@ import org.apache.flink.streaming.api.windowing.time.Time
  */
 
 case class Rule(ruleId: Int, ruleState: RuleState, groupingKeyNames: List[String], aggregateFieldName: String,
-                aggregatorFunctionType: RuleState, limitOperatorType: RuleState,
+                aggregatorFunctionType: AggregatorType, limitOperatorType: OperatorType,
                 limit: BigDecimal, windowMinutes: Int) {
 
-    var controlType: RuleState = _
+    var controlType: ControlType = _
 
     def getWindowMillis: Long = Time.minutes(this.windowMinutes).toMilliseconds
 
     def apply(comparisonValue: BigDecimal): Boolean =
         limitOperatorType match {
             case EQUAL =>
-                comparisonValue.compareTo(limit) eq 0
+                comparisonValue.compareTo(limit) == 0
             case NOT_EQUAL =>
-                comparisonValue.compareTo(limit) ne 0
+                comparisonValue.compareTo(limit) != 0
             case GREATER =>
                 comparisonValue.compareTo(limit) > 0
             case LESS =>
