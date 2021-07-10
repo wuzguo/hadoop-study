@@ -72,7 +72,8 @@ object Table_CommonApi {
         // 3.2 SQL
         tableEnv.sqlQuery("select id, temp from sensors where id = 'sensor_6'")
         val sqlAggTable = tableEnv.sqlQuery("select id, count(id) as cnt, avg(temp) as avgTemp from sensors group by id")
-        sqlAggTable.toRetractStream[Row].print()
+        val sqlAggStream = sqlAggTable.toRetractStream[Row]
+        sqlAggStream.print()
 
         // 执行
         env.execute("Table CommonApi")

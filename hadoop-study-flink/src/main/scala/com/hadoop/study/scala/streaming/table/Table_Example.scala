@@ -40,13 +40,15 @@ object Table_Example {
 
         // 5. 调用table API进行转换操作 DSL
         val resultTable = dataTable.select($"id", $"temp").where($("id").isEqual("sensor_1"))
-        resultTable.toAppendStream[Row].print("result ")
+        val resultStream = resultTable.toAppendStream[Row]
+        resultStream.print("result ")
 
         // 6. 创建视图，执行SQL
         tableEnv.createTemporaryView("sensor", dataTable)
         val sql = "select * from sensor where id = 'sensor_1'"
         val resultSqlTable = tableEnv.sqlQuery(sql)
-        resultSqlTable.toAppendStream[Row].print("sql ")
+        val resultSqlStream = resultSqlTable.toAppendStream[Row]
+        resultSqlStream.print("sql ")
 
         // 7. 执行
         env.execute("Table Example")
