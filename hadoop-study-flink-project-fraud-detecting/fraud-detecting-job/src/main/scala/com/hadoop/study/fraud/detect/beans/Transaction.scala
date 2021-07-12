@@ -2,7 +2,7 @@ package com.hadoop.study.fraud.detect.beans
 
 import com.hadoop.study.fraud.detect.dynamic.TimestampAssignable
 import com.hadoop.study.fraud.detect.enums.PaymentType
-import com.hadoop.study.fraud.detect.enums.PaymentType.PaymentType
+import com.hadoop.study.fraud.detect.enums.PaymentType.Payment
 
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneOffset, ZonedDateTime}
@@ -28,7 +28,7 @@ class Transaction extends TimestampAssignable[Long] {
 
     var paymentAmount: BigDecimal = _
 
-    var paymentType: PaymentType = _
+    var paymentType: Payment = _
 
     var ingestionTimestamp: Long = 0L
 

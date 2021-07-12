@@ -2,7 +2,7 @@ package com.hadoop.study.fraud.detect.functions
 
 import com.hadoop.study.fraud.detect.beans._
 import com.hadoop.study.fraud.detect.dynamic.Descriptors
-import com.hadoop.study.fraud.detect.enums.ControlType.ControlType
+import com.hadoop.study.fraud.detect.enums.ControlType.Control
 import com.hadoop.study.fraud.detect.enums.{ControlType, RuleState}
 import com.hadoop.study.fraud.detect.utils.KeysExtractor
 import com.hadoop.study.fraud.detect.utils.StateUtils.handleBroadcast
@@ -56,7 +56,7 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
             handleControlCommand(value.controlType, broadcastState)
     }
 
-    private def handleControlCommand(controlType: ControlType, rulesState: BroadcastState[Int, Rule]): Unit = {
+    private def handleControlCommand(controlType: Control, rulesState: BroadcastState[Int, Rule]): Unit = {
         if (controlType eq ControlType.DELETE_RULES_ALL) {
             val iter = rulesState.iterator
             while (iter.hasNext) {

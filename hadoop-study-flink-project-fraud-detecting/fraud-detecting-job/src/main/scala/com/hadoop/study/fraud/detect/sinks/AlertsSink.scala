@@ -45,7 +45,7 @@ object AlertsSink {
             case DISCARD =>
                 new DiscardingSink[String]
             case _ =>
-                throw new IllegalArgumentException(s"Source ${alertsSinkType} unknown. Known values are: ${AlertsType.values}")
+                throw new IllegalArgumentException(s"Source ${alertsSinkType} unknown. Known values are: ${SinkType.values}")
         }
     }
 

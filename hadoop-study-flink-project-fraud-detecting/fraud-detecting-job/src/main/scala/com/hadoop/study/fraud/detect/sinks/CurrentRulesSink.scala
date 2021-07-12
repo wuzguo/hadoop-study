@@ -44,7 +44,7 @@ object CurrentRulesSink {
             case STDOUT =>
                 new PrintSinkFunction[String](true)
             case _ =>
-                throw new IllegalArgumentException(s"Source ${currentRulesSinkType} unknown. Known values are: ${CurrentRulesType.values}")
+                throw new IllegalArgumentException(s"Source ${currentRulesSinkType} unknown. Known values are: ${SinkType.values}")
         }
     }
 

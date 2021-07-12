@@ -3,7 +3,7 @@ package com.hadoop.study.fraud.detect.dynamic
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.dynamic.RuleParser.parsePlain
-import com.hadoop.study.fraud.detect.enums.{AggregatorType, OperatorType, RuleState}
+import com.hadoop.study.fraud.detect.enums.{AggregateType, OperateType, RuleState}
 
 import java.io.IOException
 
@@ -36,8 +36,8 @@ object RuleParser {
         rule.ruleState = RuleState.withName(stripBrackets(iter.next).toUpperCase)
         rule.groupingKeyNames = getNames(iter.next)
         rule.aggregateFieldName = stripBrackets(iter.next)
-        rule.aggregatorType = AggregatorType.withName(stripBrackets(iter.next).toUpperCase)
-        rule.limitOperatorType = OperatorType.withName(stripBrackets(iter.next))
+        rule.aggregatorType = AggregateType.withName(stripBrackets(iter.next).toUpperCase)
+        rule.limitOperatorType = OperateType.withName(stripBrackets(iter.next))
         rule.limit = BigDecimal(stripBrackets(iter.next))
         rule.windowMinutes = stripBrackets(iter.next).toInt
         rule

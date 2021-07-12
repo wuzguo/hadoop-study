@@ -3,7 +3,7 @@ package com.hadoop.study.fraud.detect.sources
 import com.hadoop.study.fraud.detect.beans.Transaction
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{DATA_TOPIC, RECORDS_PER_SECOND, TRANSACTIONS_SOURCE}
-import com.hadoop.study.fraud.detect.enums.TransactionsType
+import com.hadoop.study.fraud.detect.enums.TransactionType
 import com.hadoop.study.fraud.detect.functions.{JsonDeserializer, JsonGeneratorWrapper, TimeStamper}
 import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema
@@ -25,8 +25,8 @@ object TransactionsSource {
     def createTransactionsSource(config: Config): SourceFunction[String] = {
         val sourceType = config.get(TRANSACTIONS_SOURCE)
 
-        val transactionsSourceType = TransactionsType.withName(sourceType.toUpperCase)
-        if (transactionsSourceType eq TransactionsType.KAFKA) {
+        val transactionsSourceType = TransactionType.withName(sourceType.toUpperCase)
+        if (transactionsSourceType eq TransactionType.KAFKA) {
             val kafkaProps = KafkaUtils.initConsumerProperties(config)
             val transactionsTopic = config.get(DATA_TOPIC)
             val kafkaConsumer = new FlinkKafkaConsumer[String](transactionsTopic, new SimpleStringSchema, kafkaProps)

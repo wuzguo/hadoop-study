@@ -1,9 +1,9 @@
 package com.hadoop.study.fraud.detect.beans
 
-import com.hadoop.study.fraud.detect.enums.AggregatorType.AggregatorType
-import com.hadoop.study.fraud.detect.enums.ControlType.ControlType
-import com.hadoop.study.fraud.detect.enums.OperatorType._
-import com.hadoop.study.fraud.detect.enums.RuleState.RuleState
+import com.hadoop.study.fraud.detect.enums.AggregateType.Aggregate
+import com.hadoop.study.fraud.detect.enums.ControlType.Control
+import com.hadoop.study.fraud.detect.enums.OperateType._
+import com.hadoop.study.fraud.detect.enums.RuleState.State
 import org.apache.flink.streaming.api.windowing.time.Time
 
 /**
@@ -17,21 +17,21 @@ class Rule {
 
     var ruleId: Int = 0
 
-    var ruleState: RuleState = _
+    var ruleState: State = _
 
     var groupingKeyNames: List[String] = List()
 
     var aggregateFieldName: String = _
 
-    var aggregatorType: AggregatorType = _
+    var aggregatorType: Aggregate = _
 
-    var limitOperatorType: OperatorType = _
+    var limitOperatorType: Operate = _
 
     var limit: BigDecimal = _
 
     var windowMinutes: Int = 0
 
-    var controlType: ControlType = _
+    var controlType: Control = _
 
     def apply(comparisonValue: BigDecimal): Boolean =
         limitOperatorType match {

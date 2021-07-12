@@ -9,51 +9,51 @@ package com.hadoop.study.fraud.detect.enums
  */
 
 
-object AggregatorType extends Enumeration {
-    type AggregatorType = Value
+object AggregateType extends Enumeration {
+    type Aggregate = Value
 
     val SUM, AVG, MIN, MAX = Value
 }
 
-object OperatorType extends Enumeration {
-    type OperatorType = Value
+object OperateType extends Enumeration {
+    type Operate = Value
 
     val EQUAL, NOT_EQUAL, GREATER_EQUAL, LESS_EQUAL, GREATER, LESS = Value
 }
 
 object RuleState extends Enumeration {
-    type RuleState = Value
+    type State = Value
 
     val ACTIVE, PAUSE, DELETE, CONTROL = Value
 }
 
 object ControlType extends Enumeration {
-    type ControlType = Value
+    type Control = Value
 
     val CLEAR_STATE_ALL, DELETE_RULES_ALL, EXPORT_RULES_CURRENT = Value
 }
 
 object PaymentType extends Enumeration {
-    type PaymentType = Value
+    type Payment = Value
 
     val CSH: Value = Value("CSH")
     val CRD: Value = Value("CRD")
 }
 
-object TransactionsType extends Enumeration {
-    type TransactionsType = Value
+object TransactionType extends Enumeration {
+    type Transaction = Value
 
     val GENERATOR, KAFKA = Value
 }
 
 object SourceType extends Enumeration {
-    type SourceType = Value
+    type Source = Value
 
     val KAFKA, PUBSUB, SOCKET, STATIC = Value
 }
 
 object SinkType extends Enumeration {
-    type SinkType = Value
+    type Sink = Value
 
     val KAFKA, PUBSUB, STDOUT, DISCARD = Value
 }
