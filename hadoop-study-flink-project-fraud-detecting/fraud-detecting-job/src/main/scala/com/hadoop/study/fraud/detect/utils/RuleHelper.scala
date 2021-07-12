@@ -1,6 +1,6 @@
 package com.hadoop.study.fraud.detect.utils
 
-import com.hadoop.study.fraud.detect.accumulators.{AverageAccumulator, BigDecimalCounter, BigDecimalMaximum, BigDecimalMinimum}
+import com.hadoop.study.fraud.detect.accumulators.{AverageAccumulator, CounterAccumulator, MaximumAccumulator, MinimumAccumulator}
 import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.enums.AggregateType.{AVG, MAX, MIN, SUM}
 import org.apache.flink.api.common.accumulators.SimpleAccumulator
@@ -19,13 +19,13 @@ object RuleHelper {
     def getAggregator(rule: Rule): SimpleAccumulator[BigDecimal] =
         rule.aggregatorType match {
             case SUM =>
-                BigDecimalCounter()
+                CounterAccumulator()
             case AVG =>
                 AverageAccumulator(0, BigDecimal(0))
             case MAX =>
-                BigDecimalMaximum()
+                MaximumAccumulator()
             case MIN =>
-                BigDecimalMinimum()
+                MinimumAccumulator()
             case _ =>
                 throw new RuntimeException(s"Unsupported aggregation function type: ${rule.aggregatorType}")
         }

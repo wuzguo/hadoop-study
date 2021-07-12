@@ -10,7 +10,7 @@ import org.apache.flink.api.common.accumulators.{Accumulator, SimpleAccumulator}
  * @date 2021/7/8 11:42
  */
 
-case class BigDecimalCounter(var local: BigDecimal = BigDecimal(0)) extends SimpleAccumulator[BigDecimal] {
+case class CounterAccumulator(var local: BigDecimal = BigDecimal(0)) extends SimpleAccumulator[BigDecimal] {
 
     override def add(value: BigDecimal): Unit = local += value
 
@@ -20,7 +20,7 @@ case class BigDecimalCounter(var local: BigDecimal = BigDecimal(0)) extends Simp
 
     override def merge(other: Accumulator[BigDecimal, BigDecimal]): Unit = local += other.getLocalValue
 
-    override def clone(): BigDecimalCounter = BigDecimalCounter(local)
+    override def clone(): CounterAccumulator = CounterAccumulator(local)
 
     override def toString: String = s"BigDecimalCounter ${local}"
 }
