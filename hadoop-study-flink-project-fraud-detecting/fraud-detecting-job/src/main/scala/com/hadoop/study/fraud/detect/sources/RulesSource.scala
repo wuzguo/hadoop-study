@@ -33,7 +33,7 @@ object RulesSource {
 
     def create(config: Config): SourceFunction[String] = {
         log.info(s"RulesSource config: ${config}")
-        val ruleSource: String = config.get(RULES_SOURCE
+        val ruleSource = config.get(RULES_SOURCE)
 
         val sourceType = SourceType.withName(ruleSource.toUpperCase)
         sourceType match {
