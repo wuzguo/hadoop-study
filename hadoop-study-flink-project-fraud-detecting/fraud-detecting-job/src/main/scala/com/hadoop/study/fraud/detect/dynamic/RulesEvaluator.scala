@@ -31,35 +31,37 @@ case class RulesEvaluator(config: Config) {
 
     def run(): Unit = {
         // Environment setup
-        val env = configStreamExecutionEnvironment()
+        val env = configEnvironment()
         log.info("rules run env: {}", env)
-        // Streams setup
-        val rulesUpdateStream = getRulesUpdateStream(env)
 
-        val transactions = getTransactionsStream(env)
-        val rulesStream = rulesUpdateStream.broadcast(Descriptors.rulesDescriptor)
+        // Streams setup
+        val rulesStream = getRuleStream(env)
+        val transactionStream = getTransactionsStream(env)
+
+        val ruleBroadcastStream = rulesStream.broadcast(Descriptors.rulesDescriptor)
 
         // Processing pipeline setup
-        val alertSteam = transactions.connect(rulesStream)
+        val alertStream = transactionStream.connect(ruleBroadcastStream)
           .process(new DynamicKeyFunction)
           .uid("Dynamic Key Function")
           .name("Dynamic Partitioning Function")
           .keyBy(_.key)
-          .connect(rulesStream)
+          .connect(ruleBroadcastStream)
           .process(new DynamicAlertFunction)
           .uid("Dynamic Alert Function")
           .name("Dynamic Rule Evaluation Function")
 
-        val currentRules = alertSteam.getSideOutput(Tags.rulesSinkTag)
-        val currentRulesJson = RulesSink.streamToJson(currentRules)
+        val currentRuleStream = alertStream.getSideOutput(Tags.rulesSinkTag)
+        val rulesJsonStream = RulesSink.streamToJson(currentRuleStream)
+
         val sinkParallelism = config.get(SINK_PARALLELISM)
-        currentRulesJson.addSink(RulesSink.create(config)).setParallelism(sinkParallelism).name("Rules Sink")
+        rulesJsonStream.addSink(RulesSink.create(config)).setParallelism(sinkParallelism).name("Rules Sink")
 
-        val alertsJson = AlertsSink.streamToJson(alertSteam)
-        alertsJson.addSink(AlertsSink.create(config)).setParallelism(sinkParallelism).name("Alerts Sink")
+        val alertsJsonStream = AlertsSink.streamToJson(alertStream)
+        alertsJsonStream.addSink(AlertsSink.create(config)).setParallelism(sinkParallelism).name("Alerts Sink")
 
-        val latencies = alertSteam.getSideOutput(Tags.latencySinkTag)
-        latencies.timeWindowAll(Time.seconds(10))
+        val latenciesStream = alertStream.getSideOutput(Tags.latencySinkTag)
+        latenciesStream.timeWindowAll(Time.seconds(10))
           .aggregate(AverageAggregate())
           .map(_.toString)
           .addSink(LatencySink.create(config))
@@ -83,10 +85,10 @@ case class RulesEvaluator(config: Config) {
         )
     }
 
-    private def getRulesUpdateStream(env: StreamExecutionEnvironment): DataStream[Rule] = {
-        val rulesSourceEnumType = getRulesSourceType
+    private def getRuleStream(env: StreamExecutionEnvironment): DataStream[Rule] = {
+        val rulesSourceType = getRulesSourceType
         val rulesSource = RulesSource.create(config)
-        val rulesStrings = env.addSource(rulesSource).name(rulesSourceEnumType.toString).setParallelism(1)
+        val rulesStrings = env.addSource(rulesSource).name(rulesSourceType.toString).setParallelism(1)
         RulesSource.streamToRules(rulesStrings)
     }
 
@@ -95,23 +97,27 @@ case class RulesEvaluator(config: Config) {
         SourceType.withName(rulesSource.toUpperCase)
     }
 
-    private def configStreamExecutionEnvironment() = {
+    private def configEnvironment() = {
         val localMode = config.get(LOCAL_EXECUTION)
 
-        val env: StreamExecutionEnvironment =
-            if (localMode.isEmpty || localMode == LOCAL_MODE_DISABLE_WEB_UI) {
-                StreamExecutionEnvironment.getExecutionEnvironment
-            } else {
-                val flinkConfig = new Configuration
-                flinkConfig.set(RestOptions.BIND_PORT, localMode)
-                StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(flinkConfig)
-            }
+        val env: StreamExecutionEnvironment = if (localMode.isEmpty || localMode == LOCAL_MODE_DISABLE_WEB_UI) {
+            StreamExecutionEnvironment.getExecutionEnvironment
+        } else {
+            val flinkConfig = new Configuration
+            flinkConfig.set(RestOptions.BIND_PORT, localMode)
+            StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(flinkConfig)
+        }
 
-        // slower restarts inside the IDE and other local runs 10s
+        // 重启策略配置 // 固定延迟重启（隔一段时间尝试重启一次）
+        // (尝试重启次数， 尝试重启的时间间隔)
         if (localMode.nonEmpty) {
             env.setRestartStrategy(RestartStrategies.fixedDelayRestart(10, 10 * 1000))
         }
+        // 执行超时时间
+        env.getCheckpointConfig.setCheckpointTimeout(config.get(CHECKPOINT_TIMEOUT).longValue())
+        // CP周期
         env.getCheckpointConfig.setCheckpointInterval(config.get(CHECKPOINT_INTERVAL).longValue())
+        // 两次执行的最小间隔时间
         env.getCheckpointConfig.setMinPauseBetweenCheckpoints(config.get(MIN_PAUSE_BETWEEN_CHECKPOINTS).longValue())
 
         env

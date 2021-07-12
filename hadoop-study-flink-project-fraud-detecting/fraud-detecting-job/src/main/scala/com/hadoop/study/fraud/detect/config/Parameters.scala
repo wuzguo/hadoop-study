@@ -61,11 +61,15 @@ object Parameters {
     val LOCAL_EXECUTION: Param[String] = Param.string("local", LOCAL_MODE_DISABLE_WEB_UI)
     val SOURCE_PARALLELISM: Param[Integer] = Param.integer("source-parallelism", 2)
     val SINK_PARALLELISM: Param[Integer] = Param.integer("sink-parallelism", 1)
-    val CHECKPOINT_INTERVAL: Param[Integer] = Param.integer("checkpoint-interval", 600000)
-    val MIN_PAUSE_BETWEEN_CHECKPOINTS: Param[Integer] = Param.integer("min-pause-between-checkpoints", 600000)
+    val CHECKPOINT_INTERVAL: Param[Integer] = Param.integer("checkpoint-interval", 60000)
+    val CHECKPOINT_TIMEOUT: Param[Integer] = Param.integer("checkpoint-timeout", 60000)
+    val MIN_PAUSE_BETWEEN_CHECKPOINTS: Param[Integer] = Param.integer("min-pause-between-checkpoints", 30000)
     val OUT_OF_ORDERLESS: Param[Integer] = Param.integer("out-of-orderliness", 500)
+
     val STRING_PARAMS = List(LOCAL_EXECUTION, KAFKA_HOST, DATA_TOPIC, ALERTS_TOPIC, RULES_TOPIC, LATENCY_TOPIC, RULES_EXPORT_TOPIC, OFFSET, GCP_PROJECT_NAME, GCP_PUBSUB_RULES_SUBSCRIPTION, GCP_PUBSUB_ALERTS_SUBSCRIPTION, GCP_PUBSUB_LATENCY_SUBSCRIPTION, GCP_PUBSUB_RULES_EXPORT_SUBSCRIPTION, RULES_SOURCE, TRANSACTIONS_SOURCE, ALERTS_SINK, LATENCY_SINK, RULES_SINK)
-    val INT_PARAMS = List(KAFKA_PORT, SOCKET_PORT, RECORDS_PER_SECOND, SOURCE_PARALLELISM, SINK_PARALLELISM, CHECKPOINT_INTERVAL, MIN_PAUSE_BETWEEN_CHECKPOINTS, OUT_OF_ORDERLESS)
+
+    val INT_PARAMS = List(KAFKA_PORT, SOCKET_PORT, RECORDS_PER_SECOND, SOURCE_PARALLELISM, SINK_PARALLELISM, CHECKPOINT_INTERVAL, CHECKPOINT_TIMEOUT, MIN_PAUSE_BETWEEN_CHECKPOINTS, OUT_OF_ORDERLESS)
+
     val BOOL_PARAMS: List[Param[Boolean]] = List[Param[Boolean]]()
 
     def fromArgs(args: Array[String]): Parameters = {

@@ -14,10 +14,10 @@ import org.apache.flink.api.java.utils.ParameterTool
  */
 
 object Driver extends App {
-
     val tool = ParameterTool.fromArgs(args)
     val inputParams = new Parameters(tool)
     val config = new Config(inputParams, STRING_PARAMS, INT_PARAMS, BOOL_PARAMS)
     val rulesEvaluator = RulesEvaluator(config)
+    // 启动
     rulesEvaluator.run()
 }

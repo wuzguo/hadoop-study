@@ -35,6 +35,7 @@ case class Config() {
         key.cls.cast(values(key))
     }
 
+    override def toString: String = s"${values.mkString}"
 }
 
 object Config {
