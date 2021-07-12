@@ -5,13 +5,14 @@ import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters._
 import com.hadoop.study.fraud.detect.enums.SourceType
 import com.hadoop.study.fraud.detect.functions.{AverageAggregate, DynamicAlertFunction, DynamicKeyFunction}
-import com.hadoop.study.fraud.detect.sinks.{AlertsSink, RulesSink, LatencySink}
+import com.hadoop.study.fraud.detect.sinks.{AlertsSink, LatencySink, RulesSink}
 import com.hadoop.study.fraud.detect.sources.{RulesSource, TransactionsSource}
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.state.MapStateDescriptor
 import org.apache.flink.configuration.{Configuration, RestOptions}
 import org.apache.flink.streaming.api.scala.{DataStream, OutputTag, StreamExecutionEnvironment, createTypeInformation}
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.slf4j.LoggerFactory
 
@@ -53,15 +54,15 @@ case class RulesEvaluator(config: Config) {
         val currentRules = alertSteam.getSideOutput(Tags.currentRulesSinkTag)
         val currentRulesJson = RulesSink.streamToJson(currentRules)
         val sinkParallelism = config.get(SINK_PARALLELISM)
-        currentRulesJson.addSink(RulesSink.create(config)).setParallelism(sinkParallelism).name("Rules Export Sink")
+        currentRulesJson.addSink(RulesSink.create(config)).setParallelism(sinkParallelism).name("Rules Sink")
 
         val alertsJson = AlertsSink.streamToJson(alertSteam)
-        alertsJson.addSink(AlertsSink.create(config)).setParallelism(sinkParallelism).name("Alerts JSON Sink")
+        alertsJson.addSink(AlertsSink.create(config)).setParallelism(sinkParallelism).name("Alerts Sink")
 
-        val latency = alertSteam.getSideOutput(Tags.latencySinkTag)
-        latency.timeWindowAll(Time.seconds(10))
-          .aggregate(AverageAggregate())
-          .map(_.toString)
+        val latencies = alertSteam.getSideOutput(Tags.latencySinkTag)
+        latencies.windowAll(TumblingEventTimeWindows.of(Time.seconds(10)))
+        //  .aggregate(AverageAggregate())
+       //   .map(_.toString)
           .addSink(LatencySink.create(config))
           .name("Latency Sink")
 
