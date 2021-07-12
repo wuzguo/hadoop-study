@@ -14,6 +14,7 @@ import org.apache.flink.streaming.api.functions.source.{SocketTextStreamFunction
 import org.apache.flink.streaming.api.scala.DataStream
 import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSource
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
+import org.slf4j.LoggerFactory
 
 import java.time.Duration
 
@@ -27,11 +28,15 @@ import java.time.Duration
 
 object RulesSource {
 
-    def create(config: Config): SourceFunction[String] = {
-        val sourceType: String = config.get(RULES_SOURCE)
-        val rulesSourceType = SourceType.withName(sourceType.toUpperCase)
+    private val log = LoggerFactory.getLogger("RulesSource")
 
-        rulesSourceType match {
+
+    def create(config: Config): SourceFunction[String] = {
+        log.info(s"RulesSource config: ${config}")
+        val ruleSource: String = config.get(RULES_SOURCE
+
+        val sourceType = SourceType.withName(ruleSource.toUpperCase)
+        sourceType match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initConsumerProperties(config)
                 val rulesTopic = config.get(RULES_TOPIC)
@@ -49,7 +54,7 @@ object RulesSource {
             case STATIC =>
                 RulesStaticJsonGenerator()
             case _ =>
-                throw new IllegalArgumentException(s"Source ${rulesSourceType} unknown. Known values are: ${SourceType.values}")
+                throw new IllegalArgumentException(s"Source ${sourceType} unknown. Known values are: ${SourceType.values}")
         }
     }
 
