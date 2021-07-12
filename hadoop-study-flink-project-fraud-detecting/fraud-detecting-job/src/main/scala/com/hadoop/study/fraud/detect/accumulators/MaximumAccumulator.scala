@@ -10,7 +10,7 @@ import org.apache.flink.api.common.accumulators.{Accumulator, SimpleAccumulator}
  * @date 2021/7/8 11:48
  */
 
-case class BigDecimalMaximum(var max: BigDecimal = BigDecimal.decimal(Double.MinValue), limit: BigDecimal = BigDecimal.decimal(Double.MinValue)) extends SimpleAccumulator[BigDecimal] {
+case class MaximumAccumulator(var max: BigDecimal = BigDecimal.decimal(Double.MinValue), limit: BigDecimal = BigDecimal.decimal(Double.MinValue)) extends SimpleAccumulator[BigDecimal] {
 
     override def add(value: BigDecimal): Unit = {
         if (value.compareTo(limit) < 0)
@@ -24,7 +24,7 @@ case class BigDecimalMaximum(var max: BigDecimal = BigDecimal.decimal(Double.Min
 
     override def merge(other: Accumulator[BigDecimal, BigDecimal]): Unit = max = max.max(other.getLocalValue)
 
-    override def clone(): BigDecimalMaximum = BigDecimalMaximum(max)
+    override def clone(): MaximumAccumulator = MaximumAccumulator(max)
 
     override def toString: String = s"BigDecimal Maximum ${max}"
 }
