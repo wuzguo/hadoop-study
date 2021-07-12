@@ -38,14 +38,17 @@ object Parameters {
     val LATENCY_TOPIC: Param[String] = Param.string("latency-topic", "latency")
     val RULES_EXPORT_TOPIC: Param[String] = Param.string("current-rules-topic", "current-rules")
     val OFFSET: Param[String] = Param.string("offset", "latest")
+
     // GCP PubSub:
     val GCP_PROJECT_NAME: Param[String] = Param.string("gcp-project", "da-fe-212612")
     val GCP_PUBSUB_RULES_SUBSCRIPTION: Param[String] = Param.string("pubsub-rules", "rules-demo")
     val GCP_PUBSUB_ALERTS_SUBSCRIPTION: Param[String] = Param.string("pubsub-alerts", "alerts-demo")
     val GCP_PUBSUB_LATENCY_SUBSCRIPTION: Param[String] = Param.string("pubsub-latency", "latency-demo")
     val GCP_PUBSUB_RULES_EXPORT_SUBSCRIPTION: Param[String] = Param.string("pubsub-rules-export", "current-rules-demo")
+
     // Socket
     val SOCKET_PORT: Param[Integer] = Param.integer("pubsub-rules-export", 9999)
+
     // General:
     // source/sink types: kafka / pubsub / socket
     val RULES_SOURCE: Param[String] = Param.string("rules-source", "SOCKET")

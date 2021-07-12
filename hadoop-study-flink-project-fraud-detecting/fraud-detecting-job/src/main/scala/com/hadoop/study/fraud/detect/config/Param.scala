@@ -10,7 +10,6 @@ package com.hadoop.study.fraud.detect.config
 
 case class Param[T](name: String, cls: Class[T], default: T)
 
-
 object Param {
 
     def string(name: String, default: String): Param[String] = {
