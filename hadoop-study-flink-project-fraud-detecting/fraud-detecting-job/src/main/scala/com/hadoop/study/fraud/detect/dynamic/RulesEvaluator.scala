@@ -12,7 +12,6 @@ import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.state.MapStateDescriptor
 import org.apache.flink.configuration.{Configuration, RestOptions}
 import org.apache.flink.streaming.api.scala.{DataStream, OutputTag, StreamExecutionEnvironment, createTypeInformation}
-import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.slf4j.LoggerFactory
 
@@ -32,7 +31,7 @@ case class RulesEvaluator(config: Config) {
 
     def run(): Unit = {
         // Environment setup
-        val env = configureStreamExecutionEnvironment()
+        val env = configStreamExecutionEnvironment()
         log.info("rules run env: {}", env)
         // Streams setup
         val rulesUpdateStream = getRulesUpdateStream(env)
@@ -51,7 +50,7 @@ case class RulesEvaluator(config: Config) {
           .uid("Dynamic Alert Function")
           .name("Dynamic Rule Evaluation Function")
 
-        val currentRules = alertSteam.getSideOutput(Tags.currentRulesSinkTag)
+        val currentRules = alertSteam.getSideOutput(Tags.rulesSinkTag)
         val currentRulesJson = RulesSink.streamToJson(currentRules)
         val sinkParallelism = config.get(SINK_PARALLELISM)
         currentRulesJson.addSink(RulesSink.create(config)).setParallelism(sinkParallelism).name("Rules Sink")
@@ -60,12 +59,11 @@ case class RulesEvaluator(config: Config) {
         alertsJson.addSink(AlertsSink.create(config)).setParallelism(sinkParallelism).name("Alerts Sink")
 
         val latencies = alertSteam.getSideOutput(Tags.latencySinkTag)
-        latencies.windowAll(TumblingEventTimeWindows.of(Time.seconds(10)))
-        //  .aggregate(AverageAggregate())
-       //   .map(_.toString)
+        latencies.timeWindowAll(Time.seconds(10))
+          .aggregate(AverageAggregate())
+          .map(_.toString)
           .addSink(LatencySink.create(config))
           .name("Latency Sink")
-
 
         env.execute("Fraud Detection Engine")
     }
@@ -97,7 +95,7 @@ case class RulesEvaluator(config: Config) {
         SourceType.withName(rulesSource.toUpperCase)
     }
 
-    private def configureStreamExecutionEnvironment() = {
+    private def configStreamExecutionEnvironment() = {
         val localMode = config.get(LOCAL_EXECUTION)
 
         val env: StreamExecutionEnvironment =
@@ -127,5 +125,5 @@ object Descriptors {
 object Tags {
     val latencySinkTag: OutputTag[Long] = new OutputTag[Long]("latency-sink")
 
-    val currentRulesSinkTag: OutputTag[Rule] = new OutputTag[Rule]("current-rules-sink")
+    val rulesSinkTag: OutputTag[Rule] = new OutputTag[Rule]("current-rules-sink")
 }
