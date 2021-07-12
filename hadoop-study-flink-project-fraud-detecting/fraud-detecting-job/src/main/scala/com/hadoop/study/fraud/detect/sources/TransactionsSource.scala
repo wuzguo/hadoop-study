@@ -4,7 +4,7 @@ import com.hadoop.study.fraud.detect.beans.Transaction
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{DATA_TOPIC, RECORDS_PER_SECOND, TRANSACTIONS_SOURCE}
 import com.hadoop.study.fraud.detect.enums.SourceType
-import com.hadoop.study.fraud.detect.enums.TransactionType.KAFKA
+import com.hadoop.study.fraud.detect.enums.SourceType.KAFKA
 import com.hadoop.study.fraud.detect.functions.{JsonDeserializer, JsonGeneratorWrapper, TimeStamper}
 import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema

@@ -59,7 +59,7 @@ object Parameters {
     val RECORDS_PER_SECOND: Param[Integer] = Param.integer("records-per-second", 2)
     val LOCAL_MODE_DISABLE_WEB_UI = "-1"
     val LOCAL_EXECUTION: Param[String] = Param.string("local", LOCAL_MODE_DISABLE_WEB_UI)
-    val SOURCE_PARALLELISM: Param[Integer] = Param.integer("source-parallelism", 2)
+    val SOURCE_PARALLELISM: Param[Integer] = Param.integer("source-parallelism", 1)
     val SINK_PARALLELISM: Param[Integer] = Param.integer("sink-parallelism", 1)
     val CHECKPOINT_INTERVAL: Param[Integer] = Param.integer("checkpoint-interval", 60000)
     val CHECKPOINT_TIMEOUT: Param[Integer] = Param.integer("checkpoint-timeout", 60000)

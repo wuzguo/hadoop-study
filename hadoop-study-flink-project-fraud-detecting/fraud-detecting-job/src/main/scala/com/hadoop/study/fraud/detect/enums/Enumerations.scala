@@ -40,16 +40,10 @@ object PaymentType extends Enumeration {
     val CRD: Value = Value("CRD")
 }
 
-object TransactionType extends Enumeration {
-    type Transaction = Value
-
-    val GENERATOR, KAFKA = Value
-}
-
 object SourceType extends Enumeration {
     type Source = Value
 
-    val KAFKA, PUBSUB, SOCKET, STATIC = Value
+    val KAFKA, PUBSUB, SOCKET, STATIC, GENERATOR = Value
 }
 
 object SinkType extends Enumeration {
