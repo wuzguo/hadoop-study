@@ -1,7 +1,8 @@
 package com.hadoop.study.fraud.detect.sources
 
-import com.hadoop.study.fraud.detect.beans.PaymentType.PaymentType
-import com.hadoop.study.fraud.detect.beans.{PaymentType, Transaction}
+import com.hadoop.study.fraud.detect.beans.Transaction
+import com.hadoop.study.fraud.detect.enums.PaymentType
+import com.hadoop.study.fraud.detect.enums.PaymentType.PaymentType
 
 import java.util.SplittableRandom
 import java.util.concurrent.ThreadLocalRandom

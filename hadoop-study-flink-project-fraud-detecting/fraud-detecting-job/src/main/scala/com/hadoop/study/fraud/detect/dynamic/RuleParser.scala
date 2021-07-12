@@ -1,8 +1,9 @@
 package com.hadoop.study.fraud.detect.dynamic
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.hadoop.study.fraud.detect.beans.{AggregatorType, OperatorType, Rule, RuleState}
+import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.dynamic.RuleParser.parsePlain
+import com.hadoop.study.fraud.detect.enums.{AggregatorType, OperatorType, RuleState}
 
 import java.io.IOException
 

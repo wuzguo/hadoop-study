@@ -1,7 +1,8 @@
 package com.hadoop.study.fraud.detect.functions
 
-import com.hadoop.study.fraud.detect.beans.{Rule, RuleState}
+import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.dynamic.RuleParser
+import com.hadoop.study.fraud.detect.enums.RuleState
 import org.apache.flink.api.common.functions.RichFlatMapFunction
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.util.Collector

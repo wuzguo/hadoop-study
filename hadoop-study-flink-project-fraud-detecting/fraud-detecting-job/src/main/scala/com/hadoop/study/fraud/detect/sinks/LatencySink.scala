@@ -2,7 +2,8 @@ package com.hadoop.study.fraud.detect.sinks
 
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{GCP_PROJECT_NAME, GCP_PUBSUB_LATENCY_SUBSCRIPTION, LATENCY_SINK, LATENCY_TOPIC}
-import com.hadoop.study.fraud.detect.sinks.LatencyType.{DISCARD, KAFKA, PUBSUB, STDOUT}
+import com.hadoop.study.fraud.detect.enums.SinkType
+import com.hadoop.study.fraud.detect.enums.SinkType.{DISCARD, KAFKA, PUBSUB, STDOUT}
 import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.functions.sink.{DiscardingSink, PrintSinkFunction, SinkFunction}
@@ -21,7 +22,7 @@ object LatencySink {
 
     def createLatencySink(config: Config): SinkFunction[String] = {
         val latencySink = config.get(LATENCY_SINK)
-        val latencySinkType = LatencyType.withName(latencySink.toUpperCase)
+        val latencySinkType = SinkType.withName(latencySink.toUpperCase)
         latencySinkType match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initProducerProperties(config)
@@ -38,13 +39,7 @@ object LatencySink {
             case DISCARD =>
                 new DiscardingSink[String]
             case _ =>
-                throw new IllegalArgumentException(s"Source ${latencySinkType} unknown. Known values are: ${LatencyType.values}")
+                throw new IllegalArgumentException(s"Source ${latencySinkType} unknown. Known values are: ${SinkType.values}")
         }
     }
-}
-
-object LatencyType extends Enumeration {
-    type LatencyType = Value
-
-    val KAFKA, PUBSUB, STDOUT, DISCARD = Value
 }

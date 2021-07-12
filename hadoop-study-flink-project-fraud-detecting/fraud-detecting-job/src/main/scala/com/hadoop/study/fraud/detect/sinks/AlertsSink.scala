@@ -3,8 +3,9 @@ package com.hadoop.study.fraud.detect.sinks
 import com.hadoop.study.fraud.detect.beans.{AlertEvent, Transaction}
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{ALERTS_SINK, ALERTS_TOPIC, GCP_PROJECT_NAME, GCP_PUBSUB_ALERTS_SUBSCRIPTION}
+import com.hadoop.study.fraud.detect.enums.SinkType
+import com.hadoop.study.fraud.detect.enums.SinkType.{DISCARD, KAFKA, PUBSUB, STDOUT}
 import com.hadoop.study.fraud.detect.functions.JsonSerializer
-import com.hadoop.study.fraud.detect.sinks.AlertsType.{DISCARD, KAFKA, PUBSUB, STDOUT}
 import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.functions.sink.{DiscardingSink, PrintSinkFunction, SinkFunction}
@@ -27,7 +28,7 @@ object AlertsSink {
 
     def createAlertsSink(config: Config): SinkFunction[String] = {
         val sinkType = config.get(ALERTS_SINK)
-        val alertsSinkType = AlertsType.withName(sinkType.toUpperCase)
+        val alertsSinkType = SinkType.withName(sinkType.toUpperCase)
         alertsSinkType match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initProducerProperties(config)
@@ -51,10 +52,4 @@ object AlertsSink {
     def alertsStreamToJson(alerts: DataStream[AlertEvent[Transaction, BigDecimal]]): DataStream[String] =
         alerts.flatMap(JsonSerializer(classOf[AlertEvent[Transaction, BigDecimal]]))
           .name("Alerts Serialization")
-}
-
-object AlertsType extends Enumeration {
-    type AlertsType = Value
-
-    val KAFKA, PUBSUB, STDOUT, DISCARD = Value
 }

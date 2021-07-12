@@ -1,8 +1,8 @@
 package com.hadoop.study.fraud.detect.utils
 
 import com.hadoop.study.fraud.detect.accumulators.{AverageAccumulator, BigDecimalCounter, BigDecimalMaximum, BigDecimalMinimum}
-import com.hadoop.study.fraud.detect.beans.AggregatorType.{AVG, MAX, MIN, SUM}
 import com.hadoop.study.fraud.detect.beans.Rule
+import com.hadoop.study.fraud.detect.enums.AggregatorType.{AVG, MAX, MIN, SUM}
 import org.apache.flink.api.common.accumulators.SimpleAccumulator
 
 /**

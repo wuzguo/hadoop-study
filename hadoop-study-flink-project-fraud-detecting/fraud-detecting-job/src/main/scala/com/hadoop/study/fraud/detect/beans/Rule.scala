@@ -1,9 +1,9 @@
 package com.hadoop.study.fraud.detect.beans
 
-import com.hadoop.study.fraud.detect.beans.AggregatorType.AggregatorType
-import com.hadoop.study.fraud.detect.beans.ControlType.ControlType
-import com.hadoop.study.fraud.detect.beans.OperatorType.{EQUAL, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL, NOT_EQUAL, OperatorType}
-import com.hadoop.study.fraud.detect.beans.RuleState.RuleState
+import com.hadoop.study.fraud.detect.enums.AggregatorType.AggregatorType
+import com.hadoop.study.fraud.detect.enums.ControlType.ControlType
+import com.hadoop.study.fraud.detect.enums.OperatorType._
+import com.hadoop.study.fraud.detect.enums.RuleState.RuleState
 import org.apache.flink.streaming.api.windowing.time.Time
 
 /**
@@ -57,28 +57,4 @@ class Rule {
     }
 
     def getWindowMillis: Long = Time.minutes(this.windowMinutes).toMilliseconds
-}
-
-object AggregatorType extends Enumeration {
-    type AggregatorType = Value
-
-    val SUM, AVG, MIN, MAX = Value
-}
-
-object OperatorType extends Enumeration {
-    type OperatorType = Value
-
-    val EQUAL, NOT_EQUAL, GREATER_EQUAL, LESS_EQUAL, GREATER, LESS = Value
-}
-
-object RuleState extends Enumeration {
-    type RuleState = Value
-
-    val ACTIVE, PAUSE, DELETE, CONTROL = Value
-}
-
-object ControlType extends Enumeration {
-    type ControlType = Value
-
-    val CLEAR_STATE_ALL, DELETE_RULES_ALL, EXPORT_RULES_CURRENT = Value
 }

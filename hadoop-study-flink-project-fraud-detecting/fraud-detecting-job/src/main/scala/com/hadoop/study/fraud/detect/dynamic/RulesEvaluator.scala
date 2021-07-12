@@ -3,9 +3,10 @@ package com.hadoop.study.fraud.detect.dynamic
 import com.hadoop.study.fraud.detect.beans.{Rule, Transaction}
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters._
+import com.hadoop.study.fraud.detect.enums.SourceType
 import com.hadoop.study.fraud.detect.functions.{AverageAggregate, DynamicAlertFunction, DynamicKeyFunction}
 import com.hadoop.study.fraud.detect.sinks.{AlertsSink, CurrentRulesSink, LatencySink}
-import com.hadoop.study.fraud.detect.sources.{RuleType, RulesSource, TransactionsSource}
+import com.hadoop.study.fraud.detect.sources.{RulesSource, TransactionsSource}
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.state.MapStateDescriptor
@@ -92,7 +93,7 @@ case class RulesEvaluator(config: Config) {
 
     private def getRulesSourceType = {
         val rulesSource = config.get(RULES_SOURCE)
-        RuleType.withName(rulesSource.toUpperCase)
+        SourceType.withName(rulesSource.toUpperCase)
     }
 
     private def configureStreamExecutionEnvironment() = {

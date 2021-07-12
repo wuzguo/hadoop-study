@@ -3,8 +3,9 @@ package com.hadoop.study.fraud.detect.sources
 import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters._
+import com.hadoop.study.fraud.detect.enums.SourceType
+import com.hadoop.study.fraud.detect.enums.SourceType.{KAFKA, PUBSUB, SOCKET, STATIC}
 import com.hadoop.study.fraud.detect.functions.RuleDeserializer
-import com.hadoop.study.fraud.detect.sources.RuleType.{KAFKA, PUBSUB, SOCKET, STATIC}
 import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.serialization.SimpleStringSchema
@@ -28,7 +29,7 @@ object RulesSource {
 
     def create(config: Config): SourceFunction[String] = {
         val sourceType: String = config.get(RULES_SOURCE)
-        val rulesSourceType = RuleType.withName(sourceType.toUpperCase)
+        val rulesSourceType = SourceType.withName(sourceType.toUpperCase)
 
         rulesSourceType match {
             case KAFKA =>
@@ -48,7 +49,7 @@ object RulesSource {
             case STATIC =>
                 RulesStaticJsonGenerator()
             case _ =>
-                throw new IllegalArgumentException(s"Source ${rulesSourceType} unknown. Known values are: ${RuleType.values}")
+                throw new IllegalArgumentException(s"Source ${rulesSourceType} unknown. Known values are: ${SourceType.values}")
         }
     }
 
@@ -64,8 +65,3 @@ object RulesSource {
 }
 
 
-object RuleType extends Enumeration {
-    type RuleType = Value
-
-    val KAFKA, PUBSUB, SOCKET, STATIC = Value
-}

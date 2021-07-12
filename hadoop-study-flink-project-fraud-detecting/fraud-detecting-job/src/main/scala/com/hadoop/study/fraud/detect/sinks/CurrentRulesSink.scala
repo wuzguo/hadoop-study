@@ -3,7 +3,9 @@ package com.hadoop.study.fraud.detect.sinks
 import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{GCP_PROJECT_NAME, GCP_PUBSUB_RULES_SUBSCRIPTION, RULES_EXPORT_SINK, RULES_EXPORT_TOPIC}
-import com.hadoop.study.fraud.detect.sinks.CurrentRulesType.{KAFKA, PUBSUB, STDOUT}
+import com.hadoop.study.fraud.detect.enums.SinkType
+import com.hadoop.study.fraud.detect.enums.SinkType.{KAFKA, PUBSUB, STDOUT}
+import com.hadoop.study.fraud.detect.functions.JsonSerializer
 import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
@@ -27,7 +29,7 @@ object CurrentRulesSink {
 
     def createRulesSink(config: Config): SinkFunction[String] = {
         val sinkType = config.get(RULES_EXPORT_SINK)
-        val currentRulesSinkType = CurrentRulesType.withName(sinkType.toUpperCase)
+        val currentRulesSinkType = SinkType.withName(sinkType.toUpperCase)
         currentRulesSinkType match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initProducerProperties(config)
@@ -47,11 +49,5 @@ object CurrentRulesSink {
     }
 
     def rulesStreamToJson(alerts: DataStream[Rule]): DataStream[String] =
-        alerts.flatMap(JsonSerializer(classOf[Rule], log)).name("Rules Serialization")
-}
-
-object CurrentRulesType extends Enumeration {
-    type CurrentRulesType = Value
-
-    val KAFKA, PUBSUB, STDOUT, DISCARD = Value
+        alerts.flatMap(JsonSerializer(classOf[Rule])).name("Rules Serialization")
 }

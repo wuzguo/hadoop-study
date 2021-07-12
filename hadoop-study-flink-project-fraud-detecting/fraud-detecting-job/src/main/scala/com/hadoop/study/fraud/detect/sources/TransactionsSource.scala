@@ -3,6 +3,7 @@ package com.hadoop.study.fraud.detect.sources
 import com.hadoop.study.fraud.detect.beans.Transaction
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters.{DATA_TOPIC, RECORDS_PER_SECOND, TRANSACTIONS_SOURCE}
+import com.hadoop.study.fraud.detect.enums.TransactionsType
 import com.hadoop.study.fraud.detect.functions.{JsonDeserializer, JsonGeneratorWrapper, TimeStamper}
 import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema
@@ -41,10 +42,4 @@ object TransactionsSource {
         stringStream.flatMap(JsonDeserializer(classOf[Transaction]))
           .map(new TimeStamper[Transaction])
           .name("Transactions Deserialization")
-}
-
-object TransactionsType extends Enumeration {
-    type TransactionsType = Value
-
-    val GENERATOR, KAFKA = Value
 }

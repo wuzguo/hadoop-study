@@ -1,7 +1,8 @@
 package com.hadoop.study.fraud.detect.beans
 
-import com.hadoop.study.fraud.detect.beans.PaymentType.PaymentType
 import com.hadoop.study.fraud.detect.dynamic.TimestampAssignable
+import com.hadoop.study.fraud.detect.enums.PaymentType
+import com.hadoop.study.fraud.detect.enums.PaymentType.PaymentType
 
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneOffset, ZonedDateTime}
@@ -58,9 +59,3 @@ object Transaction {
     }
 }
 
-object PaymentType extends Enumeration {
-    type PaymentType = Value
-
-    val CSH: Value = Value("CSH")
-    val CRD: Value = Value("CRD")
-}

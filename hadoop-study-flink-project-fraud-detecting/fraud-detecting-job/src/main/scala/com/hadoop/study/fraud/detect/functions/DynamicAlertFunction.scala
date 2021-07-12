@@ -1,8 +1,9 @@
 package com.hadoop.study.fraud.detect.functions
 
-import com.hadoop.study.fraud.detect.beans.ControlType.{CLEAR_STATE_ALL, DELETE_RULES_ALL, EXPORT_RULES_CURRENT}
 import com.hadoop.study.fraud.detect.beans._
 import com.hadoop.study.fraud.detect.dynamic.{Descriptors, Tags}
+import com.hadoop.study.fraud.detect.enums.ControlType.{CLEAR_STATE_ALL, DELETE_RULES_ALL, EXPORT_RULES_CURRENT}
+import com.hadoop.study.fraud.detect.enums.RuleState
 import com.hadoop.study.fraud.detect.utils.StateUtils.handleBroadcast
 import com.hadoop.study.fraud.detect.utils.{FieldsExtractor, RuleHelper, StateUtils}
 import org.apache.flink.api.common.accumulators.SimpleAccumulator

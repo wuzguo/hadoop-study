@@ -1,7 +1,7 @@
 package com.hadoop.study.fraud.detect.utils
 
 import com.hadoop.study.fraud.detect.beans.Rule
-import com.hadoop.study.fraud.detect.beans.RuleState.{ACTIVE, DELETE, PAUSE}
+import com.hadoop.study.fraud.detect.enums.RuleState.{ACTIVE, DELETE, PAUSE}
 import org.apache.flink.api.common.state.{BroadcastState, MapState}
 
 /**
