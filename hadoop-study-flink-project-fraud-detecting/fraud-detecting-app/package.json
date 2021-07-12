@@ -1,7 +1,7 @@
 {
-  "name": "front-end",
+  "name": "fraud-detecting-app",
   "version": "0.1.0",
-  "author": "Daryl Roberts <daryl@ververica.com>",
+  "author": "Roberts <daryl@gmail.com>",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.25",
