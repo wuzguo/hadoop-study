@@ -3,9 +3,8 @@ package com.hadoop.study.fraud.detect.dynamic
 import com.hadoop.study.fraud.detect.beans.{Rule, Transaction}
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters._
-import com.hadoop.study.fraud.detect.enums.SourceType
 import com.hadoop.study.fraud.detect.functions.{AverageAggregate, DynamicAlertFunction, DynamicKeyFunction}
-import com.hadoop.study.fraud.detect.sinks.{AlertsAbstractSink$, LatencyAbstractSink$, RulesAbstractSink$}
+import com.hadoop.study.fraud.detect.sinks.{AlertsSink, LatencySink, RulesSink}
 import com.hadoop.study.fraud.detect.sources.{RulesSource, TransactionsSource}
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
@@ -52,19 +51,19 @@ case class RulesEvaluator(config: Config) {
           .name("Dynamic Rule Evaluation Function")
 
         val currentRuleStream = alertStream.getSideOutput(Tags.rulesSinkTag)
-        val rulesJsonStream = RulesAbstractSink$.streamToJson(currentRuleStream)
+        val rulesJsonStream = RulesSink.streamToJson(currentRuleStream)
 
         val sinkParallelism = config.get(SINK_PARALLELISM)
-        rulesJsonStream.addSink(RulesAbstractSink$.create(config)).setParallelism(sinkParallelism).name("Rules Sink")
+        rulesJsonStream.addSink(RulesSink.create(config)).setParallelism(sinkParallelism).name("Rules Sink")
 
-        val alertsJsonStream = AlertsAbstractSink$.streamToJson(alertStream)
-        alertsJsonStream.addSink(AlertsAbstractSink$.create(config)).setParallelism(sinkParallelism).name("Alerts Sink")
+        val alertsJsonStream = AlertsSink.streamToJson(alertStream)
+        alertsJsonStream.addSink(AlertsSink.create(config)).setParallelism(sinkParallelism).name("Alerts Sink")
 
         val latenciesStream = alertStream.getSideOutput(Tags.latencySinkTag)
         latenciesStream.timeWindowAll(Time.seconds(10))
           .aggregate(AverageAggregate())
           .map(_.toString)
-          .addSink(LatencyAbstractSink$.create(config))
+          .addSink(LatencySink.create(config))
           .name("Latency Sink")
 
         env.execute("Fraud Detection Engine")
@@ -72,14 +71,15 @@ case class RulesEvaluator(config: Config) {
 
     private def getTransactionsStream(env: StreamExecutionEnvironment): DataStream[Transaction] = {
         // Data stream setup
-        val transactionSource = TransactionsSource.create(config)
         val sourceParallelism = config.get(SOURCE_PARALLELISM)
+        val sourceType = RulesSource.getSourceType(config)
 
-        val transactionsStringsStream = env.addSource(transactionSource)
-          .name("Transactions Source")
+        val transactionSource = TransactionsSource.create(config)
+        val transactionStringsStream = env.addSource(transactionSource)
+          .name(sourceType.toString)
           .setParallelism(sourceParallelism)
 
-        val transactionsStream = TransactionsSource.streamToTransactions(transactionsStringsStream)
+        val transactionsStream = TransactionsSource.streamToTransactions(transactionStringsStream)
         transactionsStream.assignTimestampsAndWatermarks(
             WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofMillis(config.get(OUT_OF_ORDERLESS).longValue()))
               .withTimestampAssigner(new SerializableTimestampAssigner[Transaction] {
@@ -90,9 +90,13 @@ case class RulesEvaluator(config: Config) {
 
     private def getRuleStream(env: StreamExecutionEnvironment): DataStream[Rule] = {
         val sourceType = RulesSource.getSourceType(config)
+        val sourceParallelism = config.get(SOURCE_PARALLELISM)
         val rulesSource = RulesSource.create(config)
-        val rulesStrings = env.addSource(rulesSource).name(sourceType.toString).setParallelism(1)
-        RulesSource.streamToRules(rulesStrings)
+
+        val rulesStringStream = env.addSource(rulesSource)
+          .name(sourceType.toString)
+          .setParallelism(sourceParallelism)
+        RulesSource.streamToRules(rulesStringStream)
     }
 
     private def configEnvironment() = {

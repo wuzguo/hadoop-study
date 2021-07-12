@@ -1,15 +1,17 @@
 package com.hadoop.study.fraud.detect.sinks
 
-import com.hadoop.study.fraud.detect.beans.{AlertEvent, Transaction}
+import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.config.Config
-import com.hadoop.study.fraud.detect.config.Parameters.{ALERTS_SINK, ALERTS_TOPIC, GCP_PROJECT_NAME, GCP_PUBSUB_ALERTS_SUBSCRIPTION}
+import com.hadoop.study.fraud.detect.config.Parameters.{GCP_PROJECT_NAME, GCP_PUBSUB_RULES_SUBSCRIPTION, RULES_SINK, RULES_EXPORT_TOPIC}
 import com.hadoop.study.fraud.detect.enums.SinkType
-import com.hadoop.study.fraud.detect.enums.SinkType.{DISCARD, KAFKA, PUBSUB, STDOUT}
+import com.hadoop.study.fraud.detect.enums.SinkType.{KAFKA, PUBSUB, STDOUT}
 import com.hadoop.study.fraud.detect.functions.JsonSerializer
+import com.hadoop.study.fraud.detect.sinks.AlertsSink.log
 import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema
-import org.apache.flink.streaming.api.functions.sink.{DiscardingSink, PrintSinkFunction, SinkFunction}
-import org.apache.flink.streaming.api.scala.{DataStream, createTypeInformation}
+import org.apache.flink.api.scala.createTypeInformation
+import org.apache.flink.streaming.api.functions.sink.{PrintSinkFunction, SinkFunction}
+import org.apache.flink.streaming.api.scala.DataStream
 import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSink
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
 import org.slf4j.LoggerFactory
@@ -19,38 +21,35 @@ import org.slf4j.LoggerFactory
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/7/8 16:56
+ * @date 2021/7/8 17:03
  */
 
-object AlertsAbstractSink$ extends AbstractSink {
+object RulesSink extends AbstractSink {
 
-    private val log = LoggerFactory.getLogger("AlertsSink")
+    private val log = LoggerFactory.getLogger("RulesSink")
 
     override def create(config: Config): SinkFunction[String] = {
-        log.info(s"AlertsSink config: ${config}")
-        val alertType = config.get(ALERTS_SINK)
-        val sinkType = SinkType.withName(alertType.toUpperCase)
+        log.info(s"RulesSink config: ${config}")
+        val ruleType = config.get(RULES_SINK)
+        val sinkType = SinkType.withName(ruleType.toUpperCase)
         sinkType match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initProducerProperties(config)
-                val alertsTopic = config.get(ALERTS_TOPIC)
+                val alertsTopic = config.get(RULES_EXPORT_TOPIC)
                 new FlinkKafkaProducer(alertsTopic, new SimpleStringSchema, kafkaProps)
             case PUBSUB =>
                 PubSubSink.newBuilder()
                   .withSerializationSchema(new SimpleStringSchema)
                   .withProjectName(config.get(GCP_PROJECT_NAME))
-                  .withTopicName(config.get(GCP_PUBSUB_ALERTS_SUBSCRIPTION))
+                  .withTopicName(config.get(GCP_PUBSUB_RULES_SUBSCRIPTION))
                   .build
             case STDOUT =>
                 new PrintSinkFunction[String](true)
-            case DISCARD =>
-                new DiscardingSink[String]
             case _ =>
                 throw new IllegalArgumentException(s"Source ${sinkType} unknown. Known values are: ${SinkType.values}")
         }
     }
 
-    def streamToJson(alerts: DataStream[AlertEvent[Transaction, BigDecimal]]): DataStream[String] =
-        alerts.flatMap(JsonSerializer(classOf[AlertEvent[Transaction, BigDecimal]]))
-          .name("Alerts Serialization")
+    def streamToJson(alerts: DataStream[Rule]): DataStream[String] =
+        alerts.flatMap(JsonSerializer(classOf[Rule])).name("Rules Serialization")
 }

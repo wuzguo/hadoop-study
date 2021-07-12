@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory
  * @date 2021/7/8 17:11
  */
 
-object LatencyAbstractSink$ extends AbstractSink {
+object LatencySink extends AbstractSink {
 
     private val log = LoggerFactory.getLogger("LatencySink")
 
