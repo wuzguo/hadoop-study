@@ -5,7 +5,7 @@ import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters._
 import com.hadoop.study.fraud.detect.enums.SourceType
 import com.hadoop.study.fraud.detect.functions.{AverageAggregate, DynamicAlertFunction, DynamicKeyFunction}
-import com.hadoop.study.fraud.detect.sinks.{AlertsSink, CurrentRulesSink, LatencySink}
+import com.hadoop.study.fraud.detect.sinks.{AlertsSink, RulesSink, LatencySink}
 import com.hadoop.study.fraud.detect.sources.{RulesSource, TransactionsSource}
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
@@ -51,11 +51,11 @@ case class RulesEvaluator(config: Config) {
           .name("Dynamic Rule Evaluation Function")
 
         val currentRules = alertSteam.getSideOutput(Tags.currentRulesSinkTag)
-        val currentRulesJson = CurrentRulesSink.rulesStreamToJson(currentRules)
+        val currentRulesJson = RulesSink.streamToJson(currentRules)
         val sinkParallelism = config.get(SINK_PARALLELISM)
-        currentRulesJson.addSink(CurrentRulesSink.createRulesSink(config)).setParallelism(sinkParallelism).name("Rules Export Sink")
+        currentRulesJson.addSink(RulesSink.createRulesSink(config)).setParallelism(sinkParallelism).name("Rules Export Sink")
 
-        val alertsJson = AlertsSink.alertsStreamToJson(alertSteam)
+        val alertsJson = AlertsSink.streamToJson(alertSteam)
         alertsJson.addSink(AlertsSink.createAlertsSink(config)).setParallelism(sinkParallelism).name("Alerts JSON Sink")
 
         val latency = alertSteam.getSideOutput(Tags.latencySinkTag)
@@ -84,14 +84,14 @@ case class RulesEvaluator(config: Config) {
         )
     }
 
-    private def getRulesUpdateStream(env: StreamExecutionEnvironment) = {
+    private def getRulesUpdateStream(env: StreamExecutionEnvironment): DataStream[Rule] = {
         val rulesSourceEnumType = getRulesSourceType
         val rulesSource = RulesSource.create(config)
         val rulesStrings = env.addSource(rulesSource).name(rulesSourceEnumType.toString).setParallelism(1)
         RulesSource.streamToRules(rulesStrings)
     }
 
-    private def getRulesSourceType = {
+    private def getRulesSourceType: SourceType.Value = {
         val rulesSource = config.get(RULES_SOURCE)
         SourceType.withName(rulesSource.toUpperCase)
     }

@@ -22,14 +22,15 @@ import org.slf4j.LoggerFactory
  * @date 2021/7/8 16:56
  */
 
-object AlertsSink {
+object AlertsSink extends Sink {
 
     private val log = LoggerFactory.getLogger("AlertsSink")
 
-    def createAlertsSink(config: Config): SinkFunction[String] = {
-        val sinkType = config.get(ALERTS_SINK)
-        val alertsSinkType = SinkType.withName(sinkType.toUpperCase)
-        alertsSinkType match {
+    override def create(config: Config): SinkFunction[String] = {
+        log.info(s"AlertsSink config: ${config}")
+        val alertType = config.get(ALERTS_SINK)
+        val sinkType = SinkType.withName(alertType.toUpperCase)
+        sinkType match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initProducerProperties(config)
                 val alertsTopic = config.get(ALERTS_TOPIC)
@@ -45,11 +46,11 @@ object AlertsSink {
             case DISCARD =>
                 new DiscardingSink[String]
             case _ =>
-                throw new IllegalArgumentException(s"Source ${alertsSinkType} unknown. Known values are: ${SinkType.values}")
+                throw new IllegalArgumentException(s"Source ${sinkType} unknown. Known values are: ${SinkType.values}")
         }
     }
 
-    def alertsStreamToJson(alerts: DataStream[AlertEvent[Transaction, BigDecimal]]): DataStream[String] =
+    def streamToJson(alerts: DataStream[AlertEvent[Transaction, BigDecimal]]): DataStream[String] =
         alerts.flatMap(JsonSerializer(classOf[AlertEvent[Transaction, BigDecimal]]))
           .name("Alerts Serialization")
 }

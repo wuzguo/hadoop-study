@@ -9,6 +9,7 @@ import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.functions.sink.{DiscardingSink, PrintSinkFunction, SinkFunction}
 import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSink
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
+import org.slf4j.LoggerFactory
 
 /**
  * <B>说明：描述</B>
@@ -18,12 +19,15 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
  * @date 2021/7/8 17:11
  */
 
-object LatencySink {
+object LatencySink extends Sink {
 
-    def createLatencySink(config: Config): SinkFunction[String] = {
-        val latencySink = config.get(LATENCY_SINK)
-        val latencySinkType = SinkType.withName(latencySink.toUpperCase)
-        latencySinkType match {
+    private val log = LoggerFactory.getLogger("LatencySink")
+
+    override def create(config: Config): SinkFunction[String] = {
+        log.info(s"LatencySink config: ${config}")
+        val latencyType = config.get(LATENCY_SINK)
+        val sinkType = SinkType.withName(latencyType.toUpperCase)
+        sinkType match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initProducerProperties(config)
                 val latencyTopic = config.get(LATENCY_TOPIC)
@@ -39,7 +43,7 @@ object LatencySink {
             case DISCARD =>
                 new DiscardingSink[String]
             case _ =>
-                throw new IllegalArgumentException(s"Source ${latencySinkType} unknown. Known values are: ${SinkType.values}")
+                throw new IllegalArgumentException(s"Source ${sinkType} unknown. Known values are: ${SinkType.values}")
         }
     }
 }

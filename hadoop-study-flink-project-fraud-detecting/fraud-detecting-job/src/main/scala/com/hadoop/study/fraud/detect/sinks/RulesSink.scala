@@ -2,10 +2,11 @@ package com.hadoop.study.fraud.detect.sinks
 
 import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.config.Config
-import com.hadoop.study.fraud.detect.config.Parameters.{GCP_PROJECT_NAME, GCP_PUBSUB_RULES_SUBSCRIPTION, RULES_EXPORT_SINK, RULES_EXPORT_TOPIC}
+import com.hadoop.study.fraud.detect.config.Parameters.{GCP_PROJECT_NAME, GCP_PUBSUB_RULES_SUBSCRIPTION, RULES_SINK, RULES_EXPORT_TOPIC}
 import com.hadoop.study.fraud.detect.enums.SinkType
 import com.hadoop.study.fraud.detect.enums.SinkType.{KAFKA, PUBSUB, STDOUT}
 import com.hadoop.study.fraud.detect.functions.JsonSerializer
+import com.hadoop.study.fraud.detect.sinks.AlertsSink.log
 import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
@@ -23,14 +24,15 @@ import org.slf4j.LoggerFactory
  * @date 2021/7/8 17:03
  */
 
-object CurrentRulesSink {
+object RulesSink extends Sink {
 
-    private val log = LoggerFactory.getLogger("CurrentRulesSink")
+    private val log = LoggerFactory.getLogger("RulesSink")
 
-    def createRulesSink(config: Config): SinkFunction[String] = {
-        val sinkType = config.get(RULES_EXPORT_SINK)
-        val currentRulesSinkType = SinkType.withName(sinkType.toUpperCase)
-        currentRulesSinkType match {
+    override def create(config: Config): SinkFunction[String] = {
+        log.info(s"RulesSink config: ${config}")
+        val ruleType = config.get(RULES_SINK)
+        val sinkType = SinkType.withName(ruleType.toUpperCase)
+        sinkType match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initProducerProperties(config)
                 val alertsTopic = config.get(RULES_EXPORT_TOPIC)
@@ -44,10 +46,10 @@ object CurrentRulesSink {
             case STDOUT =>
                 new PrintSinkFunction[String](true)
             case _ =>
-                throw new IllegalArgumentException(s"Source ${currentRulesSinkType} unknown. Known values are: ${SinkType.values}")
+                throw new IllegalArgumentException(s"Source ${sinkType} unknown. Known values are: ${SinkType.values}")
         }
     }
 
-    def rulesStreamToJson(alerts: DataStream[Rule]): DataStream[String] =
+    def streamToJson(alerts: DataStream[Rule]): DataStream[String] =
         alerts.flatMap(JsonSerializer(classOf[Rule])).name("Rules Serialization")
 }
