@@ -26,17 +26,18 @@ import java.time.Duration
  * @date 2021/7/8 14:28
  */
 
-object RulesSource {
+object RulesSource extends AbstractSource {
 
     private val log = LoggerFactory.getLogger("RulesSource")
 
+    override def getSourceType(config: Config): SourceType.Value = {
+        val rulesSource = config.get(RULES_SOURCE)
+        SourceType.withName(rulesSource.toUpperCase)
+    }
 
-    def create(config: Config): SourceFunction[String] = {
+    override def create(config: Config): SourceFunction[String] = {
         log.info(s"RulesSource config: ${config}")
-        val ruleSource = config.get(RULES_SOURCE)
-
-        val sourceType = SourceType.withName(ruleSource.toUpperCase)
-        sourceType match {
+        getSourceType(config) match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initConsumerProperties(config)
                 val rulesTopic = config.get(RULES_TOPIC)
@@ -50,11 +51,11 @@ object RulesSource {
                   .withSubscriptionName(config.get(GCP_PUBSUB_RULES_SUBSCRIPTION))
                   .build
             case SOCKET =>
-                new SocketTextStreamFunction("localhost", config.get(SOCKET_PORT), "\n", -1)
+                new SocketTextStreamFunction("hadoop003", config.get(SOCKET_PORT), "\n", -1)
             case STATIC =>
                 RulesStaticJsonGenerator()
             case _ =>
-                throw new IllegalArgumentException(s"Source ${sourceType} unknown. Known values are: ${SourceType.values}")
+                throw new IllegalArgumentException(s"Source unknown. Known values are: ${SourceType.values}")
         }
     }
 

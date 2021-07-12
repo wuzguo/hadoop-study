@@ -6,7 +6,7 @@ import com.hadoop.study.fraud.detect.config.Parameters.{GCP_PROJECT_NAME, GCP_PU
 import com.hadoop.study.fraud.detect.enums.SinkType
 import com.hadoop.study.fraud.detect.enums.SinkType.{KAFKA, PUBSUB, STDOUT}
 import com.hadoop.study.fraud.detect.functions.JsonSerializer
-import com.hadoop.study.fraud.detect.sinks.AlertsSink.log
+import com.hadoop.study.fraud.detect.sinks.AlertsAbstractSink$.log
 import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory
  * @date 2021/7/8 17:03
  */
 
-object RulesSink extends Sink {
+object RulesAbstractSink$ extends AbstractSink {
 
     private val log = LoggerFactory.getLogger("RulesSink")
 

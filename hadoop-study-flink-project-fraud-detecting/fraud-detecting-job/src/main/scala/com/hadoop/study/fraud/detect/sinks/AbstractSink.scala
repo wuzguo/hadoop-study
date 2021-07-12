@@ -11,7 +11,7 @@ import org.apache.flink.streaming.api.functions.sink.SinkFunction
  * @date 2021/7/12 9:31
  */
 
-abstract class Sink {
+abstract class AbstractSink {
 
     def create(config: Config): SinkFunction[String]
 }

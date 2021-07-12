@@ -5,7 +5,7 @@ import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters._
 import com.hadoop.study.fraud.detect.enums.SourceType
 import com.hadoop.study.fraud.detect.functions.{AverageAggregate, DynamicAlertFunction, DynamicKeyFunction}
-import com.hadoop.study.fraud.detect.sinks.{AlertsSink, LatencySink, RulesSink}
+import com.hadoop.study.fraud.detect.sinks.{AlertsAbstractSink$, LatencyAbstractSink$, RulesAbstractSink$}
 import com.hadoop.study.fraud.detect.sources.{RulesSource, TransactionsSource}
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
@@ -52,19 +52,19 @@ case class RulesEvaluator(config: Config) {
           .name("Dynamic Rule Evaluation Function")
 
         val currentRuleStream = alertStream.getSideOutput(Tags.rulesSinkTag)
-        val rulesJsonStream = RulesSink.streamToJson(currentRuleStream)
+        val rulesJsonStream = RulesAbstractSink$.streamToJson(currentRuleStream)
 
         val sinkParallelism = config.get(SINK_PARALLELISM)
-        rulesJsonStream.addSink(RulesSink.create(config)).setParallelism(sinkParallelism).name("Rules Sink")
+        rulesJsonStream.addSink(RulesAbstractSink$.create(config)).setParallelism(sinkParallelism).name("Rules Sink")
 
-        val alertsJsonStream = AlertsSink.streamToJson(alertStream)
-        alertsJsonStream.addSink(AlertsSink.create(config)).setParallelism(sinkParallelism).name("Alerts Sink")
+        val alertsJsonStream = AlertsAbstractSink$.streamToJson(alertStream)
+        alertsJsonStream.addSink(AlertsAbstractSink$.create(config)).setParallelism(sinkParallelism).name("Alerts Sink")
 
         val latenciesStream = alertStream.getSideOutput(Tags.latencySinkTag)
         latenciesStream.timeWindowAll(Time.seconds(10))
           .aggregate(AverageAggregate())
           .map(_.toString)
-          .addSink(LatencySink.create(config))
+          .addSink(LatencyAbstractSink$.create(config))
           .name("Latency Sink")
 
         env.execute("Fraud Detection Engine")
@@ -72,9 +72,12 @@ case class RulesEvaluator(config: Config) {
 
     private def getTransactionsStream(env: StreamExecutionEnvironment): DataStream[Transaction] = {
         // Data stream setup
-        val transactionSource = TransactionsSource.createTransactionsSource(config)
+        val transactionSource = TransactionsSource.create(config)
         val sourceParallelism = config.get(SOURCE_PARALLELISM)
-        val transactionsStringsStream = env.addSource(transactionSource).name("Transactions Source").setParallelism(sourceParallelism)
+
+        val transactionsStringsStream = env.addSource(transactionSource)
+          .name("Transactions Source")
+          .setParallelism(sourceParallelism)
 
         val transactionsStream = TransactionsSource.streamToTransactions(transactionsStringsStream)
         transactionsStream.assignTimestampsAndWatermarks(
@@ -86,15 +89,10 @@ case class RulesEvaluator(config: Config) {
     }
 
     private def getRuleStream(env: StreamExecutionEnvironment): DataStream[Rule] = {
-        val rulesSourceType = getRulesSourceType
+        val sourceType = RulesSource.getSourceType(config)
         val rulesSource = RulesSource.create(config)
-        val rulesStrings = env.addSource(rulesSource).name(rulesSourceType.toString).setParallelism(1)
+        val rulesStrings = env.addSource(rulesSource).name(sourceType.toString).setParallelism(1)
         RulesSource.streamToRules(rulesStrings)
-    }
-
-    private def getRulesSourceType: SourceType.Value = {
-        val rulesSource = config.get(RULES_SOURCE)
-        SourceType.withName(rulesSource.toUpperCase)
     }
 
     private def configEnvironment() = {

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory
  * @date 2021/7/8 16:56
  */
 
-object AlertsSink extends Sink {
+object AlertsAbstractSink$ extends AbstractSink {
 
     private val log = LoggerFactory.getLogger("AlertsSink")
 
