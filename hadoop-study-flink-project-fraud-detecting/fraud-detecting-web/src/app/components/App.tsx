@@ -143,8 +143,8 @@ export const App: FC = () => {
 
   return (
       <>
-        <SockJsClient url="/ws/backend" topics={["/topic/alerts"]} onMessage={handleMessage}/>
-        <SockJsClient url="/ws/backend" topics={["/topic/latency"]} onMessage={handleLatencyMessage}/>
+        <SockJsClient url="/ws/backend" topics={["/topic/alerts"]} onMessage={handleMessage} options = {{"timeout" : 10000} }/>
+        <SockJsClient url="/ws/backend" topics={["/topic/latency"]} onMessage={handleLatencyMessage} options = {{"timeout" : 10000} }/>
         <LayoutContainer>
           <Header setRules={setRules}/>
           <Container fluid={true} className="flex-grow-1 d-flex w-100 flex-column overflow-hidden">

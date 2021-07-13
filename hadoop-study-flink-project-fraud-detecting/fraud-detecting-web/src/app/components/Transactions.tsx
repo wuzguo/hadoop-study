@@ -141,7 +141,7 @@ export const Transactions = React.memo(
 
       return (
           <>
-            <SockJsClient url="/ws/backend" topics={["/topic/transactions"]} onMessage={addTransaction}/>
+            <SockJsClient url="/ws/backend" topics={["/topic/transactions"]} onMessage={addTransaction} options = {{"timeout" : 10000} }/>
             <Col xs="2" className="d-flex flex-column px-0">
               <TransactionsCard innerRef={ref}>
                 <CardHeader className="d-flex align-items-center py-0 justify-content-between">
