@@ -51,7 +51,7 @@ object RulesSource extends AbstractSource {
                   .withSubscriptionName(config.get(GCP_PUBSUB_RULES_SUBSCRIPTION))
                   .build
             case SOCKET =>
-                new SocketTextStreamFunction("hadoop003", config.get(SOCKET_PORT), "\n", -1)
+                new SocketTextStreamFunction("10.20.0.92", config.get(SOCKET_PORT), "\n", -1)
             case STATIC =>
                 RulesStaticJsonGenerator()
             case _ =>

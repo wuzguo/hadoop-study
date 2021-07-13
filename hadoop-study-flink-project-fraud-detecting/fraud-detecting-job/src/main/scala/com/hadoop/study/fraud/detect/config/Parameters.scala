@@ -47,7 +47,7 @@ object Parameters {
     val GCP_PUBSUB_RULES_EXPORT_SUBSCRIPTION: Param[String] = Param.string("pubsub-rules-export", "current-rules-demo")
 
     // Socket
-    val SOCKET_PORT: Param[Integer] = Param.integer("pubsub-rules-export", 9999)
+    val SOCKET_PORT: Param[Integer] = Param.integer("pubsub-rules-export", 6800)
 
     // General:
     // source/sink types: kafka / pubsub / socket
