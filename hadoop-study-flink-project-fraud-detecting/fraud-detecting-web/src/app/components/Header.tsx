@@ -1,9 +1,9 @@
 import logoImage from "app/assets/flink_squirrel_200_color.png";
-import React, { FC, useState, Dispatch, SetStateAction } from "react";
-import { Button, ButtonGroup, Col, Navbar, NavbarBrand } from "reactstrap";
+import React, {Dispatch, FC, SetStateAction, useState} from "react";
+import {Button, ButtonGroup, Col, Navbar, NavbarBrand} from "reactstrap";
 import styled from "styled-components/macro";
-import { AddRuleModal } from "./AddRuleModal";
-import { Rule } from "app/interfaces";
+import {AddRuleModal} from "./AddRuleModal";
+import {Rule} from "app/interfaces";
 
 const AppNavbar = styled(Navbar)`
   && {
@@ -39,45 +39,45 @@ export const Header: FC<Props> = props => {
   const pushToFlink = () => fetch("/api/rules/push").then();
 
   return (
-    <>
-      <AppNavbar color="dark" dark={true}>
-        <TransactionsCol xs="2">
-          <NavbarBrand tag="div">Live Transactions</NavbarBrand>
-          <ButtonGroup size="sm">
-            <Button color="success" onClick={startTransactions}>
-              Start
+      <>
+        <AppNavbar color="dark" dark={true}>
+          <TransactionsCol xs="2">
+            <NavbarBrand tag="div">Live Transactions</NavbarBrand>
+            <ButtonGroup size="sm">
+              <Button color="success" onClick={startTransactions}>
+                Start
+              </Button>
+              <Button color="danger" onClick={stopTransactions}>
+                Stop
+              </Button>
+            </ButtonGroup>
+          </TransactionsCol>
+
+          <Col xs={{size: 5, offset: 1}}>
+            <Button size="sm" color="primary" onClick={openRuleModal}>
+              Add Rule
             </Button>
-            <Button color="danger" onClick={stopTransactions}>
-              Stop
+
+            <Button size="sm" color="warning" onClick={syncRules}>
+              Sync Rules
             </Button>
-          </ButtonGroup>
-        </TransactionsCol>
 
-        <Col xs={{ size: 5, offset: 1 }}>
-          <Button size="sm" color="primary" onClick={openRuleModal}>
-            Add Rule
-          </Button>
+            <Button size="sm" color="warning" onClick={clearState}>
+              Clear State
+            </Button>
 
-          <Button size="sm" color="warning" onClick={syncRules}>
-            Sync Rules
-          </Button>
+            <Button size="sm" color="warning" onClick={pushToFlink}>
+              Push to Flink
+            </Button>
+          </Col>
 
-          <Button size="sm" color="warning" onClick={clearState}>
-            Clear State
-          </Button>
-
-          <Button size="sm" color="warning" onClick={pushToFlink}>
-            Push to Flink
-          </Button>
-        </Col>
-
-        <Col xs={{ size: 3, offset: 1 }} className="justify-content-end d-flex align-items-center">
-          <NavbarBrand tag="div">Apache Flink - Fraud Detection Demo</NavbarBrand>
-          <Logo src={logoImage} title="Apache Flink" />
-        </Col>
-      </AppNavbar>
-      <AddRuleModal isOpen={modalOpen} toggle={toggleRuleModal} onClosed={closeRuleModal} setRules={props.setRules} />
-    </>
+          <Col xs={{size: 3, offset: 1}} className="justify-content-end d-flex align-items-center">
+            <NavbarBrand tag="div">Apache Flink - Fraud Detection Demo</NavbarBrand>
+            <Logo src={logoImage} title="Apache Flink"/>
+          </Col>
+        </AppNavbar>
+        <AddRuleModal isOpen={modalOpen} toggle={toggleRuleModal} onClosed={closeRuleModal} setRules={props.setRules}/>
+      </>
   );
 };
 

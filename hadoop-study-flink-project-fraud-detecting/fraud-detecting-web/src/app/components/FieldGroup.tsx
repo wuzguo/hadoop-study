@@ -1,7 +1,7 @@
-import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FC } from "react";
-import { Col, FormGroup, Label } from "reactstrap";
+import {IconDefinition} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import React, {FC} from "react";
+import {Col, FormGroup, Label} from "reactstrap";
 import styled from "styled-components";
 
 const LabelColumn = styled(Label)`
@@ -19,13 +19,13 @@ const InputColumn = styled(Col)`
 `;
 
 export const FieldGroup: FC<Props> = props => (
-  <FormGroup className="row">
-    <LabelColumn className="col-sm-4">
-      <FontAwesomeIcon icon={props.icon} fixedWidth={true} className="mr-2" />
-      {props.label}
-    </LabelColumn>
-    <InputColumn sm="8">{props.children}</InputColumn>
-  </FormGroup>
+    <FormGroup className="row">
+      <LabelColumn className="col-sm-4">
+        <FontAwesomeIcon icon={props.icon} fixedWidth={true} className="mr-2"/>
+        {props.label}
+      </LabelColumn>
+      <InputColumn sm="8">{props.children}</InputColumn>
+    </FormGroup>
 );
 
 interface Props {

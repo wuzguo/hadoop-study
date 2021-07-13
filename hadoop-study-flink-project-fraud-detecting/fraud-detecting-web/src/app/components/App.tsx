@@ -1,17 +1,17 @@
-import { Header, Alerts, Rules, Transactions } from "app/components";
-import { Rule, Alert } from "app/interfaces";
+import {Alerts, Header, Rules, Transactions} from "app/components";
+import {Alert, Rule} from "app/interfaces";
 // import { useLines } from "app/utils/useLines";
 import Axios from "axios";
-import React, { createRef, FC, useEffect, useRef, useState } from "react";
-import { Col, Container, Row } from "reactstrap";
+import React, {createRef, FC, useEffect, useRef, useState} from "react";
+import {Col, Container, Row} from "reactstrap";
 import styled from "styled-components/macro";
 import SockJsClient from "react-stomp";
 import uuid from "uuid/v4";
 import LeaderLine from "leader-line";
-import { intersectionWith, find } from "lodash/fp";
+import {find, intersectionWith} from "lodash/fp";
 
 import "../assets/app.scss";
-import { Line } from "app/utils/useLines";
+import {Line} from "app/utils/useLines";
 
 // edit for rule timeouts. (s * ms)
 const RULE_TIMEOUT = 5 * 1000;
@@ -43,7 +43,7 @@ export const App: FC = () => {
 
   useEffect(() => {
     Axios.get<Rule[]>("/api/rules").then(response =>
-      setRules(response.data.map(rule => ({ ...rule, ref: createRef<HTMLDivElement>() })))
+        setRules(response.data.map(rule => ({...rule, ref: createRef<HTMLDivElement>()})))
     );
   }, []);
 
@@ -52,7 +52,7 @@ export const App: FC = () => {
       try {
         return {
           line: new LeaderLine(transactionsRef.current, rule.ref.current, {
-            dash: { animation: true },
+            dash: {animation: true},
             endSocket: "left",
             startSocket: "right",
           }),
@@ -61,8 +61,10 @@ export const App: FC = () => {
       } catch (e) {
         return {
           line: {
-            position: () => {},
-            remove: () => {},
+            position: () => {
+            },
+            remove: () => {
+            },
           },
           ruleId: rule.id,
         };
@@ -76,7 +78,7 @@ export const App: FC = () => {
 
   useEffect(() => {
     const alertingRules = intersectionWith((rule, alert) => rule.id === alert.ruleId, rules, alerts).map(
-      rule => rule.id
+        rule => rule.id
     );
     ruleLines.forEach(line => {
       try {
@@ -140,19 +142,19 @@ export const App: FC = () => {
   };
 
   return (
-    <>
-      <SockJsClient url="/ws/backend" topics={["/topic/alerts"]} onMessage={handleMessage} />
-      <SockJsClient url="/ws/backend" topics={["/topic/latency"]} onMessage={handleLatencyMessage} />
-      <LayoutContainer>
-        <Header setRules={setRules} />
-        <Container fluid={true} className="flex-grow-1 d-flex w-100 flex-column overflow-hidden">
-          <Row className="flex-grow-1 overflow-hidden">
-            <Transactions ref={transactionsRef} />
-            <Rules clearRule={clearRule} rules={rules} alerts={alerts} ruleLines={ruleLines} alertLines={alertLines} />
-            <Alerts alerts={alerts} clearAlert={clearAlert} lines={alertLines} />
-          </Row>
-        </Container>
-      </LayoutContainer>
-    </>
+      <>
+        <SockJsClient url="/ws/backend" topics={["/topic/alerts"]} onMessage={handleMessage}/>
+        <SockJsClient url="/ws/backend" topics={["/topic/latency"]} onMessage={handleLatencyMessage}/>
+        <LayoutContainer>
+          <Header setRules={setRules}/>
+          <Container fluid={true} className="flex-grow-1 d-flex w-100 flex-column overflow-hidden">
+            <Row className="flex-grow-1 overflow-hidden">
+              <Transactions ref={transactionsRef}/>
+              <Rules clearRule={clearRule} rules={rules} alerts={alerts} ruleLines={ruleLines} alertLines={alertLines}/>
+              <Alerts alerts={alerts} clearAlert={clearAlert} lines={alertLines}/>
+            </Row>
+          </Container>
+        </LayoutContainer>
+      </>
   );
 };
