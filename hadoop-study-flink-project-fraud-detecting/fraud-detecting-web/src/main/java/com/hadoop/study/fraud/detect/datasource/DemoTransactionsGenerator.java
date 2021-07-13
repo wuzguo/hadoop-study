@@ -25,30 +25,30 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DemoTransactionsGenerator extends TransactionsGenerator {
 
-  private long lastPayeeIdBeneficiaryIdTriggered = System.currentTimeMillis();
+    private long lastPayeeIdBeneficiaryIdTriggered = System.currentTimeMillis();
 
-  private long lastBeneficiaryIdTriggered = System.currentTimeMillis();
+    private long lastBeneficiaryIdTriggered = System.currentTimeMillis();
 
-  private BigDecimal beneficiaryLimit = new BigDecimal(10000000);
+    private final BigDecimal beneficiaryLimit = BigDecimal.valueOf(10000000L);
 
-  private BigDecimal payeeBeneficiaryLimit = new BigDecimal(20000000);
+    private final BigDecimal payeeBeneficiaryLimit = BigDecimal.valueOf(20000000L);
 
-  public DemoTransactionsGenerator(Consumer<Transaction> consumer, int maxRecordsPerSecond) {
-    super(consumer, maxRecordsPerSecond);
-  }
-
-  @Override
-  protected Transaction randomEvent(SplittableRandom rnd) {
-    Transaction transaction = super.randomEvent(rnd);
-    long now = System.currentTimeMillis();
-    if (now - lastBeneficiaryIdTriggered > 8000 + rnd.nextInt(5000)) {
-      transaction.setPaymentAmount(beneficiaryLimit.add(new BigDecimal(rnd.nextInt(1000000))));
-      this.lastBeneficiaryIdTriggered = System.currentTimeMillis();
+    public DemoTransactionsGenerator(Consumer<Transaction> consumer, int maxRecordsPerSecond) {
+        super(consumer, maxRecordsPerSecond);
     }
-    if (now - lastPayeeIdBeneficiaryIdTriggered > 12000 + rnd.nextInt(10000)) {
-      transaction.setPaymentAmount(payeeBeneficiaryLimit.add(new BigDecimal(rnd.nextInt(1000000))));
-      this.lastPayeeIdBeneficiaryIdTriggered = System.currentTimeMillis();
+
+    @Override
+    protected Transaction randomEvent(SplittableRandom random) {
+        Transaction transaction = super.randomEvent(random);
+        long now = System.currentTimeMillis();
+        if (now - lastBeneficiaryIdTriggered > 8000 + random.nextInt(5000)) {
+            transaction.setPaymentAmount(beneficiaryLimit.add(new BigDecimal(random.nextInt(1000000))));
+            this.lastBeneficiaryIdTriggered = System.currentTimeMillis();
+        }
+        if (now - lastPayeeIdBeneficiaryIdTriggered > 12000 + random.nextInt(10000)) {
+            transaction.setPaymentAmount(payeeBeneficiaryLimit.add(new BigDecimal(random.nextInt(1000000))));
+            this.lastPayeeIdBeneficiaryIdTriggered = System.currentTimeMillis();
+        }
+        return transaction;
     }
-    return transaction;
-  }
 }

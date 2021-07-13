@@ -21,7 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.hadoop.study.fraud.detect.entities.Rule;
-import com.hadoop.study.fraud.detect.exceptions.RuleNotFoundException;
+import com.hadoop.study.fraud.detect.exceptions.NotFoundException;
 import com.hadoop.study.fraud.detect.model.RulePayload;
 import com.hadoop.study.fraud.detect.repositories.RuleRepository;
 import com.hadoop.study.fraud.detect.services.FlinkRulesService;
@@ -72,7 +72,7 @@ class RuleRestController {
 
   @GetMapping("/rules/{id}")
   Rule one(@PathVariable Integer id) {
-    return repository.findById(id).orElseThrow(() -> new RuleNotFoundException(id));
+    return repository.findById(id).orElseThrow(() -> new NotFoundException(id));
   }
 
   @DeleteMapping("/rules/{id}")
