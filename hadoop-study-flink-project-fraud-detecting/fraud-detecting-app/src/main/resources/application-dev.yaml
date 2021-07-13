@@ -1,12 +1,41 @@
-kafka:
-  #  bootstrap-servers: kafka-cp-kafka-headless:9092
-  bootstrap-servers: 10.20.0.92:9092
-
 security:
   auth:
-    enabled: true
+    enabled: false
+
+transactionsRateDisplayLimit: 50
+
+kafka:
+  bootstrap-servers: 10.20.0.92:9092
+
+  topic:
+    transactions: topic-detect-livetransactions
+    rules: topic-detect-rules
+    alerts: topic-detect-alerts
+    latency: topic-detect-latency
+    current-rules: topic-detect-current-rules
+  listeners:
+    transactions.id: transactions-listener
+
+web-socket:
+  topic:
+    transactions: /topic/transactions
+    alerts: /topic/alerts
+    latency: /topic/latency
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: mappings, loggers
 
 spring:
+  h2:
+    console:
+      enabled: true
+  thymeleaf:
+    cache: false
   kafka:
     producer:
       bootstrap-servers: 10.20.0.92:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
