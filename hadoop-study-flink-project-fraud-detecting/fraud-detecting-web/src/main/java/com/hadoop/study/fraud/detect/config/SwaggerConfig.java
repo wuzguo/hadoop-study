@@ -30,23 +30,24 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-  @Bean
-  public Docket api() {
-    return new Docket(DocumentationType.SWAGGER_2)
-        .select()
-        .apis(RequestHandlerSelectors.basePackage("com.ververica"))
-        .paths(PathSelectors.regex("/.*"))
-        .build()
-        .apiInfo(apiEndPointsInfo());
-  }
 
-  private ApiInfo apiEndPointsInfo() {
-    return new ApiInfoBuilder()
-        .title("Ververica Demo REST API")
-        .description("Ververica Demo Management REST API")
-        .license("Apache 2.0")
-        .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
-        .version("1.0.0")
-        .build();
-  }
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+            .select()
+            .apis(RequestHandlerSelectors.basePackage("com.hadoop.study.fraud.detect"))
+            .paths(PathSelectors.regex("/.*"))
+            .build()
+            .apiInfo(apiEndPointsInfo());
+    }
+
+    private ApiInfo apiEndPointsInfo() {
+        return new ApiInfoBuilder()
+            .title("Fraud Detect Demo REST API")
+            .description("Fraud Detect Demo Management REST API")
+            .license("Apache 2.0")
+            .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
+            .version("1.0.0")
+            .build();
+    }
 }

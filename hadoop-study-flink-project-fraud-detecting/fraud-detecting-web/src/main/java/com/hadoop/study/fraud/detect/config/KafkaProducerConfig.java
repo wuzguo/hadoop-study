@@ -17,7 +17,7 @@
 
 package com.hadoop.study.fraud.detect.config;
 
-import java.util.HashMap;
+import com.google.common.collect.Maps;
 import java.util.Map;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -37,7 +37,7 @@ public class KafkaProducerConfig {
 
   @Bean
   public Map<String, Object> producerConfigsJson() {
-    Map<String, Object> props = new HashMap<>();
+    Map<String, Object> props = Maps.newHashMap();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
@@ -46,7 +46,7 @@ public class KafkaProducerConfig {
 
   @Bean
   public Map<String, Object> producerConfigsString() {
-    Map<String, Object> props = new HashMap<>();
+    Map<String, Object> props = Maps.newHashMap();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
