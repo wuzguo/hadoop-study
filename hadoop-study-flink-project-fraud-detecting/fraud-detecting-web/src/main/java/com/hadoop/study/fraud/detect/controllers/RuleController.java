@@ -46,12 +46,12 @@ public class RuleController {
     private FlinkRulesService flinkRulesService;
 
     @GetMapping("/rules")
-    List<Rule> all() {
+    public List<Rule> all() {
         return repository.findAll();
     }
 
     @PostMapping("/rules")
-    Rule newRule(@RequestBody Rule newRule) {
+    public Rule newRule(@RequestBody Rule newRule) {
         Rule savedRule = repository.save(newRule);
         Integer id = savedRule.getId();
         RulePayload payload = UtilJson.readValue(savedRule.getPayload(), RulePayload.class);
@@ -63,8 +63,8 @@ public class RuleController {
         return result;
     }
 
-    @GetMapping("/rules/pushToFlink")
-    void pushToFlink() {
+    @GetMapping("/rules/push")
+    public void pushToFlink() {
         List<Rule> rules = repository.findAll();
         for (Rule rule : rules) {
             flinkRulesService.addRule(rule);
@@ -72,18 +72,18 @@ public class RuleController {
     }
 
     @GetMapping("/rules/{id}")
-    Rule one(@PathVariable Integer id) {
+    public Rule one(@PathVariable Integer id) {
         return repository.findById(id).orElseThrow(() -> new NotFoundException(id));
     }
 
     @DeleteMapping("/rules/{id}")
-    void deleteRule(@PathVariable Integer id) {
+    public void deleteRule(@PathVariable Integer id) {
         repository.deleteById(id);
         flinkRulesService.deleteRule(id);
     }
 
     @DeleteMapping("/rules")
-    void deleteAllRules() {
+    public void deleteAllRules() {
         List<Rule> rules = repository.findAll();
         for (Rule rule : rules) {
             repository.deleteById(rule.getId());

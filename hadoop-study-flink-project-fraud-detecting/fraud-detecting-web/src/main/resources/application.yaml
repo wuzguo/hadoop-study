@@ -25,11 +25,18 @@ web-socket:
     alerts: /topic/alerts
     latency: /topic/latency
 
-management.endpoints.web.exposure.include: mappings, loggers
+management:
+  endpoints:
+    web:
+      exposure:
+        include: mappings, loggers
+
 spring:
-  h2.console.enabled: true
-  thymeleaf.cache: false
-  autoconfigure.exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
+  h2:
+    console:
+      enabled: true
+  thymeleaf:
+    cache: false
   kafka:
     producer:
       bootstrap-servers: localhost:9092

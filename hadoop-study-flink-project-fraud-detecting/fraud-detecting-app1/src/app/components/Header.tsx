@@ -31,12 +31,12 @@ export const Header: FC<Props> = props => {
   const closeRuleModal = () => setModalOpen(false);
   const toggleRuleModal = () => setModalOpen(state => !state);
 
-  const startTransactions = () => fetch("/api/startTransactionsGeneration").then();
-  const stopTransactions = () => fetch("/api/stopTransactionsGeneration").then();
+  const startTransactions = () => fetch("/api/transaction/gen/start").then();
+  const stopTransactions = () => fetch("/api/transaction/gen/stop").then();
 
-  const syncRules = () => fetch("/api/syncRules").then();
-  const clearState = () => fetch("/api/clearState").then();
-  const pushToFlink = () => fetch("/api/rules/pushToFlink").then();
+  const syncRules = () => fetch("/api/rule/sync").then();
+  const clearState = () => fetch("/api/state/clear").then();
+  const pushToFlink = () => fetch("/api/rules/push").then();
 
   return (
     <>

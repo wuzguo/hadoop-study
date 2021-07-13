@@ -30,16 +30,18 @@ import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Api(tags = "数据生成接口")
 @RestController
+@RequestMapping("/api")
 public class DataGenerateController {
 
-    private TransactionsGenerator transactionsGenerator;
+    private final TransactionsGenerator transactionsGenerator;
 
-    private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+    private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -60,39 +62,39 @@ public class DataGenerateController {
         this.kafkaListenerEndpointRegistry = kafkaListenerEndpointRegistry;
     }
 
-    @GetMapping("/api/startTransactionsGeneration")
-    public void startTransactionsGeneration() {
-        log.info("{}", "startTransactionsGeneration called");
-        generateTransactions();
+    @GetMapping("/transaction/gen/start")
+    public void startGenTransaction() {
+        log.info("{}", "startGenTransaction called");
+        transactionsGen();
     }
 
-    private void generateTransactions() {
+    private void transactionsGen() {
         if (!generatingTransactions) {
             executor.submit(transactionsGenerator);
             generatingTransactions = true;
         }
     }
 
-    @GetMapping("/api/stopTransactionsGeneration")
-    public void stopTransactionsGeneration() {
+    @GetMapping("/transaction/gen/stop")
+    public void stopGenTransaction() {
         transactionsGenerator.cancel();
         generatingTransactions = false;
-        log.info("{}", "stopTransactionsGeneration called");
+        log.info("{}", "stopGenTransaction called");
     }
 
-    @GetMapping("/api/generatorSpeed/{speed}")
-    public void setGeneratorSpeed(@PathVariable Long speed) {
+    @GetMapping("/setting/speed/{speed}")
+    public void setGenSpeed(@PathVariable Long speed) {
         log.info("Generator speed change request: " + speed);
         if (speed <= 0) {
             transactionsGenerator.cancel();
             generatingTransactions = false;
             return;
         } else {
-            generateTransactions();
+            transactionsGen();
         }
 
-        MessageListenerContainer listenerContainer =
-            kafkaListenerEndpointRegistry.getListenerContainer(transactionListenerId);
+        MessageListenerContainer listenerContainer = kafkaListenerEndpointRegistry
+            .getListenerContainer(transactionListenerId);
         if (speed > transactionsRateDisplayLimit) {
             listenerContainer.stop();
             listenerContainerRunning = false;
@@ -100,8 +102,6 @@ public class DataGenerateController {
             listenerContainer.start();
         }
 
-        if (transactionsGenerator != null) {
-            transactionsGenerator.adjustMaxRecordsPerSecond(speed);
-        }
+        transactionsGenerator.adjustMaxRecordsPerSecond(speed);
     }
 }
