@@ -39,7 +39,7 @@ public class TransactionsGenerator implements Runnable {
     private final Integer maxRecordsPerSecond;
 
     private final Consumer<Transaction> consumer;
-    
+
     private volatile boolean running = true;
 
     public TransactionsGenerator(Consumer<Transaction> consumer, int maxRecordsPerSecond) {

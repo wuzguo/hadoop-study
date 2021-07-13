@@ -34,9 +34,10 @@ public class Rule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String rulePayload;
 
-    public Rule(String rulePayload) {
-        this.rulePayload = rulePayload;
+    private String payload;
+
+    public Rule(String payload) {
+        this.payload = payload;
     }
 }

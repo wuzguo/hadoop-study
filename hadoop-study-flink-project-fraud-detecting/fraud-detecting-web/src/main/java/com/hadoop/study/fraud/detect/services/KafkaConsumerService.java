@@ -17,11 +17,10 @@
 
 package com.hadoop.study.fraud.detect.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.model.RulePayload;
 import com.hadoop.study.fraud.detect.repositories.RuleRepository;
-import java.io.IOException;
+import com.hadoop.study.fraud.detect.utils.UtilJson;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +34,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaConsumerService {
 
-    private final ObjectMapper mapper = new ObjectMapper();
     @Autowired
     private SimpMessagingTemplate simpTemplate;
+
     @Autowired
     private RuleRepository ruleRepository;
+
     @Value("${web-socket.topic.alerts}")
     private String alertsWebSocketTopic;
+
     @Value("${web-socket.topic.latency}")
     private String latencyWebSocketTopic;
 
@@ -58,13 +59,13 @@ public class KafkaConsumerService {
     }
 
     @KafkaListener(topics = "${kafka.topic.current-rules}", groupId = "current-rules")
-    public void saveTemplateRules(@Payload String message) throws IOException {
+    public void saveTemplateRules(@Payload String message) {
         log.info("{}", message);
-        RulePayload payload = mapper.readValue(message, RulePayload.class);
+        RulePayload payload = UtilJson.readValue(message, RulePayload.class);
         Integer payloadId = payload.getRuleId();
         Optional<Rule> ruleOptional = ruleRepository.findById(payloadId);
         if (!ruleOptional.isPresent()) {
-            ruleRepository.save(new Rule(payloadId, mapper.writeValueAsString(payload)));
+            ruleRepository.save(new Rule(payloadId, UtilJson.writeValueAsString(payload)));
         }
     }
 }

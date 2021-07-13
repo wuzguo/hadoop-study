@@ -56,7 +56,7 @@ public class AlertsController {
     AlertEvent mockAlert(@PathVariable Integer id) {
         Rule rule = repository.findById(id).orElseThrow(() -> new NotFoundException(id));
         Transaction triggeringEvent = transactionsPusher.getLastTransaction();
-        String violatedRule = rule.getRulePayload();
+        String violatedRule = rule.getPayload();
         BigDecimal triggeringValue = triggeringEvent.getPaymentAmount().multiply(new BigDecimal(10));
 
         AlertEvent alert = new AlertEvent(rule.getId(), violatedRule, triggeringEvent, triggeringValue);

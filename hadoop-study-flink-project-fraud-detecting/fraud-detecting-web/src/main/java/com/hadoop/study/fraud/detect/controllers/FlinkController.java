@@ -17,12 +17,12 @@
 
 package com.hadoop.study.fraud.detect.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.model.RulePayload;
 import com.hadoop.study.fraud.detect.services.FlinkRulesService;
+import com.hadoop.study.fraud.detect.utils.UtilJson;
 import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,33 +32,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class FlinkController {
 
-    private final FlinkRulesService flinkRulesService;
-    private final ObjectMapper mapper = new ObjectMapper();
-
-    // Currently rules channel is also (mis)used for control messages. This has to do with how control
-    // channels are set up in Flink Job.
-    FlinkController(FlinkRulesService flinkRulesService) {
-        this.flinkRulesService = flinkRulesService;
-    }
+    @Autowired
+    private FlinkRulesService flinkRulesService;
 
     @GetMapping("/syncRules")
-    void syncRules() throws JsonProcessingException {
-        Rule command = createControlCommand(RulePayload.ControlType.EXPORT_RULES_CURRENT);
-        flinkRulesService.addRule(command);
+    void syncRules() {
+        Rule rule = createControlRule(RulePayload.ControlType.EXPORT_RULES_CURRENT);
+        flinkRulesService.addRule(rule);
     }
 
     @GetMapping("/clearState")
-    void clearState() throws JsonProcessingException {
-        Rule command = createControlCommand(RulePayload.ControlType.CLEAR_STATE_ALL);
-        flinkRulesService.addRule(command);
+    void clearState() {
+        Rule rule = createControlRule(RulePayload.ControlType.CLEAR_STATE_ALL);
+        flinkRulesService.addRule(rule);
     }
 
-    private Rule createControlCommand(RulePayload.ControlType clearStateAll) throws JsonProcessingException {
+    private Rule createControlRule(RulePayload.ControlType clearStateAll) {
         RulePayload payload = new RulePayload();
         payload.setRuleState(RulePayload.RuleState.CONTROL);
         payload.setControlType(clearStateAll);
         Rule rule = new Rule();
-        rule.setRulePayload(mapper.writeValueAsString(payload));
+        rule.setPayload(UtilJson.writeValueAsString(payload));
         return rule;
     }
 }

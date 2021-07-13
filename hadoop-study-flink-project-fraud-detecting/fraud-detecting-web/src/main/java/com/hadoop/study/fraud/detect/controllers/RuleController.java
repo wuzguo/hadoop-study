@@ -17,7 +17,6 @@
 
 package com.hadoop.study.fraud.detect.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.exceptions.NotFoundException;
 import com.hadoop.study.fraud.detect.model.RulePayload;
@@ -25,7 +24,6 @@ import com.hadoop.study.fraud.detect.repositories.RuleRepository;
 import com.hadoop.study.fraud.detect.services.FlinkRulesService;
 import com.hadoop.study.fraud.detect.utils.UtilJson;
 import io.swagger.annotations.Api;
-import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,13 +51,13 @@ public class RuleController {
     }
 
     @PostMapping("/rules")
-    Rule newRule(@RequestBody Rule newRule) throws IOException {
+    Rule newRule(@RequestBody Rule newRule) {
         Rule savedRule = repository.save(newRule);
         Integer id = savedRule.getId();
-        RulePayload payload = UtilJson.readValue(savedRule.getRulePayload(), RulePayload.class);
+        RulePayload payload = UtilJson.readValue(savedRule.getPayload(), RulePayload.class);
         payload.setRuleId(id);
         String payloadJson = UtilJson.writeValueAsString(payload);
-        savedRule.setRulePayload(payloadJson);
+        savedRule.setPayload(payloadJson);
         Rule result = repository.save(savedRule);
         flinkRulesService.addRule(result);
         return result;
@@ -79,13 +77,13 @@ public class RuleController {
     }
 
     @DeleteMapping("/rules/{id}")
-    void deleteRule(@PathVariable Integer id) throws JsonProcessingException {
+    void deleteRule(@PathVariable Integer id) {
         repository.deleteById(id);
         flinkRulesService.deleteRule(id);
     }
 
     @DeleteMapping("/rules")
-    void deleteAllRules() throws JsonProcessingException {
+    void deleteAllRules() {
         List<Rule> rules = repository.findAll();
         for (Rule rule : rules) {
             repository.deleteById(rule.getId());

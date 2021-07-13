@@ -61,7 +61,7 @@ public class DataGenerateController {
     }
 
     @GetMapping("/api/startTransactionsGeneration")
-    public void startTransactionsGeneration() throws Exception {
+    public void startTransactionsGeneration() {
         log.info("{}", "startTransactionsGeneration called");
         generateTransactions();
     }

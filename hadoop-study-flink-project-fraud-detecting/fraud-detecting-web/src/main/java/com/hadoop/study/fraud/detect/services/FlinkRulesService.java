@@ -17,11 +17,10 @@
 
 package com.hadoop.study.fraud.detect.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.model.RulePayload;
 import com.hadoop.study.fraud.detect.model.RulePayload.RuleState;
+import com.hadoop.study.fraud.detect.utils.UtilJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -30,22 +29,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class FlinkRulesService {
 
-    private final ObjectMapper mapper = new ObjectMapper();
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
+
     @Value("${kafka.topic.rules}")
     private String topic;
 
     public void addRule(Rule rule) {
-        String payload = rule.getRulePayload();
+        String payload = rule.getPayload();
         kafkaTemplate.send(topic, payload);
     }
 
-    public void deleteRule(int ruleId) throws JsonProcessingException {
+    public void deleteRule(int ruleId) {
         RulePayload payload = new RulePayload();
         payload.setRuleId(ruleId);
         payload.setRuleState(RuleState.DELETE);
-        String payloadJson = mapper.writeValueAsString(payload);
+        String payloadJson = UtilJson.writeValueAsString(payload);
         kafkaTemplate.send(topic, payloadJson);
     }
 }
