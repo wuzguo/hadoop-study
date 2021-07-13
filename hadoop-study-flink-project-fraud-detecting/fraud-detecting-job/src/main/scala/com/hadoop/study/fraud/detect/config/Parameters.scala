@@ -30,13 +30,13 @@ case class Parameters(tool: ParameterTool) {
 object Parameters {
 
     // Kafka:
-    val KAFKA_HOST: Param[String] = Param.string("kafka-host", "localhost")
+    val KAFKA_HOST: Param[String] = Param.string("kafka-host", "10.20.0.92")
     val KAFKA_PORT: Param[Integer] = Param.integer("kafka-port", 9092)
-    val DATA_TOPIC: Param[String] = Param.string("data-topic", "live-transactions")
-    val ALERTS_TOPIC: Param[String] = Param.string("alerts-topic", "alerts")
-    val RULES_TOPIC: Param[String] = Param.string("rules-topic", "rules")
-    val LATENCY_TOPIC: Param[String] = Param.string("latency-topic", "latency")
-    val RULES_EXPORT_TOPIC: Param[String] = Param.string("current-rules-topic", "current-rules")
+    val DATA_TOPIC: Param[String] = Param.string("data-topic", "topic-detect-live-transactions")
+    val ALERTS_TOPIC: Param[String] = Param.string("alerts-topic", "topic-detect-alerts")
+    val RULES_TOPIC: Param[String] = Param.string("rules-topic", "topic-detect-rules")
+    val LATENCY_TOPIC: Param[String] = Param.string("latency-topic", "topic-detect-latency")
+    val RULES_EXPORT_TOPIC: Param[String] = Param.string("current-rules-topic", "topic-detect-current-rules")
     val OFFSET: Param[String] = Param.string("offset", "latest")
 
     // GCP PubSub:

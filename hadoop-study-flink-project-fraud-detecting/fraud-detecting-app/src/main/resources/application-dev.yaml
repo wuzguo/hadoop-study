@@ -8,7 +8,7 @@ kafka:
   bootstrap-servers: 10.20.0.92:9092
 
   topic:
-    transactions: topic-detect-livetransactions
+    transactions: topic-detect-live-transactions
     rules: topic-detect-rules
     alerts: topic-detect-alerts
     latency: topic-detect-latency
