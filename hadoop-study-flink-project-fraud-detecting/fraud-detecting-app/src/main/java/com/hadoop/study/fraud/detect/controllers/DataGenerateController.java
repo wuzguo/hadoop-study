@@ -39,70 +39,70 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class DataGenerateController {
 
-  private final TransactionsGenerator transactionsGenerator;
+    private final TransactionsGenerator transactionsGenerator;
 
-  private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+    private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 
-  private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
 
-  private boolean generatingTransactions = false;
+    private boolean generatingTransactions = false;
 
-  private boolean listenerContainerRunning = true;
+    private boolean listenerContainerRunning = true;
 
-  @Value("${kafka.listeners.transactions.id}")
-  private String transactionListenerId;
+    @Value("${kafka.listeners.transactions.id}")
+    private String transactionListenerId;
 
-  @Value("${transactionsRateDisplayLimit}")
-  private int transactionsRateDisplayLimit;
+    @Value("${transactionsRateDisplayLimit}")
+    private int transactionsRateDisplayLimit;
 
-  @Autowired
-  public DataGenerateController(
-      KafkaTransactionsPusher transactionsPusher,
-      KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry) {
-    transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
-    this.kafkaListenerEndpointRegistry = kafkaListenerEndpointRegistry;
-  }
-
-  @GetMapping("/transaction/gen/start")
-  public void startGenTransaction() {
-    log.info("{}", "startGenTransaction called");
-    transactionsGen();
-  }
-
-  private void transactionsGen() {
-    if (!generatingTransactions) {
-      executor.submit(transactionsGenerator);
-      generatingTransactions = true;
-    }
-  }
-
-  @GetMapping("/transaction/gen/stop")
-  public void stopGenTransaction() {
-    transactionsGenerator.cancel();
-    generatingTransactions = false;
-    log.info("{}", "stopGenTransaction called");
-  }
-
-  @GetMapping("/setting/speed/{speed}")
-  public void setGenSpeed(@PathVariable Long speed) {
-    log.info("Generator speed change request: " + speed);
-    if (speed <= 0) {
-      transactionsGenerator.cancel();
-      generatingTransactions = false;
-      return;
-    } else {
-      transactionsGen();
+    @Autowired
+    public DataGenerateController(
+        KafkaTransactionsPusher transactionsPusher,
+        KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry) {
+        transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
+        this.kafkaListenerEndpointRegistry = kafkaListenerEndpointRegistry;
     }
 
-    MessageListenerContainer listenerContainer =
-        kafkaListenerEndpointRegistry.getListenerContainer(transactionListenerId);
-    if (speed > transactionsRateDisplayLimit) {
-      listenerContainer.stop();
-      listenerContainerRunning = false;
-    } else if (!listenerContainerRunning) {
-      listenerContainer.start();
+    @GetMapping("/transaction/gen/start")
+    public void startGenTransaction() {
+        log.info("{}", "startGenTransaction called");
+        transactionsGen();
     }
 
-    transactionsGenerator.adjustMaxRecordsPerSecond(speed);
-  }
+    private void transactionsGen() {
+        if (!generatingTransactions) {
+            executor.submit(transactionsGenerator);
+            generatingTransactions = true;
+        }
+    }
+
+    @GetMapping("/transaction/gen/stop")
+    public void stopGenTransaction() {
+        transactionsGenerator.cancel();
+        generatingTransactions = false;
+        log.info("{}", "stopGenTransaction called");
+    }
+
+    @GetMapping("/setting/speed/{speed}")
+    public void setGenSpeed(@PathVariable Long speed) {
+        log.info("Generator speed change request: " + speed);
+        if (speed <= 0) {
+            transactionsGenerator.cancel();
+            generatingTransactions = false;
+            return;
+        } else {
+            transactionsGen();
+        }
+
+        MessageListenerContainer listenerContainer =
+            kafkaListenerEndpointRegistry.getListenerContainer(transactionListenerId);
+        if (speed > transactionsRateDisplayLimit) {
+            listenerContainer.stop();
+            listenerContainerRunning = false;
+        } else if (!listenerContainerRunning) {
+            listenerContainer.start();
+        }
+
+        transactionsGenerator.adjustMaxRecordsPerSecond(speed);
+    }
 }

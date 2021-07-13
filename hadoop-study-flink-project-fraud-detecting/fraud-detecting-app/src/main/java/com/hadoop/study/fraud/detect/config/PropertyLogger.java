@@ -34,33 +34,33 @@ import org.springframework.stereotype.Component;
 @Component
 public class PropertyLogger {
 
-  @Autowired
-  public PropertyLogger(ApplicationContext context) {
-    logProperties(context);
-  }
+    @Autowired
+    public PropertyLogger(ApplicationContext context) {
+        logProperties(context);
+    }
 
-  @EventListener
-  public void handleContextRefresh(ContextRefreshedEvent event) {
-    logProperties(event.getApplicationContext());
-  }
+    @EventListener
+    public void handleContextRefresh(ContextRefreshedEvent event) {
+        logProperties(event.getApplicationContext());
+    }
 
-  public void logProperties(ApplicationContext context) {
-    final Environment env = context.getEnvironment();
-    log.info("====== Environment and configuration ======");
-    log.info("Active profiles: {}", Arrays.toString(env.getActiveProfiles()));
-    final MutablePropertySources sources = ((AbstractEnvironment) env).getPropertySources();
-    StreamSupport.stream(sources.spliterator(), false)
-        .filter(source -> source instanceof EnumerablePropertySource)
-        .map(source -> ((EnumerablePropertySource) source).getPropertyNames())
-        .flatMap(Arrays::stream)
-        .distinct()
-        .filter(
-            prop ->
-                !(prop.contains("credentials")
-                    || prop.contains("password")
-                    || prop.contains("java.class.path")
-                    || prop.contains("sun.boot.class.path")))
-        .forEach(prop -> log.info("{}: {}", prop, env.getProperty(prop)));
-    log.info("===========================================");
-  }
+    public void logProperties(ApplicationContext context) {
+        final Environment env = context.getEnvironment();
+        log.info("====== Environment and configuration ======");
+        log.info("Active profiles: {}", Arrays.toString(env.getActiveProfiles()));
+        final MutablePropertySources sources = ((AbstractEnvironment) env).getPropertySources();
+        StreamSupport.stream(sources.spliterator(), false)
+            .filter(source -> source instanceof EnumerablePropertySource)
+            .map(source -> ((EnumerablePropertySource) source).getPropertyNames())
+            .flatMap(Arrays::stream)
+            .distinct()
+            .filter(
+                prop ->
+                    !(prop.contains("credentials")
+                        || prop.contains("password")
+                        || prop.contains("java.class.path")
+                        || prop.contains("sun.boot.class.path")))
+            .forEach(prop -> log.info("{}: {}", prop, env.getProperty(prop)));
+        log.info("===========================================");
+    }
 }

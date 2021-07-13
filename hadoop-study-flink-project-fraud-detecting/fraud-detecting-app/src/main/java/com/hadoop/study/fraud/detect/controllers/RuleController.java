@@ -39,55 +39,55 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class RuleController {
 
-  @Autowired
-  private RuleRepository repository;
+    @Autowired
+    private RuleRepository repository;
 
-  @Autowired
-  private FlinkRulesService flinkRulesService;
+    @Autowired
+    private FlinkRulesService flinkRulesService;
 
-  @GetMapping("/rules")
-  public List<Rule> all() {
-    return repository.findAll();
-  }
-
-  @PostMapping("/rules")
-  public Rule newRule(@RequestBody Rule newRule) {
-    Rule savedRule = repository.save(newRule);
-    Integer id = savedRule.getId();
-    RulePayload payload = UtilJson.readValue(savedRule.getPayload(), RulePayload.class);
-    payload.setRuleId(id);
-    String payloadJson = UtilJson.writeValueAsString(payload);
-    savedRule.setPayload(payloadJson);
-    Rule result = repository.save(savedRule);
-    flinkRulesService.addRule(result);
-    return result;
-  }
-
-  @GetMapping("/rules/push")
-  public void pushToFlink() {
-    List<Rule> rules = repository.findAll();
-    for (Rule rule : rules) {
-      flinkRulesService.addRule(rule);
+    @GetMapping("/rules")
+    public List<Rule> all() {
+        return repository.findAll();
     }
-  }
 
-  @GetMapping("/rules/{id}")
-  public Rule one(@PathVariable Integer id) {
-    return repository.findById(id).orElseThrow(() -> new NotFoundException(id));
-  }
-
-  @DeleteMapping("/rules/{id}")
-  public void deleteRule(@PathVariable Integer id) {
-    repository.deleteById(id);
-    flinkRulesService.deleteRule(id);
-  }
-
-  @DeleteMapping("/rules")
-  public void deleteAllRules() {
-    List<Rule> rules = repository.findAll();
-    for (Rule rule : rules) {
-      repository.deleteById(rule.getId());
-      flinkRulesService.deleteRule(rule.getId());
+    @PostMapping("/rules")
+    public Rule newRule(@RequestBody Rule newRule) {
+        Rule savedRule = repository.save(newRule);
+        Integer id = savedRule.getId();
+        RulePayload payload = UtilJson.readValue(savedRule.getPayload(), RulePayload.class);
+        payload.setRuleId(id);
+        String payloadJson = UtilJson.writeValueAsString(payload);
+        savedRule.setPayload(payloadJson);
+        Rule result = repository.save(savedRule);
+        flinkRulesService.addRule(result);
+        return result;
     }
-  }
+
+    @GetMapping("/rules/push")
+    public void pushToFlink() {
+        List<Rule> rules = repository.findAll();
+        for (Rule rule : rules) {
+            flinkRulesService.addRule(rule);
+        }
+    }
+
+    @GetMapping("/rules/{id}")
+    public Rule one(@PathVariable Integer id) {
+        return repository.findById(id).orElseThrow(() -> new NotFoundException(id));
+    }
+
+    @DeleteMapping("/rules/{id}")
+    public void deleteRule(@PathVariable Integer id) {
+        repository.deleteById(id);
+        flinkRulesService.deleteRule(id);
+    }
+
+    @DeleteMapping("/rules")
+    public void deleteAllRules() {
+        List<Rule> rules = repository.findAll();
+        for (Rule rule : rules) {
+            repository.deleteById(rule.getId());
+            flinkRulesService.deleteRule(rule.getId());
+        }
+    }
 }

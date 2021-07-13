@@ -24,97 +24,101 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-/** Rules representation. */
+/**
+ * Rules representation.
+ */
 @EqualsAndHashCode
 @ToString
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RulePayload {
 
-  private Integer ruleId;
+    private Integer ruleId;
 
-  private RuleState ruleState;
+    private RuleState ruleState;
 
-  /** aggregation */
-  private List<String> groupingKeyNames;
+    /**
+     * aggregation
+     */
+    private List<String> groupingKeyNames;
 
-  private String aggregateFieldName;
+    private String aggregateFieldName;
 
-  private AggregatorType aggregatorType;
+    private AggregatorType aggregatorType;
 
-  private OperatorType operatorType;
+    private OperatorType operatorType;
 
-  private BigDecimal limit;
+    private BigDecimal limit;
 
-  private Integer windowMinutes;
+    private Integer windowMinutes;
 
-  private ControlType controlType;
+    private ControlType controlType;
 
-  /**
-   * Evaluates this rule by comparing provided value with rules' limit based on limit operator type.
-   *
-   * @param comparisonValue value to be compared with the limit
-   */
-  public boolean apply(BigDecimal comparisonValue) {
-    switch (operatorType) {
-      case EQUAL:
-        return comparisonValue.compareTo(limit) == 0;
-      case NOT_EQUAL:
-        return comparisonValue.compareTo(limit) != 0;
-      case GREATER:
-        return comparisonValue.compareTo(limit) > 0;
-      case LESS:
-        return comparisonValue.compareTo(limit) < 0;
-      case LESS_EQUAL:
-        return comparisonValue.compareTo(limit) <= 0;
-      case GREATER_EQUAL:
-        return comparisonValue.compareTo(limit) >= 0;
-      default:
-        throw new RuntimeException("Unknown limit operator type: " + operatorType);
-    }
-  }
-
-  public enum AggregatorType {
-    SUM,
-    AVG,
-    MIN,
-    MAX
-  }
-
-  public enum OperatorType {
-    EQUAL("="),
-    NOT_EQUAL("!="),
-    GREATER_EQUAL(">="),
-    LESS_EQUAL("<="),
-    GREATER(">"),
-    LESS("<");
-
-    String operator;
-
-    OperatorType(String operator) {
-      this.operator = operator;
-    }
-
-    public static OperatorType typeOf(String text) {
-      for (OperatorType type : OperatorType.values()) {
-        if (type.operator.equals(text)) {
-          return type;
+    /**
+     * Evaluates this rule by comparing provided value with rules' limit based on limit operator type.
+     *
+     * @param comparisonValue value to be compared with the limit
+     */
+    public boolean apply(BigDecimal comparisonValue) {
+        switch (operatorType) {
+            case EQUAL:
+                return comparisonValue.compareTo(limit) == 0;
+            case NOT_EQUAL:
+                return comparisonValue.compareTo(limit) != 0;
+            case GREATER:
+                return comparisonValue.compareTo(limit) > 0;
+            case LESS:
+                return comparisonValue.compareTo(limit) < 0;
+            case LESS_EQUAL:
+                return comparisonValue.compareTo(limit) <= 0;
+            case GREATER_EQUAL:
+                return comparisonValue.compareTo(limit) >= 0;
+            default:
+                throw new RuntimeException("Unknown limit operator type: " + operatorType);
         }
-      }
-      return null;
     }
-  }
 
-  public enum RuleState {
-    ACTIVE,
-    PAUSE,
-    DELETE,
-    CONTROL
-  }
+    public enum AggregatorType {
+        SUM,
+        AVG,
+        MIN,
+        MAX
+    }
 
-  public enum ControlType {
-    CLEAR_STATE_ALL,
-    DELETE_RULES_ALL,
-    EXPORT_RULES_CURRENT
-  }
+    public enum OperatorType {
+        EQUAL("="),
+        NOT_EQUAL("!="),
+        GREATER_EQUAL(">="),
+        LESS_EQUAL("<="),
+        GREATER(">"),
+        LESS("<");
+
+        String operator;
+
+        OperatorType(String operator) {
+            this.operator = operator;
+        }
+
+        public static OperatorType typeOf(String text) {
+            for (OperatorType type : OperatorType.values()) {
+                if (type.operator.equals(text)) {
+                    return type;
+                }
+            }
+            return null;
+        }
+    }
+
+    public enum RuleState {
+        ACTIVE,
+        PAUSE,
+        DELETE,
+        CONTROL
+    }
+
+    public enum ControlType {
+        CLEAR_STATE_ALL,
+        DELETE_RULES_ALL,
+        EXPORT_RULES_CURRENT
+    }
 }

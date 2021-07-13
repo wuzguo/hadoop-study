@@ -29,14 +29,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class KafkaAlertsPusher implements Consumer<AlertEvent> {
 
-  @Autowired private KafkaTemplate<String, Object> kafkaTemplate;
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
-  @Value("${kafka.topic.alerts}")
-  private String topic;
+    @Value("${kafka.topic.alerts}")
+    private String topic;
 
-  @Override
-  public void accept(AlertEvent alert) {
-    log.info("{}", alert);
-    kafkaTemplate.send(topic, alert);
-  }
+    @Override
+    public void accept(AlertEvent alert) {
+        log.info("{}", alert);
+        kafkaTemplate.send(topic, alert);
+    }
 }

@@ -19,7 +19,7 @@ package com.hadoop.study.fraud.detect.exceptions;
 
 public class NotFoundException extends RuntimeException {
 
-  public NotFoundException(Integer ruleId) {
-    super("Could not find employee " + ruleId);
-  }
+    public NotFoundException(Integer ruleId) {
+        super("Could not find employee " + ruleId);
+    }
 }

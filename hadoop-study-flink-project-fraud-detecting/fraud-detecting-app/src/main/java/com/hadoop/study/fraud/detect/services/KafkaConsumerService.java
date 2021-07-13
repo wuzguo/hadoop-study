@@ -34,36 +34,38 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaConsumerService {
 
-  @Autowired private SimpMessagingTemplate simpTemplate;
+    @Autowired
+    private SimpMessagingTemplate simpTemplate;
 
-  @Autowired private RuleRepository ruleRepository;
+    @Autowired
+    private RuleRepository ruleRepository;
 
-  @Value("${web-socket.topic.alerts}")
-  private String alertsWebSocketTopic;
+    @Value("${web-socket.topic.alerts}")
+    private String alertsWebSocketTopic;
 
-  @Value("${web-socket.topic.latency}")
-  private String latencyWebSocketTopic;
+    @Value("${web-socket.topic.latency}")
+    private String latencyWebSocketTopic;
 
-  @KafkaListener(topics = "${kafka.topic.alerts}", groupId = "alerts")
-  public void templateAlerts(@Payload String message) {
-    log.debug("{}", message);
-    simpTemplate.convertAndSend(alertsWebSocketTopic, message);
-  }
-
-  @KafkaListener(topics = "${kafka.topic.latency}", groupId = "latency")
-  public void templateLatency(@Payload String message) {
-    log.debug("{}", message);
-    simpTemplate.convertAndSend(latencyWebSocketTopic, message);
-  }
-
-  @KafkaListener(topics = "${kafka.topic.current-rules}", groupId = "current-rules")
-  public void saveTemplateRules(@Payload String message) {
-    log.info("{}", message);
-    RulePayload payload = UtilJson.readValue(message, RulePayload.class);
-    Integer payloadId = payload.getRuleId();
-    Optional<Rule> ruleOptional = ruleRepository.findById(payloadId);
-    if (!ruleOptional.isPresent()) {
-      ruleRepository.save(new Rule(payloadId, UtilJson.writeValueAsString(payload)));
+    @KafkaListener(topics = "${kafka.topic.alerts}", groupId = "alerts")
+    public void templateAlerts(@Payload String message) {
+        log.debug("{}", message);
+        simpTemplate.convertAndSend(alertsWebSocketTopic, message);
     }
-  }
+
+    @KafkaListener(topics = "${kafka.topic.latency}", groupId = "latency")
+    public void templateLatency(@Payload String message) {
+        log.debug("{}", message);
+        simpTemplate.convertAndSend(latencyWebSocketTopic, message);
+    }
+
+    @KafkaListener(topics = "${kafka.topic.current-rules}", groupId = "current-rules")
+    public void saveTemplateRules(@Payload String message) {
+        log.info("{}", message);
+        RulePayload payload = UtilJson.readValue(message, RulePayload.class);
+        Integer payloadId = payload.getRuleId();
+        Optional<Rule> ruleOptional = ruleRepository.findById(payloadId);
+        if (!ruleOptional.isPresent()) {
+            ruleRepository.save(new Rule(payloadId, UtilJson.writeValueAsString(payload)));
+        }
+    }
 }

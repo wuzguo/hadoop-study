@@ -26,15 +26,23 @@ import lombok.Data;
 @AllArgsConstructor
 public class AlertEvent {
 
-  /** 规则ID */
-  private Integer ruleId;
+    /**
+     * 规则ID
+     */
+    private Integer ruleId;
 
-  /** 负载 */
-  private String payload;
+    /**
+     * 负载
+     */
+    private String payload;
 
-  /** 触发事件 */
-  Transaction triggeringEvent;
+    /**
+     * 触发事件
+     */
+    Transaction triggeringEvent;
 
-  /** 值 */
-  BigDecimal triggeringValue;
+    /**
+     * 值
+     */
+    BigDecimal triggeringValue;
 }

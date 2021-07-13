@@ -63,7 +63,6 @@ const sampleRules: {
     windowMinutes: 1440,
     ruleState: "ACTIVE",
   },
-
 };
 
 const keywords = ["beneficiaryId", "payeeId", "paymentAmount", "paymentType"];

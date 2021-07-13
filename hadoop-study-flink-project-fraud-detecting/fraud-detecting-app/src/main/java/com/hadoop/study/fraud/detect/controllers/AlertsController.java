@@ -39,30 +39,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class AlertsController {
 
-  @Autowired
-  private RuleRepository repository;
+    @Autowired
+    private RuleRepository repository;
 
-  @Autowired
-  private KafkaTransactionsPusher transactionsPusher;
+    @Autowired
+    private KafkaTransactionsPusher transactionsPusher;
 
-  @Autowired
-  private SimpMessagingTemplate simpSender;
+    @Autowired
+    private SimpMessagingTemplate simpSender;
 
-  @Value("${web-socket.topic.alerts}")
-  private String alertsWebSocketTopic;
+    @Value("${web-socket.topic.alerts}")
+    private String alertsWebSocketTopic;
 
-  @GetMapping("/rules/{id}/alert")
-  public AlertEvent mockAlert(@PathVariable Integer id) {
-    Rule rule = repository.findById(id).orElseThrow(() -> new NotFoundException(id));
+    @GetMapping("/rules/{id}/alert")
+    public AlertEvent mockAlert(@PathVariable Integer id) {
+        Rule rule = repository.findById(id).orElseThrow(() -> new NotFoundException(id));
 
-    Transaction triggeringEvent = transactionsPusher.getLastTransaction();
-    String violatedRule = rule.getPayload();
-    BigDecimal triggeringValue =
-        triggeringEvent.getPaymentAmount().multiply(BigDecimal.valueOf(10));
-    AlertEvent alert = new AlertEvent(rule.getId(), violatedRule, triggeringEvent, triggeringValue);
+        Transaction triggeringEvent = transactionsPusher.getLastTransaction();
+        String violatedRule = rule.getPayload();
+        BigDecimal triggeringValue =
+            triggeringEvent.getPaymentAmount().multiply(BigDecimal.valueOf(10));
+        AlertEvent alert = new AlertEvent(rule.getId(), violatedRule, triggeringEvent, triggeringValue);
 
-    String alertJson = UtilJson.toJson(alert);
-    simpSender.convertAndSend(alertsWebSocketTopic, alertJson);
-    return alert;
-  }
+        String alertJson = UtilJson.toJson(alert);
+        simpSender.convertAndSend(alertsWebSocketTopic, alertJson);
+        return alert;
+    }
 }

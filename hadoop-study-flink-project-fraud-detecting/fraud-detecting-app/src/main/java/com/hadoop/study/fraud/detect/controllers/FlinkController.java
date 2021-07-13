@@ -32,27 +32,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class FlinkController {
 
-  @Autowired
-  private FlinkRulesService flinkRulesService;
+    @Autowired
+    private FlinkRulesService flinkRulesService;
 
-  @GetMapping("/rule/sync")
-  public void syncRules() {
-    Rule rule = createControlRule(RulePayload.ControlType.EXPORT_RULES_CURRENT);
-    flinkRulesService.addRule(rule);
-  }
+    @GetMapping("/rule/sync")
+    public void syncRules() {
+        Rule rule = createControlRule(RulePayload.ControlType.EXPORT_RULES_CURRENT);
+        flinkRulesService.addRule(rule);
+    }
 
-  @GetMapping("/state/clear")
-  public void clearState() {
-    Rule rule = createControlRule(RulePayload.ControlType.CLEAR_STATE_ALL);
-    flinkRulesService.addRule(rule);
-  }
+    @GetMapping("/state/clear")
+    public void clearState() {
+        Rule rule = createControlRule(RulePayload.ControlType.CLEAR_STATE_ALL);
+        flinkRulesService.addRule(rule);
+    }
 
-  private Rule createControlRule(RulePayload.ControlType controlType) {
-    RulePayload payload = new RulePayload();
-    payload.setRuleState(RulePayload.RuleState.CONTROL);
-    payload.setControlType(controlType);
-    Rule rule = new Rule();
-    rule.setPayload(UtilJson.writeValueAsString(payload));
-    return rule;
-  }
+    private Rule createControlRule(RulePayload.ControlType controlType) {
+        RulePayload payload = new RulePayload();
+        payload.setRuleState(RulePayload.RuleState.CONTROL);
+        payload.setControlType(controlType);
+        Rule rule = new Rule();
+        rule.setPayload(UtilJson.writeValueAsString(payload));
+        return rule;
+    }
 }
