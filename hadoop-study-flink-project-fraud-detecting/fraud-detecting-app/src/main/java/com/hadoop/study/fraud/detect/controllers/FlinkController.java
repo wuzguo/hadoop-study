@@ -32,7 +32,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class FlinkController {
 
-  @Autowired private FlinkRulesService flinkRulesService;
+  @Autowired
+  private FlinkRulesService flinkRulesService;
 
   @GetMapping("/rule/sync")
   public void syncRules() {

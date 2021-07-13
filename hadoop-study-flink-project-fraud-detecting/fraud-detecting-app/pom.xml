@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>fraud-detecting-app</artifactId>
-
     <modelVersion>4.0.0</modelVersion>
 
     <properties>

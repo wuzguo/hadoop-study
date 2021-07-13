@@ -39,11 +39,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class AlertsController {
 
-  @Autowired private RuleRepository repository;
+  @Autowired
+  private RuleRepository repository;
 
-  @Autowired private KafkaTransactionsPusher transactionsPusher;
+  @Autowired
+  private KafkaTransactionsPusher transactionsPusher;
 
-  @Autowired private SimpMessagingTemplate simpSender;
+  @Autowired
+  private SimpMessagingTemplate simpSender;
 
   @Value("${web-socket.topic.alerts}")
   private String alertsWebSocketTopic;

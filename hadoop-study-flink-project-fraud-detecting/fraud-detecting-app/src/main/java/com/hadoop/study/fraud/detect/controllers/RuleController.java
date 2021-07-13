@@ -39,9 +39,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class RuleController {
 
-  @Autowired private RuleRepository repository;
+  @Autowired
+  private RuleRepository repository;
 
-  @Autowired private FlinkRulesService flinkRulesService;
+  @Autowired
+  private FlinkRulesService flinkRulesService;
 
   @GetMapping("/rules")
   public List<Rule> all() {

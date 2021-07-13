@@ -9,11 +9,11 @@ transactionsRateDisplayLimit: 50
 
 kafka:
   topic:
-    transactions: livetransactions
-    rules: rules
-    alerts: alerts
-    latency: latency
-    current-rules: current-rules
+    transactions: topic-detect-livetransactions
+    rules: topic-detect-rules
+    alerts: topic-detect-alerts
+    latency: topic-detect-latency
+    current-rules: topic-detect-current-rules
   listeners:
     transactions.id: transactions-listener
 
