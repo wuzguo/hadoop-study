@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hadoop.study.fraud.detect.datasource.Transaction;
 import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.exceptions.RuleNotFoundException;
-import com.hadoop.study.fraud.detect.model.Alert;
+import com.hadoop.study.fraud.detect.model.AlertEvent;
 import com.hadoop.study.fraud.detect.repositories.RuleRepository;
 import com.hadoop.study.fraud.detect.services.KafkaTransactionsPusher;
 import java.math.BigDecimal;
@@ -61,13 +61,13 @@ public class AlertsController {
   ObjectMapper mapper = new ObjectMapper();
 
   @GetMapping("/rules/{id}/alert")
-  Alert mockAlert(@PathVariable Integer id) throws JsonProcessingException {
+  AlertEvent mockAlert(@PathVariable Integer id) throws JsonProcessingException {
     Rule rule = repository.findById(id).orElseThrow(() -> new RuleNotFoundException(id));
     Transaction triggeringEvent = transactionsPusher.getLastTransaction();
     String violatedRule = rule.getRulePayload();
     BigDecimal triggeringValue = triggeringEvent.getPaymentAmount().multiply(new BigDecimal(10));
 
-    Alert alert = new Alert(rule.getId(), violatedRule, triggeringEvent, triggeringValue);
+    AlertEvent alert = new AlertEvent(rule.getId(), violatedRule, triggeringEvent, triggeringValue);
 
     String result = mapper.writeValueAsString(alert);
 

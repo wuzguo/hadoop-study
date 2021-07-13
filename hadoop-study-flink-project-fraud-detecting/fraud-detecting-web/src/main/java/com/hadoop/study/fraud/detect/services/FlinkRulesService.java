@@ -30,17 +30,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class FlinkRulesService {
 
+  @Autowired
   private KafkaTemplate<String, String> kafkaTemplate;
 
   @Value("${kafka.topic.rules}")
   private String topic;
 
   private final ObjectMapper mapper = new ObjectMapper();
-
-  @Autowired
-  public FlinkRulesService(KafkaTemplate<String, String> kafkaTemplate) {
-    this.kafkaTemplate = kafkaTemplate;
-  }
 
   public void addRule(Rule rule) {
     String payload = rule.getRulePayload();

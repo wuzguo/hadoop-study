@@ -24,7 +24,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Alert {
+public class AlertEvent {
 
   private Integer ruleId;
 
