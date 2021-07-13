@@ -1,0 +1,12 @@
+kafka:
+  #  bootstrap-servers: kafka-cp-kafka-headless:9092
+  bootstrap-servers: kafka-cp-kafka-headless:9092
+
+security:
+  auth:
+    enabled: true
+
+spring:
+  kafka:
+    producer:
+      bootstrap-servers: kafka-cp-kafka-headless:9092

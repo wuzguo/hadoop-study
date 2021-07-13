@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hadoop-study</artifactId>
+        <groupId>com.hadoop.study</groupId>
+        <relativePath>../../pom.xml</relativePath>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>fraud-detecting-app</artifactId>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <logback.version>1.2.3</logback.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <swagger.version>2.9.2</swagger.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <groupId>org.springframework.boot</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>org.springframework.boot</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+            <groupId>org.springframework.boot</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <groupId>org.springframework.boot</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <groupId>org.springframework.boot</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>kafka-streams</artifactId>
+            <groupId>org.apache.kafka</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-kafka</artifactId>
+            <groupId>org.springframework.kafka</groupId>
+        </dependency>
+
+        <!-- WEB JARS -->
+        <dependency>
+            <artifactId>webjars-locator-core</artifactId>
+            <groupId>org.webjars</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>sockjs-client</artifactId>
+            <groupId>org.webjars</groupId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <artifactId>stomp-websocket</artifactId>
+            <groupId>org.webjars</groupId>
+            <version>2.3.3</version>
+        </dependency>
+        <dependency>
+            <artifactId>bootstrap</artifactId>
+            <groupId>org.webjars</groupId>
+            <version>3.3.7</version>
+        </dependency>
+        <dependency>
+            <artifactId>jquery</artifactId>
+            <groupId>org.webjars</groupId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>lombok</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <artifactId>spring-boot-devtools</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <artifactId>logback-classic</artifactId>
+            <groupId>ch.qos.logback</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>h2</artifactId>
+            <groupId>com.h2database</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>springfox-swagger2</artifactId>
+            <groupId>io.springfox</groupId>
+            <version>${swagger.version}</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <groupId>io.springfox</groupId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>commons-lang3</artifactId>
+            <groupId>org.apache.commons</groupId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes/static</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>build</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <id>copy-resources</id>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.springframework.boot</groupId>
+            </plugin>
+
+            <plugin>
+                <artifactId>fmt-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <groupId>com.coveo</groupId>
+                <version>2.9</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <artifactId>surefire-junit47</artifactId>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <version>3.0.0-M3</version>
+                    </dependency>
+                </dependencies>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>3.0.0-M3</version>
+            </plugin>
+        </plugins>
+
+    </build>
+</project>
