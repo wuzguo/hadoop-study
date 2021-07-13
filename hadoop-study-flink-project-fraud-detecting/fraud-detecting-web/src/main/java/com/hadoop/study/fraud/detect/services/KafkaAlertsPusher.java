@@ -26,19 +26,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-@Service
 @Slf4j
+@Service
 public class KafkaAlertsPusher implements Consumer<AlertEvent> {
 
+    @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     @Value("${kafka.topic.alerts}")
     private String topic;
-
-    @Autowired
-    public KafkaAlertsPusher(KafkaTemplate<String, Object> kafkaTemplateForJson) {
-        this.kafkaTemplate = kafkaTemplateForJson;
-    }
 
     @Override
     public void accept(AlertEvent alert) {

@@ -17,7 +17,6 @@
 
 package com.hadoop.study.fraud.detect.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.TopicPartition;
@@ -33,37 +32,32 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaTransactionsConsumerService implements ConsumerSeekAware {
 
-  private final SimpMessagingTemplate simpTemplate;
+    @Autowired
+    private SimpMessagingTemplate simpTemplate;
 
-  private final ObjectMapper mapper = new ObjectMapper();
+    @Value("${web-socket.topic.transactions}")
+    private String transactionsWebSocketTopic;
 
-  @Value("${web-socket.topic.transactions}")
-  private String transactionsWebSocketTopic;
+    @KafkaListener(id = "${kafka.listeners.transactions.id}",
+        topics = "${kafka.topic.transactions}",
+        groupId = "transactions")
+    public void consumeTransactions(@Payload String message) {
+        log.debug("{}", message);
+        simpTemplate.convertAndSend(transactionsWebSocketTopic, message);
+    }
 
-  @Autowired
-  public KafkaTransactionsConsumerService(SimpMessagingTemplate simpTemplate) {
-    this.simpTemplate = simpTemplate;
-  }
+    @Override
+    public void registerSeekCallback(ConsumerSeekCallback callback) {
+    }
 
-  @KafkaListener(
-      id = "${kafka.listeners.transactions.id}",
-      topics = "${kafka.topic.transactions}",
-      groupId = "transactions")
-  public void consumeTransactions(@Payload String message) {
-    log.debug("{}", message);
-    simpTemplate.convertAndSend(transactionsWebSocketTopic, message);
-  }
+    @Override
+    public void onPartitionsAssigned(
+        Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
+        assignments.forEach((topicPartition, value) -> callback.seekToEnd(topicPartition.topic(),
+            topicPartition.partition()));
+    }
 
-  @Override
-  public void registerSeekCallback(ConsumerSeekCallback callback) {}
-
-  @Override
-  public void onPartitionsAssigned(
-      Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
-    assignments.forEach((t, o) -> callback.seekToEnd(t.topic(), t.partition()));
-  }
-
-  @Override
-  public void onIdleContainer(
-      Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {}
+    @Override
+    public void onIdleContainer(Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
+    }
 }

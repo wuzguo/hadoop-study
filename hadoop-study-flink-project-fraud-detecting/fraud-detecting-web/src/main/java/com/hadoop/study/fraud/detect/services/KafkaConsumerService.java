@@ -35,44 +35,40 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaConsumerService {
 
-  private final SimpMessagingTemplate simpTemplate;
+    @Autowired
+    private SimpMessagingTemplate simpTemplate;
 
-  private final RuleRepository ruleRepository;
+    @Autowired
+    private RuleRepository ruleRepository;
 
-  private final ObjectMapper mapper = new ObjectMapper();
+    @Value("${web-socket.topic.alerts}")
+    private String alertsWebSocketTopic;
 
-  @Value("${web-socket.topic.alerts}")
-  private String alertsWebSocketTopic;
+    @Value("${web-socket.topic.latency}")
+    private String latencyWebSocketTopic;
 
-  @Value("${web-socket.topic.latency}")
-  private String latencyWebSocketTopic;
+    private final ObjectMapper mapper = new ObjectMapper();
 
-  @Autowired
-  public KafkaConsumerService(SimpMessagingTemplate simpTemplate, RuleRepository ruleRepository) {
-    this.simpTemplate = simpTemplate;
-    this.ruleRepository = ruleRepository;
-  }
-
-  @KafkaListener(topics = "${kafka.topic.alerts}", groupId = "alerts")
-  public void templateAlerts(@Payload String message) {
-    log.debug("{}", message);
-    simpTemplate.convertAndSend(alertsWebSocketTopic, message);
-  }
-
-  @KafkaListener(topics = "${kafka.topic.latency}", groupId = "latency")
-  public void templateLatency(@Payload String message) {
-    log.debug("{}", message);
-    simpTemplate.convertAndSend(latencyWebSocketTopic, message);
-  }
-
-  @KafkaListener(topics = "${kafka.topic.current-rules}", groupId = "current-rules")
-  public void templateCurrentFlinkRules(@Payload String message) throws IOException {
-    log.info("{}", message);
-    RulePayload payload = mapper.readValue(message, RulePayload.class);
-    Integer payloadId = payload.getRuleId();
-    Optional<Rule> existingRule = ruleRepository.findById(payloadId);
-    if (!existingRule.isPresent()) {
-      ruleRepository.save(new Rule(payloadId, mapper.writeValueAsString(payload)));
+    @KafkaListener(topics = "${kafka.topic.alerts}", groupId = "alerts")
+    public void templateAlerts(@Payload String message) {
+        log.debug("{}", message);
+        simpTemplate.convertAndSend(alertsWebSocketTopic, message);
     }
-  }
+
+    @KafkaListener(topics = "${kafka.topic.latency}", groupId = "latency")
+    public void templateLatency(@Payload String message) {
+        log.debug("{}", message);
+        simpTemplate.convertAndSend(latencyWebSocketTopic, message);
+    }
+
+    @KafkaListener(topics = "${kafka.topic.current-rules}", groupId = "current-rules")
+    public void saveTemplateRules(@Payload String message) throws IOException {
+        log.info("{}", message);
+        RulePayload payload = mapper.readValue(message, RulePayload.class);
+        Integer payloadId = payload.getRuleId();
+        Optional<Rule> ruleOptional = ruleRepository.findById(payloadId);
+        if (!ruleOptional.isPresent()) {
+            ruleRepository.save(new Rule(payloadId, mapper.writeValueAsString(payload)));
+        }
+    }
 }
