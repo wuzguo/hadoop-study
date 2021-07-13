@@ -12,8 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2021/7/12 16:30
  */
 
-@SpringBootApplication
 @Slf4j
+@SpringBootApplication
 public class DetectApplication {
 
     public static void main(String[] args) {
