@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "规则设置接口")
 @RestController
 @RequestMapping("/api")
-public class RuleRestController {
+public class RuleController {
 
     @Autowired
     private RuleRepository repository;

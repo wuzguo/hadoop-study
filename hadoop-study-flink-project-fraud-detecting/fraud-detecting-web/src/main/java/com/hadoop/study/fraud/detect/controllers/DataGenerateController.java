@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @Api(tags = "数据生成接口")
 @RestController
-public class DataGenerationController {
+public class DataGenerateController {
 
     private TransactionsGenerator transactionsGenerator;
 
@@ -54,7 +54,7 @@ public class DataGenerationController {
     private int transactionsRateDisplayLimit;
 
     @Autowired
-    public DataGenerationController(KafkaTransactionsPusher transactionsPusher,
+    public DataGenerateController(KafkaTransactionsPusher transactionsPusher,
         KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry) {
         transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
         this.kafkaListenerEndpointRegistry = kafkaListenerEndpointRegistry;
