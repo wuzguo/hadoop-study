@@ -17,15 +17,14 @@
 
 package com.hadoop.study.fraud.detect.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.hadoop.study.fraud.detect.datasource.Transaction;
 import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.exceptions.NotFoundException;
 import com.hadoop.study.fraud.detect.model.AlertEvent;
 import com.hadoop.study.fraud.detect.repositories.RuleRepository;
 import com.hadoop.study.fraud.detect.services.KafkaTransactionsPusher;
+import com.hadoop.study.fraud.detect.utils.UtilJson;
+import io.swagger.annotations.Api;
 import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,44 +34,35 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+@Api(tags = "警报接口")
 @RestController
 @RequestMapping("/api")
 public class AlertsController {
 
-  private final RuleRepository repository;
+    @Autowired
+    private RuleRepository repository;
 
-  private final KafkaTransactionsPusher transactionsPusher;
+    @Autowired
+    private KafkaTransactionsPusher transactionsPusher;
 
-  private SimpMessagingTemplate simpSender;
+    @Autowired
+    private SimpMessagingTemplate simpSender;
 
-  @Value("${web-socket.topic.alerts}")
-  private String alertsWebSocketTopic;
+    @Value("${web-socket.topic.alerts}")
+    private String alertsWebSocketTopic;
 
-  @Autowired
-  public AlertsController(
-      RuleRepository repository,
-      KafkaTransactionsPusher transactionsPusher,
-      SimpMessagingTemplate simpSender) {
-    this.repository = repository;
-    this.transactionsPusher = transactionsPusher;
-    this.simpSender = simpSender;
-  }
+    @GetMapping("/rules/{id}/alert")
+    AlertEvent mockAlert(@PathVariable Integer id) {
+        Rule rule = repository.findById(id).orElseThrow(() -> new NotFoundException(id));
+        Transaction triggeringEvent = transactionsPusher.getLastTransaction();
+        String violatedRule = rule.getRulePayload();
+        BigDecimal triggeringValue = triggeringEvent.getPaymentAmount().multiply(new BigDecimal(10));
 
-  ObjectMapper mapper = new ObjectMapper();
+        AlertEvent alert = new AlertEvent(rule.getId(), violatedRule, triggeringEvent, triggeringValue);
 
-  @GetMapping("/rules/{id}/alert")
-  AlertEvent mockAlert(@PathVariable Integer id) throws JsonProcessingException {
-    Rule rule = repository.findById(id).orElseThrow(() -> new NotFoundException(id));
-    Transaction triggeringEvent = transactionsPusher.getLastTransaction();
-    String violatedRule = rule.getRulePayload();
-    BigDecimal triggeringValue = triggeringEvent.getPaymentAmount().multiply(new BigDecimal(10));
-
-    AlertEvent alert = new AlertEvent(rule.getId(), violatedRule, triggeringEvent, triggeringValue);
-
-    String result = mapper.writeValueAsString(alert);
-
-    simpSender.convertAndSend(alertsWebSocketTopic, result);
-
-    return alert;
-  }
+        String result = UtilJson.toJson(alert);
+        simpSender.convertAndSend(alertsWebSocketTopic, result);
+        return alert;
+    }
 }

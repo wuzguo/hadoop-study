@@ -20,6 +20,7 @@ package com.hadoop.study.fraud.detect.controllers;
 import com.hadoop.study.fraud.detect.datasource.DemoTransactionsGenerator;
 import com.hadoop.study.fraud.detect.datasource.TransactionsGenerator;
 import com.hadoop.study.fraud.detect.services.KafkaTransactionsPusher;
+import io.swagger.annotations.Api;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
 @Slf4j
+@Api(tags = "数据生成接口")
+@RestController
 public class DataGenerationController {
 
     private TransactionsGenerator transactionsGenerator;

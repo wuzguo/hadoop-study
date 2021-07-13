@@ -22,10 +22,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.model.RulePayload;
 import com.hadoop.study.fraud.detect.services.FlinkRulesService;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Api(tags = "Fink接口")
 @RestController
 @RequestMapping("/api")
 public class FlinkController {
