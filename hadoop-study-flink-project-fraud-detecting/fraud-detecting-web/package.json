@@ -21,7 +21,7 @@
     "react-stomp": "^4.1.1",
     "react-use": "^10.6.2",
     "react-virtualized": "^9.21.1",
-    "reactstrap": "^8.0.1",
+    "reactstrap": "8.0.1",
     "styled-components": "^4.3.2",
     "uuid": "^3.3.3"
   },
@@ -33,7 +33,7 @@
     "@types/react-select": "^3.0.2",
     "@types/react-rangeslider": "^2.2.1",
     "@types/react-virtualized": "^9.21.4",
-    "@types/reactstrap": "^8.0.1",
+    "@types/reactstrap": "8.0.1",
     "@types/styled-components": "^4.1.18",
     "concurrently": "^4.1.2",
     "http-proxy-middleware": "^0.19.1",
