@@ -31,23 +31,17 @@ import org.springframework.util.Assert;
 public abstract class UtilDate {
 
 
-    private static final ConcurrentHashMap<String, TimeZone> timeZoneCache = new ConcurrentHashMap<>();
-
     // mvc.format
     public static final String PatternMvc = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-
     public static final String PatternDate = "yyyy-MM-dd";
-
     //东八区
     public static final TimeZone tzShanghai = TimeZone.getTimeZone("Asia/Shanghai");
-
     //标准时区
     public static final TimeZone tzUTC = TimeZone.getTimeZone(ZoneOffset.UTC);
-
     public static final ZoneId UTC = ZoneOffset.UTC;
-
     //This class is immutable and thread-safe.
     public static final DateTimeFormatter DateFormatter = DateTimeFormatter.ofPattern(PatternDate);
+    private static final ConcurrentHashMap<String, TimeZone> timeZoneCache = new ConcurrentHashMap<>();
 
     /**
      * @param dateStr str格式 yyyy-MM-dd

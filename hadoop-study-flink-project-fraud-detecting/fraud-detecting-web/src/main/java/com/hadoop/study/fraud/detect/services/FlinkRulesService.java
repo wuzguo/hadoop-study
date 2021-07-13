@@ -30,24 +30,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class FlinkRulesService {
 
-  @Autowired
-  private KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+    @Value("${kafka.topic.rules}")
+    private String topic;
 
-  @Value("${kafka.topic.rules}")
-  private String topic;
+    public void addRule(Rule rule) {
+        String payload = rule.getRulePayload();
+        kafkaTemplate.send(topic, payload);
+    }
 
-  private final ObjectMapper mapper = new ObjectMapper();
-
-  public void addRule(Rule rule) {
-    String payload = rule.getRulePayload();
-    kafkaTemplate.send(topic, payload);
-  }
-
-  public void deleteRule(int ruleId) throws JsonProcessingException {
-    RulePayload payload = new RulePayload();
-    payload.setRuleId(ruleId);
-    payload.setRuleState(RuleState.DELETE);
-    String payloadJson = mapper.writeValueAsString(payload);
-    kafkaTemplate.send(topic, payloadJson);
-  }
+    public void deleteRule(int ruleId) throws JsonProcessingException {
+        RulePayload payload = new RulePayload();
+        payload.setRuleId(ruleId);
+        payload.setRuleState(RuleState.DELETE);
+        String payloadJson = mapper.writeValueAsString(payload);
+        kafkaTemplate.send(topic, payloadJson);
+    }
 }

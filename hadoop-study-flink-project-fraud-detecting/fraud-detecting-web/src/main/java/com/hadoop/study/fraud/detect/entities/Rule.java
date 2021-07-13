@@ -31,13 +31,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Rule {
 
-  public Rule(String rulePayload) {
-    this.rulePayload = rulePayload;
-  }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private String rulePayload;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
-
-  private String rulePayload;
+    public Rule(String rulePayload) {
+        this.rulePayload = rulePayload;
+    }
 }

@@ -26,11 +26,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class AlertEvent {
 
-  private Integer ruleId;
-
-  private String rulePayload;
-
-  Transaction triggeringEvent;
-
-  BigDecimal triggeringValue;
+    Transaction triggeringEvent;
+    BigDecimal triggeringValue;
+    private Integer ruleId;
+    private String rulePayload;
 }

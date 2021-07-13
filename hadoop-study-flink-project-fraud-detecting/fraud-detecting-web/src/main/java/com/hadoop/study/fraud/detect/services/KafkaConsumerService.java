@@ -35,19 +35,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaConsumerService {
 
+    private final ObjectMapper mapper = new ObjectMapper();
     @Autowired
     private SimpMessagingTemplate simpTemplate;
-
     @Autowired
     private RuleRepository ruleRepository;
-
     @Value("${web-socket.topic.alerts}")
     private String alertsWebSocketTopic;
-
     @Value("${web-socket.topic.latency}")
     private String latencyWebSocketTopic;
-
-    private final ObjectMapper mapper = new ObjectMapper();
 
     @KafkaListener(topics = "${kafka.topic.alerts}", groupId = "alerts")
     public void templateAlerts(@Payload String message) {

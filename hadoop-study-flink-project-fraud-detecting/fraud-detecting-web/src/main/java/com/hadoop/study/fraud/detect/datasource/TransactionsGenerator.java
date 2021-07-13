@@ -36,16 +36,28 @@ public class TransactionsGenerator implements Runnable {
 
     private final Throttler throttler;
 
-    private volatile boolean running = true;
-
     private final Integer maxRecordsPerSecond;
 
     private final Consumer<Transaction> consumer;
+    
+    private volatile boolean running = true;
 
     public TransactionsGenerator(Consumer<Transaction> consumer, int maxRecordsPerSecond) {
         this.consumer = consumer;
         this.maxRecordsPerSecond = maxRecordsPerSecond;
         this.throttler = new Throttler(maxRecordsPerSecond);
+    }
+
+    private static Transaction.PaymentType paymentType(long id) {
+        int name = (int) (id % 2);
+        switch (name) {
+            case 0:
+                return Transaction.PaymentType.CRD;
+            case 1:
+                return Transaction.PaymentType.CSH;
+            default:
+                throw new IllegalStateException("");
+        }
     }
 
     public void adjustMaxRecordsPerSecond(long maxRecordsPerSecond) {
@@ -72,18 +84,6 @@ public class TransactionsGenerator implements Runnable {
 
     public Transaction generateOne() {
         return randomEvent(new SplittableRandom());
-    }
-
-    private static Transaction.PaymentType paymentType(long id) {
-        int name = (int) (id % 2);
-        switch (name) {
-            case 0:
-                return Transaction.PaymentType.CRD;
-            case 1:
-                return Transaction.PaymentType.CSH;
-            default:
-                throw new IllegalStateException("");
-        }
     }
 
     @Override
