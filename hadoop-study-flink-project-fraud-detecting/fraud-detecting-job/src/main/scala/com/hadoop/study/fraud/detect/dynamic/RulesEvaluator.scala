@@ -50,7 +50,7 @@ case class RulesEvaluator(config: Config) {
           .uid("Dynamic Alert Function")
           .name("Dynamic Rule Evaluation Function")
 
-        val currentRuleStream = alertStream.getSideOutput(Tags.rulesSinkTag)
+        val currentRuleStream = alertStream.getSideOutput(Tags.currentRulesSinkTag)
         val rulesJsonStream = RulesSink.streamToJson(currentRuleStream)
 
         val sinkParallelism = config.get(SINK_PARALLELISM)
@@ -133,5 +133,5 @@ object Descriptors {
 object Tags {
     val latencySinkTag: OutputTag[Long] = new OutputTag[Long]("latency-sink")
 
-    val rulesSinkTag: OutputTag[Rule] = new OutputTag[Rule]("current-rules-sink")
+    val currentRulesSinkTag: OutputTag[Rule] = new OutputTag[Rule]("current-rules-sink")
 }

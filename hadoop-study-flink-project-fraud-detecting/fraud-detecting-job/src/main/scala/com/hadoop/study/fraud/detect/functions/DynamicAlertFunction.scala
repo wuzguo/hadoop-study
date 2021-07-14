@@ -117,7 +117,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
     private def handleControlCommand(command: Rule, rulesState: BroadcastState[Int, Rule], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context): Unit = {
         command.controlType match {
             case EXPORT_RULES_CURRENT =>
-                rulesState.entries.forEach(entry => ctx.output(Tags.rulesSinkTag, entry.getValue))
+                rulesState.entries.forEach(entry => ctx.output(Tags.currentRulesSinkTag, entry.getValue))
             case CLEAR_STATE_ALL =>
                 ctx.applyToKeyedState(windowStateDescriptor, (_, state: MapState[Long, Set[Transaction]]) => state.clear())
             case DELETE_RULES_ALL =>

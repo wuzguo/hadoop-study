@@ -27,9 +27,10 @@ import lombok.ToString;
 /**
  * Rules representation.
  */
-@EqualsAndHashCode
-@ToString
+
 @Data
+@ToString
+@EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RulePayload {
 
