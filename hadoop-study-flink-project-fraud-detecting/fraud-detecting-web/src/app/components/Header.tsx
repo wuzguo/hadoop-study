@@ -72,7 +72,7 @@ export const Header: FC<Props> = props => {
           </Col>
 
           <Col xs={{size: 3, offset: 1}} className="justify-content-end d-flex align-items-center">
-            <NavbarBrand tag="div">Apache Flink - Fraud Detection Demo</NavbarBrand>
+            <NavbarBrand tag="div">Fraud Transactions Detection Platform</NavbarBrand>
             <Logo src={logoImage} title="Apache Flink"/>
           </Col>
         </AppNavbar>
