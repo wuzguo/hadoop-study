@@ -37,15 +37,12 @@ public class TransactionsGenerator implements Runnable {
 
     private final Throttler throttler;
 
-    private final Integer maxRecordsPerSecond;
-
     private final Consumer<Transaction> consumer;
 
     private volatile boolean running = true;
 
     public TransactionsGenerator(Consumer<Transaction> consumer, int maxRecordsPerSecond) {
         this.consumer = consumer;
-        this.maxRecordsPerSecond = maxRecordsPerSecond;
         this.throttler = new Throttler(maxRecordsPerSecond);
     }
 

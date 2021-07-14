@@ -92,8 +92,7 @@ public class TransactionController {
             startGenTransaction();
         }
 
-        MessageListenerContainer listenerContainer =
-            kafkaListenerEndpointRegistry.getListenerContainer(transactionListenerId);
+        MessageListenerContainer listenerContainer = kafkaListenerEndpointRegistry.getListenerContainer(transactionListenerId);
         if (speed > transactionsRateDisplayLimit) {
             listenerContainer.stop();
             listenerContainerRunning = false;

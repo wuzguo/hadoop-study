@@ -73,7 +73,7 @@ final class Throttler {
         currentBatch = 0;
 
         final long now = System.nanoTime();
-        final int millisRemaining = (int) ((endOfNextBatchNanos - now) / 1_000_000);
+        final int millisRemaining = (int) ((endOfNextBatchNanos - now) / 1_000_000L);
 
         if (millisRemaining > 0) {
             endOfNextBatchNanos += nanosPerBatch;

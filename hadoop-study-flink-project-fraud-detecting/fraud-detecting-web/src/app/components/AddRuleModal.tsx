@@ -33,9 +33,7 @@ type ResponseError = {
   message: string;
 } | null;
 
-const sampleRules: {
-  [n: number]: RulePayload;
-} = {
+const sampleRules: { [n: number]: RulePayload; } = {
   1: {
     aggregateFieldName: "paymentAmount",
     aggregatorType: "SUM",
@@ -83,8 +81,8 @@ export const AddRuleModal: FC<Props> = props => {
     const data = pickFields(getFormData(e.target)) as RulePayload;
     data.groupingKeyNames = isArray(data.groupingKeyNames) ? data.groupingKeyNames : [data.groupingKeyNames];
 
-    const rulePayload = JSON.stringify(data);
-    const body = JSON.stringify({rulePayload});
+    const payload = JSON.stringify(data);
+    const body = JSON.stringify({payload});
 
     setError(null);
     Axios.post<Rule>("/api/rules", body, {headers})
@@ -94,8 +92,8 @@ export const AddRuleModal: FC<Props> = props => {
   };
 
   const postSampleRule = (ruleId: number) => (e: MouseEvent) => {
-    const rulePayload = JSON.stringify(sampleRules[ruleId]);
-    const body = JSON.stringify({rulePayload});
+    const payload = JSON.stringify(sampleRules[ruleId]);
+    const body = JSON.stringify({payload});
 
     Axios.post<Rule>("/api/rules", body, {headers})
     .then(response => props.setRules(rules => [...rules, {...response.data, ref: createRef<HTMLDivElement>()}]))
