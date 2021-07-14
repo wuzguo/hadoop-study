@@ -1,6 +1,6 @@
 package com.hadoop.study.fraud.detect.functions
 
-import com.hadoop.study.fraud.detect.dynamic.JsonMapper
+import com.hadoop.study.fraud.detect.dynamic.JsonMapper2
 import org.apache.flink.api.common.functions.RichFlatMapFunction
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.util.Collector
@@ -15,12 +15,12 @@ import org.apache.flink.util.Collector
 
 case class JsonSerializer[T](sourceClass: Class[T]) extends RichFlatMapFunction[T, String] {
 
-    private var parser: JsonMapper[T] = _
+    private var parser: JsonMapper2[T] = _
 
     override def flatMap(value: T, out: Collector[String]): Unit = {
         val serialized = parser.to(value)
         out.collect(serialized)
     }
 
-    override def open(parameters: Configuration): Unit = parser = JsonMapper(sourceClass)
+    override def open(parameters: Configuration): Unit = parser = JsonMapper2(sourceClass)
 }

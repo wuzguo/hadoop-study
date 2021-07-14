@@ -35,18 +35,22 @@ case class RulesEvaluator(config: Config) {
 
         // Streams setup
         val rulesStream = getRuleStream(env)
-        val transactionStream = getTransactionsStream(env)
+        rulesStream.print("rule")
 
+        val transactionStream = getTransactionsStream(env)
+        transactionStream.print("transaction")
+
+        // Broadcast
         val ruleBroadcastStream = rulesStream.broadcast(Descriptors.rulesDescriptor)
 
         // Processing pipeline setup
         val alertStream = transactionStream.connect(ruleBroadcastStream)
-          .process(new DynamicKeyFunction)
+          .process(DynamicKeyFunction())
           .uid("Dynamic Key Function")
           .name("Dynamic Partitioning Function")
           .keyBy(_.key)
           .connect(ruleBroadcastStream)
-          .process(new DynamicAlertFunction)
+          .process(DynamicAlertFunction())
           .uid("Dynamic Alert Function")
           .name("Dynamic Rule Evaluation Function")
 
@@ -89,25 +93,27 @@ case class RulesEvaluator(config: Config) {
     }
 
     private def getRuleStream(env: StreamExecutionEnvironment): DataStream[Rule] = {
-        val sourceType = RulesSource.getSourceType(config)
         val sourceParallelism = config.get(SOURCE_PARALLELISM)
         val rulesSource = RulesSource.create(config)
+        val sourceType = RulesSource.getSourceType(config)
 
         val rulesStringStream = env.addSource(rulesSource)
           .name(sourceType.toString)
           .setParallelism(sourceParallelism)
+
         RulesSource.streamToRules(rulesStringStream)
     }
 
     private def configEnvironment() = {
         val localMode = config.get(LOCAL_EXECUTION)
 
-        val env: StreamExecutionEnvironment = if (localMode.isEmpty || localMode == LOCAL_MODE_DISABLE_WEB_UI) {
-            StreamExecutionEnvironment.getExecutionEnvironment
+        var env: StreamExecutionEnvironment = null
+        if (localMode.isEmpty || localMode == LOCAL_MODE_DISABLE_WEB_UI) {
+            env = StreamExecutionEnvironment.getExecutionEnvironment
         } else {
             val flinkConfig = new Configuration
             flinkConfig.set(RestOptions.BIND_PORT, localMode)
-            StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(flinkConfig)
+            env = StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(flinkConfig)
         }
 
         // 重启策略配置 // 固定延迟重启（隔一段时间尝试重启一次）

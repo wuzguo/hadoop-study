@@ -16,8 +16,6 @@ import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSource
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 import org.slf4j.LoggerFactory
 
-import java.time.Duration
-
 /**
  * <B>说明：描述</B>
  *
@@ -64,7 +62,7 @@ object RulesSource extends AbstractSource {
           .name("Rule Deserialization")
           .setParallelism(1)
           .assignTimestampsAndWatermarks(
-              WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofMillis(0))
+              WatermarkStrategy.forMonotonousTimestamps()
                 .withTimestampAssigner(new SerializableTimestampAssigner[Rule] {
                     override def extractTimestamp(element: Rule, recordTimestamp: Long): Long = Long.MaxValue
                 }))

@@ -1,9 +1,10 @@
 package com.hadoop.study.fraud.detect.dynamic
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.dynamic.RuleParser.parsePlain
-import com.hadoop.study.fraud.detect.enums.{AggregateType, OperateType, RuleState}
+import com.hadoop.study.fraud.detect.enums._
 
 import java.io.IOException
 
@@ -17,11 +18,11 @@ import java.io.IOException
 
 case class RuleParser() {
 
-    private val mapper = new ObjectMapper()
+    private val mapper = JsonMapper.builder().addModule(DefaultScalaModule).build()
 
     def from(line: String): Rule = if (line.nonEmpty && '{' == line.charAt(0)) parseJson(line) else parsePlain(line)
 
-    private def parseJson(ruleString: String): Rule = mapper.readValue(ruleString, classOf[Nothing])
+    private def parseJson(ruleJson: String): Rule = mapper.readValue(ruleJson, classOf[Rule])
 }
 
 object RuleParser {
@@ -33,11 +34,11 @@ object RuleParser {
         val iter = tokens.iterator
         val rule = new Rule()
         rule.ruleId = stripBrackets(iter.next).toInt
-        rule.ruleState = RuleState.withName(stripBrackets(iter.next).toUpperCase)
+        rule.ruleState = stripBrackets(iter.next).toUpperCase
         rule.groupingKeyNames = getNames(iter.next)
         rule.aggregateFieldName = stripBrackets(iter.next)
-        rule.aggregatorType = AggregateType.withName(stripBrackets(iter.next).toUpperCase)
-        rule.operatorType = OperateType.withName(stripBrackets(iter.next))
+        rule.aggregatorType = stripBrackets(iter.next).toUpperCase
+        rule.operatorType = stripBrackets(iter.next)
         rule.limit = BigDecimal(stripBrackets(iter.next))
         rule.windowMinutes = stripBrackets(iter.next).toInt
         rule

@@ -1,6 +1,7 @@
 package com.hadoop.study.fraud.detect.utils
 
 import com.hadoop.study.fraud.detect.beans.Rule
+import com.hadoop.study.fraud.detect.enums.RuleState
 import com.hadoop.study.fraud.detect.enums.RuleState.{ACTIVE, DELETE, PAUSE}
 import org.apache.flink.api.common.state.{BroadcastState, MapState}
 
@@ -15,7 +16,7 @@ import org.apache.flink.api.common.state.{BroadcastState, MapState}
 object StateUtils {
 
     def handleBroadcast(rule: Rule, broadcastState: BroadcastState[Int, Rule]): Unit = {
-        rule.ruleState match {
+        RuleState.withName(rule.ruleState) match {
             case ACTIVE =>
             case PAUSE =>
                 broadcastState.put(rule.ruleId, rule)

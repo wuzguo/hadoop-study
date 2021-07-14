@@ -1,9 +1,8 @@
 package com.hadoop.study.fraud.detect.beans
 
-import com.hadoop.study.fraud.detect.enums.AggregateType.Aggregate
-import com.hadoop.study.fraud.detect.enums.ControlType.Control
+import com.hadoop.study.fraud.detect.dynamic.JsonMapper2
+import com.hadoop.study.fraud.detect.enums.OperateType
 import com.hadoop.study.fraud.detect.enums.OperateType._
-import com.hadoop.study.fraud.detect.enums.RuleState.State
 import org.apache.flink.streaming.api.windowing.time.Time
 
 /**
@@ -17,39 +16,38 @@ class Rule {
 
     var ruleId: Int = 0
 
-    var ruleState: State = _
+    var ruleState: String = _
 
     var groupingKeyNames: List[String] = List()
 
     var aggregateFieldName: String = _
 
-    var aggregatorType: Aggregate = _
+    var aggregatorType: String = _
 
-    var operatorType: Operate = _
+    var operatorType: String = _
 
     var limit: BigDecimal = _
 
     var windowMinutes: Int = 0
 
-    var controlType: Control = _
+    var controlType: String = _
 
-    def apply(comparisonValue: BigDecimal): Boolean =
-        operatorType match {
-            case EQUAL =>
-                comparisonValue.compareTo(limit) == 0
-            case NOT_EQUAL =>
-                comparisonValue.compareTo(limit) != 0
-            case GREATER =>
-                comparisonValue.compareTo(limit) > 0
-            case LESS =>
-                comparisonValue.compareTo(limit) < 0
-            case LESS_EQUAL =>
-                comparisonValue.compareTo(limit) <= 0
-            case GREATER_EQUAL =>
-                comparisonValue.compareTo(limit) >= 0
-            case _ =>
-                throw new RuntimeException("Unknown limit operator type: " + operatorType)
-        }
+    def apply(value: BigDecimal): Boolean = OperateType.withName(operatorType) match {
+        case EQUAL =>
+            value.compareTo(limit) == 0
+        case NOT_EQUAL =>
+            value.compareTo(limit) != 0
+        case GREATER =>
+            value.compareTo(limit) > 0
+        case LESS =>
+            value.compareTo(limit) < 0
+        case LESS_EQUAL =>
+            value.compareTo(limit) <= 0
+        case GREATER_EQUAL =>
+            value.compareTo(limit) >= 0
+        case _ =>
+            throw new RuntimeException("Unknown limit operator type: " + operatorType)
+    }
 
     def getWindowStartFor(timestamp: Long): Long = {
         val ruleWindowMillis = getWindowMillis
@@ -57,4 +55,6 @@ class Rule {
     }
 
     def getWindowMillis: Long = Time.minutes(this.windowMinutes).toMilliseconds
+
+    override def toString: String = JsonMapper2(classOf[Rule]).to(this)
 }

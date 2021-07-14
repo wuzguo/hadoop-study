@@ -45,13 +45,13 @@ case class TransactionsGenerator(var maxRecordsPerSecond: Int) extends BaseGener
         transaction
     }
 
-    private def paymentType(id: Long): Payment = {
+    private def paymentType(id: Long): String = {
         val name = (id % 2).toInt
         name match {
             case 0 =>
-                PaymentType.CRD
+                PaymentType.CRD.toString
             case 1 =>
-                PaymentType.CSH
+                PaymentType.CSH.toString
             case _ =>
                 throw new IllegalStateException("")
         }

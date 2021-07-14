@@ -3,7 +3,7 @@ package com.hadoop.study.fraud.detect.functions
 import com.hadoop.study.fraud.detect.beans._
 import com.hadoop.study.fraud.detect.dynamic.{Descriptors, Tags}
 import com.hadoop.study.fraud.detect.enums.ControlType.{CLEAR_STATE_ALL, DELETE_RULES_ALL, EXPORT_RULES_CURRENT}
-import com.hadoop.study.fraud.detect.enums.RuleState
+import com.hadoop.study.fraud.detect.enums.{ControlType, RuleState}
 import com.hadoop.study.fraud.detect.utils.StateUtils.handleBroadcast
 import com.hadoop.study.fraud.detect.utils.{FieldsExtractor, RuleHelper, StateUtils}
 import org.apache.flink.api.common.accumulators.SimpleAccumulator
@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory
  * @date 2021/7/8 13:48
  */
 
-class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]] {
+case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]] {
 
     private val log = LoggerFactory.getLogger(classOf[DynamicAlertFunction])
 
@@ -115,7 +115,7 @@ class DynamicAlertFunction extends KeyedBroadcastProcessFunction[String, Keyed[T
     }
 
     private def handleControlCommand(command: Rule, rulesState: BroadcastState[Int, Rule], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context): Unit = {
-        command.controlType match {
+        ControlType.withName(command.controlType) match {
             case EXPORT_RULES_CURRENT =>
                 rulesState.entries.forEach(entry => ctx.output(Tags.currentRulesSinkTag, entry.getValue))
             case CLEAR_STATE_ALL =>

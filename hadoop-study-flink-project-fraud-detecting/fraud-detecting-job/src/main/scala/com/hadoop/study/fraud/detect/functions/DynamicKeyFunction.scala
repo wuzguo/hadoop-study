@@ -52,8 +52,9 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
         log.trace(s"processBroadcastElement ${value}")
         val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
         handleBroadcast(value, broadcastState)
-        if (value.ruleState eq RuleState.CONTROL)
-            handleControlCommand(value.controlType, broadcastState)
+        val ruleState = RuleState.withName(value.ruleState)
+        if (ruleState eq RuleState.CONTROL)
+            handleControlCommand(ControlType.withName(value.controlType), broadcastState)
     }
 
     private def handleControlCommand(controlType: Control, rulesState: BroadcastState[Int, Rule]): Unit = {

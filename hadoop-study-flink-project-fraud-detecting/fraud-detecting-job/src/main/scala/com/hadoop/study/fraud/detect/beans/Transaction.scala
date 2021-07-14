@@ -1,8 +1,6 @@
 package com.hadoop.study.fraud.detect.beans
 
-import com.hadoop.study.fraud.detect.dynamic.TimestampAssignable
-import com.hadoop.study.fraud.detect.enums.PaymentType
-import com.hadoop.study.fraud.detect.enums.PaymentType.Payment
+import com.hadoop.study.fraud.detect.dynamic.{JsonMapper2, TimestampAssignable}
 
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneOffset, ZonedDateTime}
@@ -28,13 +26,15 @@ class Transaction extends TimestampAssignable[Long] {
 
     var paymentAmount: BigDecimal = _
 
-    var paymentType: Payment = _
+    var paymentType: String = _
 
     var ingestionTimestamp: Long = 0L
 
     def assignIngestionTimestamp(timestamp: Long): Unit = {
         this.ingestionTimestamp = timestamp
     }
+
+    override def toString: String = JsonMapper2(classOf[Transaction]).to(this)
 }
 
 object Transaction {
@@ -53,7 +53,7 @@ object Transaction {
         transaction.payeeId = iter.next.toLong
         transaction.beneficiaryId = iter.next.toLong
         transaction.paymentAmount = BigDecimal(iter.next)
-        transaction.paymentType = PaymentType.withName(iter.next)
+        transaction.paymentType = iter.next
         transaction.ingestionTimestamp = iter.next.toLong
         transaction
     }

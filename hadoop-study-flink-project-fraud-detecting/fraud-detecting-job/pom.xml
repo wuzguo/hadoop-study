@@ -85,6 +85,12 @@
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-scala_${scala.binary.version}</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-pubsub</artifactId>
             <version>${pubsub.version}</version>

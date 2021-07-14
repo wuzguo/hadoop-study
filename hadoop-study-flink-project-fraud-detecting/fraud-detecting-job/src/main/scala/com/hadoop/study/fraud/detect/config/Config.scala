@@ -1,6 +1,7 @@
 package com.hadoop.study.fraud.detect.config
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 /**
  * <B>说明：描述</B>
@@ -35,7 +36,11 @@ case class Config() {
         key.cls.cast(values(key))
     }
 
-    override def toString: String = s"${values.mkString}"
+    override def toString: String = {
+        val buf = ListBuffer[String]()
+        values.toList.foreach(some => buf.append(s"{key=[${some._1}], value=[${some._2}]}"))
+        buf.toString()
+    }
 }
 
 object Config {

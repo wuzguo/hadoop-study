@@ -8,7 +8,9 @@ package com.hadoop.study.fraud.detect.config
  * @date 2021/7/8 9:28
  */
 
-case class Param[T](name: String, cls: Class[T], default: T)
+case class Param[T](name: String, cls: Class[T], default: T) {
+    override def toString: String = s"name: ${name}, default: ${default}"
+}
 
 object Param {
 
