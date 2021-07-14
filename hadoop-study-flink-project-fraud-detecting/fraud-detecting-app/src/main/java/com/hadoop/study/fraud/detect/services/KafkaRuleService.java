@@ -35,7 +35,7 @@ public class KafkaRuleService {
     @Value("${kafka.topic.rules}")
     private String topic;
 
-    public void addRule(Rule rule) {
+    public void sendRule(Rule rule) {
         String payload = rule.getPayload();
         kafkaTemplate.send(topic, payload);
     }

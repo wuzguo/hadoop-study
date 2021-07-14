@@ -27,32 +27,30 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(tags = "Fink接口")
+@Api(tags = "Kafka接口")
 @RestController
 @RequestMapping("/api")
-public class FlinkController {
+public class KafkaController {
 
     @Autowired
     private KafkaRuleService kafkaRuleService;
 
     @GetMapping("/rule/sync")
     public void syncRules() {
-        Rule rule = createControlRule(RulePayload.ControlType.EXPORT_RULES_CURRENT);
-        kafkaRuleService.addRule(rule);
+        Rule rule = createRule(RulePayload.ControlType.EXPORT_RULES_CURRENT);
+        kafkaRuleService.sendRule(rule);
     }
 
     @GetMapping("/state/clear")
     public void clearState() {
-        Rule rule = createControlRule(RulePayload.ControlType.CLEAR_STATE_ALL);
-        kafkaRuleService.addRule(rule);
+        Rule rule = createRule(RulePayload.ControlType.CLEAR_STATE_ALL);
+        kafkaRuleService.sendRule(rule);
     }
 
-    private Rule createControlRule(RulePayload.ControlType controlType) {
+    private Rule createRule(RulePayload.ControlType controlType) {
         RulePayload payload = new RulePayload();
         payload.setRuleState(RulePayload.RuleState.CONTROL);
         payload.setControlType(controlType);
-        Rule rule = new Rule();
-        rule.setPayload(UtilJson.writeValueAsString(payload));
-        return rule;
+        return new Rule(UtilJson.writeValueAsString(payload));
     }
 }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.hadoop.study.fraud.detect.datasource;
+package com.hadoop.study.fraud.detect.runner;
 
 import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.repositories.RuleRepository;
@@ -91,6 +91,6 @@ public class RulesBootstrapper implements ApplicationRunner {
         ruleRepository.save(rule4);
 
         List<Rule> rules = ruleRepository.findAll();
-        rules.forEach(rule -> kafkaRuleService.addRule(rule));
+        rules.forEach(rule -> kafkaRuleService.sendRule(rule));
     }
 }

@@ -59,7 +59,7 @@ public class RuleController {
         String payloadJson = UtilJson.writeValueAsString(payload);
         savedRule.setPayload(payloadJson);
         Rule result = repository.save(savedRule);
-        kafkaRuleService.addRule(result);
+        kafkaRuleService.sendRule(result);
         return result;
     }
 
@@ -67,7 +67,7 @@ public class RuleController {
     public void pushToFlink() {
         List<Rule> rules = repository.findAll();
         for (Rule rule : rules) {
-            kafkaRuleService.addRule(rule);
+            kafkaRuleService.sendRule(rule);
         }
     }
 
