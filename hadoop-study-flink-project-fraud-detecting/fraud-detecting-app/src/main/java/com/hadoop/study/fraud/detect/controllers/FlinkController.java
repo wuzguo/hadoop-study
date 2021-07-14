@@ -19,7 +19,7 @@ package com.hadoop.study.fraud.detect.controllers;
 
 import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.model.RulePayload;
-import com.hadoop.study.fraud.detect.services.FlinkRulesService;
+import com.hadoop.study.fraud.detect.services.KafkaRuleService;
 import com.hadoop.study.fraud.detect.utils.UtilJson;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,18 +33,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class FlinkController {
 
     @Autowired
-    private FlinkRulesService flinkRulesService;
+    private KafkaRuleService kafkaRuleService;
 
     @GetMapping("/rule/sync")
     public void syncRules() {
         Rule rule = createControlRule(RulePayload.ControlType.EXPORT_RULES_CURRENT);
-        flinkRulesService.addRule(rule);
+        kafkaRuleService.addRule(rule);
     }
 
     @GetMapping("/state/clear")
     public void clearState() {
         Rule rule = createControlRule(RulePayload.ControlType.CLEAR_STATE_ALL);
-        flinkRulesService.addRule(rule);
+        kafkaRuleService.addRule(rule);
     }
 
     private Rule createControlRule(RulePayload.ControlType controlType) {

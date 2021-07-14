@@ -27,7 +27,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FlinkRulesService {
+public class KafkaRuleService {
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;

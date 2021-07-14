@@ -19,9 +19,8 @@ package com.hadoop.study.fraud.detect.datasource;
 
 import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.repositories.RuleRepository;
-import com.hadoop.study.fraud.detect.services.FlinkRulesService;
+import com.hadoop.study.fraud.detect.services.KafkaRuleService;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -34,7 +33,7 @@ public class RulesBootstrapper implements ApplicationRunner {
     private RuleRepository ruleRepository;
 
     @Autowired
-    private FlinkRulesService flinkRulesService;
+    private KafkaRuleService kafkaRuleService;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -92,6 +91,6 @@ public class RulesBootstrapper implements ApplicationRunner {
         ruleRepository.save(rule4);
 
         List<Rule> rules = ruleRepository.findAll();
-        rules.forEach(rule -> flinkRulesService.addRule(rule));
+        rules.forEach(rule -> kafkaRuleService.addRule(rule));
     }
 }

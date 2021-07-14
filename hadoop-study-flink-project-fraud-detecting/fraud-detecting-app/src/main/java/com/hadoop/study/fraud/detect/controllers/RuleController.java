@@ -21,7 +21,7 @@ import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.exceptions.NotFoundException;
 import com.hadoop.study.fraud.detect.model.RulePayload;
 import com.hadoop.study.fraud.detect.repositories.RuleRepository;
-import com.hadoop.study.fraud.detect.services.FlinkRulesService;
+import com.hadoop.study.fraud.detect.services.KafkaRuleService;
 import com.hadoop.study.fraud.detect.utils.UtilJson;
 import io.swagger.annotations.Api;
 import java.util.List;
@@ -43,7 +43,7 @@ public class RuleController {
     private RuleRepository repository;
 
     @Autowired
-    private FlinkRulesService flinkRulesService;
+    private KafkaRuleService kafkaRuleService;
 
     @GetMapping("/rules")
     public List<Rule> all() {
@@ -59,7 +59,7 @@ public class RuleController {
         String payloadJson = UtilJson.writeValueAsString(payload);
         savedRule.setPayload(payloadJson);
         Rule result = repository.save(savedRule);
-        flinkRulesService.addRule(result);
+        kafkaRuleService.addRule(result);
         return result;
     }
 
@@ -67,7 +67,7 @@ public class RuleController {
     public void pushToFlink() {
         List<Rule> rules = repository.findAll();
         for (Rule rule : rules) {
-            flinkRulesService.addRule(rule);
+            kafkaRuleService.addRule(rule);
         }
     }
 
@@ -79,7 +79,7 @@ public class RuleController {
     @DeleteMapping("/rules/{id}")
     public void deleteRule(@PathVariable Integer id) {
         repository.deleteById(id);
-        flinkRulesService.deleteRule(id);
+        kafkaRuleService.deleteRule(id);
     }
 
     @DeleteMapping("/rules")
@@ -87,7 +87,7 @@ public class RuleController {
         List<Rule> rules = repository.findAll();
         for (Rule rule : rules) {
             repository.deleteById(rule.getId());
-            flinkRulesService.deleteRule(rule.getId());
+            kafkaRuleService.deleteRule(rule.getId());
         }
     }
 }
