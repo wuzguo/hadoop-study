@@ -17,7 +17,7 @@
 
 package com.hadoop.study.fraud.detect.services;
 
-import com.hadoop.study.fraud.detect.datasource.Transaction;
+import com.hadoop.study.fraud.detect.model.Transaction;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

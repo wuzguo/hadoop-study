@@ -20,10 +20,10 @@ const headers = {"Content-Type": "application/json"};
 
 const pickFields = pick([
   "aggregateFieldName",
-  "aggregatorFunctionType",
+  "aggregatorType",
   "groupingKeyNames",
   "limit",
-  "limitOperatorType",
+  "operatorType",
   "ruleState",
   "windowMinutes",
 ]);
@@ -38,28 +38,28 @@ const sampleRules: {
 } = {
   1: {
     aggregateFieldName: "paymentAmount",
-    aggregatorFunctionType: "SUM",
+    aggregatorType: "SUM",
     groupingKeyNames: ["payeeId", "beneficiaryId"],
     limit: 20000000,
-    limitOperatorType: "GREATER",
+    operatorType: "GREATER",
     windowMinutes: 43200,
     ruleState: "ACTIVE",
   },
   2: {
     aggregateFieldName: "paymentAmount",
-    aggregatorFunctionType: "SUM",
+    aggregatorType: "SUM",
     groupingKeyNames: ["beneficiaryId"],
     limit: 10000000,
-    limitOperatorType: "GREATER_EQUAL",
+    operatorType: "GREATER_EQUAL",
     windowMinutes: 1440,
     ruleState: "ACTIVE",
   },
   3: {
     aggregateFieldName: "COUNT_WITH_RESET_FLINK",
-    aggregatorFunctionType: "SUM",
+    aggregatorType: "SUM",
     groupingKeyNames: ["paymentType"],
     limit: 100,
-    limitOperatorType: "GREATER_EQUAL",
+    operatorType: "GREATER_EQUAL",
     windowMinutes: 1440,
     ruleState: "ACTIVE",
   },
@@ -124,8 +124,8 @@ export const AddRuleModal: FC<Props> = props => {
               </Input>
             </FieldGroup>
 
-            <FieldGroup label="aggregatorFunctionType" icon={faCalculator}>
-              <Input type="select" name="aggregatorFunctionType" bsSize="sm">
+            <FieldGroup label="aggregatorType" icon={faCalculator}>
+              <Input type="select" name="aggregatorType" bsSize="sm">
                 <option value="SUM">SUM</option>
                 <option value="AVG">AVG</option>
                 <option value="MIN">MIN</option>
@@ -153,8 +153,8 @@ export const AddRuleModal: FC<Props> = props => {
               />
             </FieldGroup>
 
-            <FieldGroup label="limitOperatorType" icon={faLaptopCode}>
-              <Input type="select" name="limitOperatorType" bsSize="sm">
+            <FieldGroup label="operatorType" icon={faLaptopCode}>
+              <Input type="select" name="operatorType" bsSize="sm">
                 <option value="EQUAL">EQUAL({"="})</option>
                 <option value="NOT_EQUAL">NOT_EQUAL({"!="})</option>
                 <option value="GREATER_EQUAL">GREATER_EQUAL({">="})</option>

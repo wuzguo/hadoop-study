@@ -35,10 +35,10 @@ const iconMap: {
   [s: string]: IconDefinition;
 } = {
   aggregateFieldName: faFont,
-  aggregatorFunctionType: faCalculator,
+  aggregatorType: faCalculator,
   groupingKeyNames: faLayerGroup,
   limit: faArrowUp,
-  limitOperatorType: faLaptopCode,
+  operatorType: faLaptopCode,
   windowMinutes: faClock,
 };
 
@@ -85,10 +85,10 @@ const RuleTable = styled(Table)`
 `;
 
 const fields = [
-  "aggregatorFunctionType",
+  "aggregatorType",
   "aggregateFieldName",
   "groupingKeyNames",
-  "limitOperatorType",
+  "operatorType",
   "limit",
   "windowMinutes",
 ];
@@ -112,7 +112,7 @@ export const Rules: FC<Props> = props => {
   return (
       <ScrollingCol xs={{size: 5, offset: 1}} onScroll={handleScroll}>
         {props.rules.map(rule => {
-          const payload = JSON.parse(rule.rulePayload);
+          const payload = JSON.parse(rule.payload);
 
           if (!payload) {
             return null;
@@ -159,9 +159,9 @@ export const Rules: FC<Props> = props => {
                   </RuleTable>
                 </CardBody>
                 <CardFooter style={{padding: "0.3rem"}}>
-                  <em>{payload.aggregatorFunctionType}</em> of <em>{payload.aggregateFieldName}</em> aggregated by "
-                  <em>{payload.groupingKeyNames.join(", ")}</em>" is <em>{payload.limitOperatorType}</em>{" "}
-                  {seperator[payload.limitOperatorType]} <em>{payload.limit}</em> within an interval of{" "}
+                  <em>{payload.aggregatorType}</em> of <em>{payload.aggregateFieldName}</em> aggregated by "
+                  <em>{payload.groupingKeyNames.join(", ")}</em>" is <em>{payload.operatorType}</em>{" "}
+                  {seperator[payload.operatorType]} <em>{payload.limit}</em> within an interval of{" "}
                   <em>{payload.windowMinutes}</em> minutes.
                 </CardFooter>
               </CenteredContainer>

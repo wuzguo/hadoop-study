@@ -25,7 +25,7 @@ class Rule {
 
     var aggregatorType: Aggregate = _
 
-    var limitOperatorType: Operate = _
+    var operatorType: Operate = _
 
     var limit: BigDecimal = _
 
@@ -34,7 +34,7 @@ class Rule {
     var controlType: Control = _
 
     def apply(comparisonValue: BigDecimal): Boolean =
-        limitOperatorType match {
+        operatorType match {
             case EQUAL =>
                 comparisonValue.compareTo(limit) == 0
             case NOT_EQUAL =>
@@ -48,7 +48,7 @@ class Rule {
             case GREATER_EQUAL =>
                 comparisonValue.compareTo(limit) >= 0
             case _ =>
-                throw new RuntimeException("Unknown limit operator type: " + limitOperatorType)
+                throw new RuntimeException("Unknown limit operator type: " + operatorType)
         }
 
     def getWindowStartFor(timestamp: Long): Long = {

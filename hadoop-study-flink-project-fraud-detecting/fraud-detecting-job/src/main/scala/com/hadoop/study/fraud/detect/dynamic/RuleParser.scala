@@ -37,7 +37,7 @@ object RuleParser {
         rule.groupingKeyNames = getNames(iter.next)
         rule.aggregateFieldName = stripBrackets(iter.next)
         rule.aggregatorType = AggregateType.withName(stripBrackets(iter.next).toUpperCase)
-        rule.limitOperatorType = OperateType.withName(stripBrackets(iter.next))
+        rule.operatorType = OperateType.withName(stripBrackets(iter.next))
         rule.limit = BigDecimal(stripBrackets(iter.next))
         rule.windowMinutes = stripBrackets(iter.next).toInt
         rule

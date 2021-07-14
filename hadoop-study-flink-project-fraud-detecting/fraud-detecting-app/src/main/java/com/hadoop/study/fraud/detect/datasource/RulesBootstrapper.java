@@ -40,10 +40,10 @@ public class RulesBootstrapper implements ApplicationRunner {
         String payload1 =
             "{\"ruleId\":\"1\","
                 + "\"aggregateFieldName\":\"paymentAmount\","
-                + "\"aggregatorFunctionType\":\"SUM\","
+                + "\"aggregatorType\":\"SUM\","
                 + "\"groupingKeyNames\":[\"payeeId\", \"beneficiaryId\"],"
                 + "\"limit\":\"20000000\","
-                + "\"limitOperatorType\":\"GREATER\","
+                + "\"operatorType\":\"GREATER\","
                 + "\"ruleState\":\"ACTIVE\","
                 + "\"windowMinutes\":\"43200\"}";
 
@@ -52,10 +52,10 @@ public class RulesBootstrapper implements ApplicationRunner {
         String payload2 =
             "{\"ruleId\":\"2\","
                 + "\"aggregateFieldName\":\"COUNT_FLINK\","
-                + "\"aggregatorFunctionType\":\"SUM\","
+                + "\"aggregatorType\":\"SUM\","
                 + "\"groupingKeyNames\":[\"paymentType\"],"
                 + "\"limit\":\"300\","
-                + "\"limitOperatorType\":\"LESS\","
+                + "\"operatorType\":\"LESS\","
                 + "\"ruleState\":\"PAUSE\","
                 + "\"windowMinutes\":\"1440\"}";
 
@@ -64,10 +64,10 @@ public class RulesBootstrapper implements ApplicationRunner {
         String payload3 =
             "{\"ruleId\":\"3\","
                 + "\"aggregateFieldName\":\"paymentAmount\","
-                + "\"aggregatorFunctionType\":\"SUM\","
+                + "\"aggregatorType\":\"SUM\","
                 + "\"groupingKeyNames\":[\"beneficiaryId\"],"
                 + "\"limit\":\"10000000\","
-                + "\"limitOperatorType\":\"GREATER_EQUAL\","
+                + "\"operatorType\":\"GREATER_EQUAL\","
                 + "\"ruleState\":\"ACTIVE\","
                 + "\"windowMinutes\":\"1440\"}";
 
@@ -76,10 +76,10 @@ public class RulesBootstrapper implements ApplicationRunner {
         String payload4 =
             "{\"ruleId\":\"4\","
                 + "\"aggregateFieldName\":\"COUNT_WITH_RESET_FLINK\","
-                + "\"aggregatorFunctionType\":\"SUM\","
+                + "\"aggregatorType\":\"SUM\","
                 + "\"groupingKeyNames\":[\"paymentType\"],"
                 + "\"limit\":\"100\","
-                + "\"limitOperatorType\":\"GREATER_EQUAL\","
+                + "\"operatorType\":\"GREATER_EQUAL\","
                 + "\"ruleState\":\"ACTIVE\","
                 + "\"windowMinutes\":\"1440\"}";
 

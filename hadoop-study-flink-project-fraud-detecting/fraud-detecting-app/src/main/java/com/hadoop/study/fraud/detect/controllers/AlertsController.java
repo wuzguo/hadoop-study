@@ -17,7 +17,7 @@
 
 package com.hadoop.study.fraud.detect.controllers;
 
-import com.hadoop.study.fraud.detect.datasource.Transaction;
+import com.hadoop.study.fraud.detect.model.Transaction;
 import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.exceptions.NotFoundException;
 import com.hadoop.study.fraud.detect.model.AlertEvent;

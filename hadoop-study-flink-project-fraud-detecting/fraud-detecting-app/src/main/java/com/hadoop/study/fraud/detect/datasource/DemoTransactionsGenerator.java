@@ -17,6 +17,7 @@
 
 package com.hadoop.study.fraud.detect.datasource;
 
+import com.hadoop.study.fraud.detect.model.Transaction;
 import java.math.BigDecimal;
 import java.util.SplittableRandom;
 import java.util.function.Consumer;

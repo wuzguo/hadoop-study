@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.hadoop.study.fraud.detect.datasource;
+package com.hadoop.study.fraud.detect.model;
 
 import java.math.BigDecimal;
 import java.time.ZoneOffset;

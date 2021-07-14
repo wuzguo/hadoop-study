@@ -17,7 +17,6 @@
 
 package com.hadoop.study.fraud.detect.model;
 
-import com.hadoop.study.fraud.detect.datasource.Transaction;
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
