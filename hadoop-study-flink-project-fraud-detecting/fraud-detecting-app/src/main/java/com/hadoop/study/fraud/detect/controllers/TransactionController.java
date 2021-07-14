@@ -41,7 +41,8 @@ public class TransactionController {
 
     private final TransactionsGenerator transactionsGenerator;
 
-    private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+    @Autowired
+    private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -56,20 +57,17 @@ public class TransactionController {
     private int transactionsRateDisplayLimit;
 
     @Autowired
-    public TransactionController(
-        KafkaTransactionsPusher transactionsPusher,
-        KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry) {
+    public TransactionController(KafkaTransactionsPusher transactionsPusher) {
         transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
-        this.kafkaListenerEndpointRegistry = kafkaListenerEndpointRegistry;
     }
 
     @GetMapping("/start")
     public void starTransaction() {
-        log.info("{}", "startGenTransaction called");
-        transactionsGen();
+        log.info("{}", "start generator Transaction called");
+        startGenTransaction();
     }
 
-    private void transactionsGen() {
+    private void startGenTransaction() {
         if (!generatingTransactions) {
             executor.submit(transactionsGenerator);
             generatingTransactions = true;
@@ -80,18 +78,18 @@ public class TransactionController {
     public void stopTransaction() {
         transactionsGenerator.cancel();
         generatingTransactions = false;
-        log.info("{}", "stopGenTransaction called");
+        log.info("{}", "stop generator transaction called");
     }
 
     @GetMapping("/speed/{speed}")
     public void setGenSpeed(@PathVariable Long speed) {
-        log.info("Generator speed change request: " + speed);
+        log.info("generator speed change request: " + speed);
         if (speed <= 0) {
             transactionsGenerator.cancel();
             generatingTransactions = false;
             return;
         } else {
-            transactionsGen();
+            startGenTransaction();
         }
 
         MessageListenerContainer listenerContainer =
