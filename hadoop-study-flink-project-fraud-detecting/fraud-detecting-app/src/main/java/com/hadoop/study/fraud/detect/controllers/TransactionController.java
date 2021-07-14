@@ -36,8 +36,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @Api(tags = "数据生成接口")
 @RestController
-@RequestMapping("/api")
-public class DataGenerateController {
+@RequestMapping("/api/transaction")
+public class TransactionController {
 
     private final TransactionsGenerator transactionsGenerator;
 
@@ -56,15 +56,15 @@ public class DataGenerateController {
     private int transactionsRateDisplayLimit;
 
     @Autowired
-    public DataGenerateController(
+    public TransactionController(
         KafkaTransactionsPusher transactionsPusher,
         KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry) {
         transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
         this.kafkaListenerEndpointRegistry = kafkaListenerEndpointRegistry;
     }
 
-    @GetMapping("/transaction/gen/start")
-    public void startGenTransaction() {
+    @GetMapping("/start")
+    public void starTransaction() {
         log.info("{}", "startGenTransaction called");
         transactionsGen();
     }
@@ -76,14 +76,14 @@ public class DataGenerateController {
         }
     }
 
-    @GetMapping("/transaction/gen/stop")
-    public void stopGenTransaction() {
+    @GetMapping("/stop")
+    public void stopTransaction() {
         transactionsGenerator.cancel();
         generatingTransactions = false;
         log.info("{}", "stopGenTransaction called");
     }
 
-    @GetMapping("/setting/speed/{speed}")
+    @GetMapping("/speed/{speed}")
     public void setGenSpeed(@PathVariable Long speed) {
         log.info("Generator speed change request: " + speed);
         if (speed <= 0) {

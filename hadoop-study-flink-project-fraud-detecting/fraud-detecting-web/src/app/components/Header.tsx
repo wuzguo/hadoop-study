@@ -31,8 +31,8 @@ export const Header: FC<Props> = props => {
   const closeRuleModal = () => setModalOpen(false);
   const toggleRuleModal = () => setModalOpen(state => !state);
 
-  const startTransactions = () => fetch("/api/transaction/gen/start").then();
-  const stopTransactions = () => fetch("/api/transaction/gen/stop").then();
+  const startTransactions = () => fetch("/api/transaction/start").then();
+  const stopTransactions = () => fetch("/api/transaction/stop").then();
 
   const syncRules = () => fetch("/api/rule/sync").then();
   const clearState = () => fetch("/api/state/clear").then();

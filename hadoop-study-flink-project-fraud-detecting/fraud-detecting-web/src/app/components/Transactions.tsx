@@ -120,7 +120,7 @@ export const Transactions = React.memo(
       const handleSliderChange = (val: number) => setGeneratorSpeed(val);
 
       useUpdateEffect(() => {
-        fetch(`/api/setting/speed/${getFakeValue(generatorSpeed)}`);
+        fetch(`/api/transaction/speed/${getFakeValue(generatorSpeed)}`);
       }, [generatorSpeed]);
 
       const renderRow: ListRowRenderer = ({key, index, style}) => {
