@@ -32,13 +32,13 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
     }
 
     override def processElement(event: Transaction, ctx: BroadcastProcessFunction[Transaction, Rule, Keyed[Transaction, String, Int]]#ReadOnlyContext, out: Collector[Keyed[Transaction, String, Int]]): Unit = {
+        log.info(s"dynamicKeyFunction processElement ${event}")
         val rulesState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
         forkEventForEachGroupingKey(event, rulesState, out)
     }
 
     private def forkEventForEachGroupingKey(event: Transaction, rulesState: ReadOnlyBroadcastState[Int, Rule], out: Collector[Keyed[Transaction, String, Int]]): Unit = {
         var ruleCounter = 0
-
         rulesState.immutableEntries.forEach(entry => {
             val rule = entry.getValue
             out.collect(Keyed(event, KeysExtractor.getKey(rule.groupingKeyNames, event), rule.ruleId))
@@ -49,11 +49,10 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
     }
 
     override def processBroadcastElement(value: Rule, ctx: BroadcastProcessFunction[Transaction, Rule, Keyed[Transaction, String, Int]]#Context, out: Collector[Keyed[Transaction, String, Int]]): Unit = {
-        log.trace(s"processBroadcastElement ${value}")
+        log.info(s"dynamicKeyFunction processBroadcastElement ${value}")
         val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
         handleBroadcast(value, broadcastState)
-        val ruleState = RuleState.withName(value.ruleState)
-        if (ruleState eq RuleState.CONTROL)
+        if (RuleState.withName(value.ruleState) eq RuleState.CONTROL)
             handleControlCommand(ControlType.withName(value.controlType), broadcastState)
     }
 

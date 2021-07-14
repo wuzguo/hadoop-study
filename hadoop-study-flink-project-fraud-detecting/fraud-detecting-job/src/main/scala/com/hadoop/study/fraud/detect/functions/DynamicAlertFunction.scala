@@ -36,7 +36,7 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
     private var alertMeter: Meter = _
 
     override def processElement(value: Keyed[Transaction, String, Int], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#ReadOnlyContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
-        log.trace("processElement value: {}, alert: {}", value)
+        log.info("dynamicAlertFunction processElement value: {}, alert: {}", value)
         val currentEventTime = value.wrapped.eventTime
         StateUtils.addValues(windowState, currentEventTime, value.wrapped)
 
@@ -54,7 +54,7 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
             return
         }
 
-        if (rule.ruleState eq RuleState.ACTIVE) {
+        if (RuleState.withName(rule.ruleState) eq RuleState.ACTIVE) {
             val windowStartForEvent = rule.getWindowStartFor(currentEventTime)
             val cleanupTime = (currentEventTime / 1000) * 1000
             ctx.timerService.registerEventTimeTimer(cleanupTime)
@@ -106,11 +106,11 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
     }
 
     override def processBroadcastElement(value: Rule, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
-        log.trace(s"processBroadcastElement ${value}")
+        log.info(s"dynamicAlertFunction processBroadcastElement ${value}")
         val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
         handleBroadcast(value, broadcastState)
         updateWidestWindowRule(value, broadcastState)
-        if (value.ruleState eq RuleState.CONTROL)
+        if (RuleState.withName(value.ruleState) eq RuleState.CONTROL)
             handleControlCommand(value, broadcastState, ctx)
     }
 
@@ -132,7 +132,7 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
 
     private def updateWidestWindowRule(rule: Rule, broadcastState: BroadcastState[Int, Rule]): Unit = {
         val widestWindowRule = broadcastState.get(WIDEST_RULE_KEY)
-        if (widestWindowRule != null && (widestWindowRule.ruleState eq RuleState.ACTIVE))
+        if (widestWindowRule != null && (RuleState.withName(widestWindowRule.ruleState) eq RuleState.ACTIVE))
             if (widestWindowRule.getWindowMillis < rule.getWindowMillis)
                 broadcastState.put(WIDEST_RULE_KEY, rule)
     }

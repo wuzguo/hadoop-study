@@ -1,6 +1,9 @@
 package com.hadoop.study.fraud.detect.utils
 
+import com.hadoop.study.fraud.detect.beans.Transaction
+
 import scala.collection.mutable.ListBuffer
+import scala.reflect.runtime.universe.typeOf
 
 /**
  * <B>说明：描述</B>
@@ -37,6 +40,6 @@ object KeysExtractor {
     private def appendKeyValue(buffer: ListBuffer[String], value: Any, fieldName: String): Unit = {
         buffer.append(fieldName)
         buffer.append("=")
-        buffer.append(FieldsExtractor.getFieldAsString(value, fieldName))
+        buffer.append(FieldsExtractor.getFieldAsString(value, typeOf[Transaction], fieldName))
     }
 }
