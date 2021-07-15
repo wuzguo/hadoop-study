@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory
  */
 
 object RulesSource extends AbstractSource {
-
     private val log = LoggerFactory.getLogger("RulesSource")
 
     override def getSourceType(config: Config): SourceType.Value = {
@@ -48,11 +47,11 @@ object RulesSource extends AbstractSource {
                   .withSubscriptionName(config.get(GCP_PUBSUB_RULES_SUBSCRIPTION))
                   .build
             case SOCKET =>
-                new SocketTextStreamFunction("10.20.0.92", config.get(SOCKET_PORT), "\n", -1)
+                new SocketTextStreamFunction(config.get(SOCKET_HOST), config.get(SOCKET_PORT), "\n", -1)
             case STATIC =>
                 RulesStaticJsonGenerator()
             case _ =>
-                throw new IllegalArgumentException(s"Source unknown. Known values are: ${SourceType.values}")
+                throw new IllegalArgumentException(s"source unknown. Known values are: ${SourceType.values}")
         }
     }
 
