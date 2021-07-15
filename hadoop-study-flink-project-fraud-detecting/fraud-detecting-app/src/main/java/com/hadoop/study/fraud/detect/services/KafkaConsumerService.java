@@ -46,21 +46,21 @@ public class KafkaConsumerService {
     @Value("${web-socket.topic.latency}")
     private String latencyWebSocketTopic;
 
-    @KafkaListener(topics = "${kafka.topic.alerts}", groupId = "alerts")
+    @KafkaListener(topics = "${kafka.topic.alerts}", groupId = "fraud-detect-alerts")
     public void templateAlerts(@Payload String message) {
-        log.debug("{}", message);
+        log.info("kafka consumer template alerts {}", message);
         simpTemplate.convertAndSend(alertsWebSocketTopic, message);
     }
 
-    @KafkaListener(topics = "${kafka.topic.latency}", groupId = "latency")
+    @KafkaListener(topics = "${kafka.topic.latency}", groupId = "fraud-detect-latency")
     public void templateLatency(@Payload String message) {
-        log.debug("{}", message);
+        log.info("kafka consumer template latency {}", message);
         simpTemplate.convertAndSend(latencyWebSocketTopic, message);
     }
 
-    @KafkaListener(topics = "${kafka.topic.current-rules}", groupId = "current-rules")
+    @KafkaListener(topics = "${kafka.topic.current-rules}", groupId = "fraud-detect-current-rules")
     public void saveTemplateRules(@Payload String message) {
-        log.info("{}", message);
+        log.info("kafka consumer save template rules {}", message);
         RulePayload payload = UtilJson.readValue(message, RulePayload.class);
         Integer payloadId = payload.getRuleId();
         Optional<Rule> ruleOptional = ruleRepository.findById(payloadId);

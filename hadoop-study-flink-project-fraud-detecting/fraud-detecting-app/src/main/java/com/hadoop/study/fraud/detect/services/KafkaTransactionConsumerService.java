@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class KafkaTransactionsConsumerService implements ConsumerSeekAware {
+public class KafkaTransactionConsumerService implements ConsumerSeekAware {
 
     @Autowired
     private SimpMessagingTemplate simpTemplate;
@@ -43,7 +43,7 @@ public class KafkaTransactionsConsumerService implements ConsumerSeekAware {
         topics = "${kafka.topic.transactions}",
         groupId = "transactions")
     public void consumeTransactions(@Payload String message) {
-        log.debug("{}", message);
+        log.info("kafka transaction consumer consume transactions {}", message);
         simpTemplate.convertAndSend(transactionsWebSocketTopic, message);
     }
 
@@ -54,13 +54,11 @@ public class KafkaTransactionsConsumerService implements ConsumerSeekAware {
     @Override
     public void onPartitionsAssigned(
         Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
-        assignments.forEach(
-            (topicPartition, value) ->
-                callback.seekToEnd(topicPartition.topic(), topicPartition.partition()));
+        assignments.forEach((topicPartition, value) ->
+            callback.seekToEnd(topicPartition.topic(), topicPartition.partition()));
     }
 
     @Override
-    public void onIdleContainer(
-        Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
+    public void onIdleContainer(Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
     }
 }

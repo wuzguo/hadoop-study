@@ -46,7 +46,7 @@ export const Alerts: FC<Props> = props => {
   return (
       <ScrollingCol xs={{size: 3, offset: 1}} onScroll={handleScroll}>
         {props.alerts.map((alert, idx) => {
-          const t = alert.triggeringEvent;
+          const t = alert.triggerEvent;
           return (
               <CenteredContainer
                   key={idx}
@@ -66,7 +66,7 @@ export const Alerts: FC<Props> = props => {
                     <tbody>
                     <tr>
                       <td>Transaction</td>
-                      <td>{alert.triggeringEvent.transactionId}</td>
+                      <td>{alert.triggerEvent.transactionId}</td>
                     </tr>
                     <tr>
                       <td colSpan={2} className="p-0" style={{borderBottomWidth: 3}}>
@@ -87,7 +87,7 @@ export const Alerts: FC<Props> = props => {
                     </tr>
                     <tr>
                       <td>Amount</td>
-                      <td>{alert.triggeringValue}</td>
+                      <td>{alert.triggerValue}</td>
                     </tr>
                     <tr>
                       <td>Of</td>
@@ -98,7 +98,7 @@ export const Alerts: FC<Props> = props => {
                 </CardBody>
                 <CardFooter style={{padding: "0.3rem"}}>
                   Alert for Rule <em>{alert.ruleId}</em> caused by Transaction{" "}
-                  <em>{alert.triggeringEvent.transactionId}</em> with Amount <em>{alert.triggeringValue}</em> of{" "}
+                  <em>{alert.triggerEvent.transactionId}</em> with Amount <em>{alert.triggerValue}</em> of{" "}
                   <em>{alert.violatedRule.aggregateFieldName}</em>.
                 </CardFooter>
               </CenteredContainer>

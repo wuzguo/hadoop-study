@@ -17,7 +17,7 @@
 
 package com.hadoop.study.fraud.detect.services;
 
-import com.hadoop.study.fraud.detect.model.Transaction;
+import com.hadoop.study.fraud.detect.model.AlertEvent;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,26 +25,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-@Service
 @Slf4j
-public class KafkaTransactionsPusher implements Consumer<Transaction> {
+@Service
+public class KafkaAlertPusher implements Consumer<AlertEvent> {
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
 
-    private Transaction lastTransaction;
-
-    @Value("${kafka.topic.transactions}")
+    @Value("${kafka.topic.alerts}")
     private String topic;
 
     @Override
-    public void accept(Transaction transaction) {
-        lastTransaction = transaction;
-        log.debug("{}", transaction);
-        kafkaTemplate.send(topic, transaction);
-    }
-
-    public Transaction getLastTransaction() {
-        return lastTransaction;
+    public void accept(AlertEvent alert) {
+        log.info("kafka alert pusher accept {}", alert);
+        kafkaTemplate.send(topic, alert);
     }
 }

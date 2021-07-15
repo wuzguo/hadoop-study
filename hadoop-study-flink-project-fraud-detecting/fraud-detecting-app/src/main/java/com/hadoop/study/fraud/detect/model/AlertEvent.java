@@ -38,10 +38,10 @@ public class AlertEvent {
     /**
      * 触发事件
      */
-    Transaction triggeringEvent;
+    Transaction triggerEvent;
 
     /**
      * 值
      */
-    BigDecimal triggeringValue;
+    BigDecimal triggerValue;
 }

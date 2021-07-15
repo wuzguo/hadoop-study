@@ -6,7 +6,7 @@ export interface Alert {
   alertId: string;
   ruleId: number;
   violatedRule: RulePayload;
-  triggeringValue: number;
-  triggeringEvent: Transaction;
+  triggerValue: number;
+  triggerEvent: Transaction;
   ref: RefObject<HTMLDivElement>;
 }

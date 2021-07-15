@@ -19,7 +19,7 @@ package com.hadoop.study.fraud.detect.controllers;
 
 import com.hadoop.study.fraud.detect.datasource.DemoTransactionsGenerator;
 import com.hadoop.study.fraud.detect.datasource.TransactionsGenerator;
-import com.hadoop.study.fraud.detect.services.KafkaTransactionsPusher;
+import com.hadoop.study.fraud.detect.services.KafkaTransactionPusher;
 import io.swagger.annotations.Api;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,7 +57,7 @@ public class TransactionController {
     private int transactionsRateDisplayLimit;
 
     @Autowired
-    public TransactionController(KafkaTransactionsPusher transactionsPusher) {
+    public TransactionController(KafkaTransactionPusher transactionsPusher) {
         transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
     }
 

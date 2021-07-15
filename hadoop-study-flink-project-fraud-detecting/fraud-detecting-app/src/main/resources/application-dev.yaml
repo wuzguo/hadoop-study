@@ -6,7 +6,6 @@ transactionsRateDisplayLimit: 50
 
 kafka:
   bootstrap-servers: 10.20.0.92:9092
-
   topic:
     transactions: topic-detect-live-transactions
     rules: topic-detect-rules

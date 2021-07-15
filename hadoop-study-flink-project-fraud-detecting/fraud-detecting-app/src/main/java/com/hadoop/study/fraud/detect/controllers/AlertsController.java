@@ -22,7 +22,7 @@ import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.exceptions.NotFoundException;
 import com.hadoop.study.fraud.detect.model.AlertEvent;
 import com.hadoop.study.fraud.detect.repositories.RuleRepository;
-import com.hadoop.study.fraud.detect.services.KafkaTransactionsPusher;
+import com.hadoop.study.fraud.detect.services.KafkaTransactionPusher;
 import com.hadoop.study.fraud.detect.utils.UtilJson;
 import io.swagger.annotations.Api;
 import java.math.BigDecimal;
@@ -43,7 +43,7 @@ public class AlertsController {
     private RuleRepository repository;
 
     @Autowired
-    private KafkaTransactionsPusher transactionsPusher;
+    private KafkaTransactionPusher transactionsPusher;
 
     @Autowired
     private SimpMessagingTemplate simpSender;
@@ -55,12 +55,10 @@ public class AlertsController {
     public AlertEvent mockAlert(@PathVariable Integer id) {
         Rule rule = repository.findById(id).orElseThrow(() -> new NotFoundException(id));
 
-        Transaction triggeringEvent = transactionsPusher.getLastTransaction();
-        String violatedRule = rule.getPayload();
-        BigDecimal triggeringValue =
-            triggeringEvent.getPaymentAmount().multiply(BigDecimal.valueOf(10));
-        AlertEvent alert = new AlertEvent(rule.getId(), violatedRule, triggeringEvent, triggeringValue);
-
+        Transaction triggerEvent = transactionsPusher.getLastTransaction();
+        String payload = rule.getPayload();
+        BigDecimal triggerValue = triggerEvent.getPaymentAmount().multiply(BigDecimal.valueOf(10));
+        AlertEvent alert = new AlertEvent(rule.getId(), payload, triggerEvent, triggerValue);
         String alertJson = UtilJson.toJson(alert);
         simpSender.convertAndSend(alertsWebSocketTopic, alertJson);
         return alert;
