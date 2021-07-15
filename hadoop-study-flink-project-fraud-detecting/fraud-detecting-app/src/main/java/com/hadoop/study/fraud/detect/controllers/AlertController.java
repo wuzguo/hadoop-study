@@ -17,15 +17,16 @@
 
 package com.hadoop.study.fraud.detect.controllers;
 
-import com.hadoop.study.fraud.detect.model.Transaction;
 import com.hadoop.study.fraud.detect.entities.Rule;
 import com.hadoop.study.fraud.detect.exceptions.NotFoundException;
 import com.hadoop.study.fraud.detect.model.AlertEvent;
+import com.hadoop.study.fraud.detect.model.Transaction;
 import com.hadoop.study.fraud.detect.repositories.RuleRepository;
 import com.hadoop.study.fraud.detect.services.KafkaTransactionPusher;
 import com.hadoop.study.fraud.detect.utils.UtilJson;
 import io.swagger.annotations.Api;
 import java.math.BigDecimal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -35,9 +36,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Api(tags = "警报接口")
+@Slf4j
 @RestController
 @RequestMapping("/api")
-public class AlertsController {
+public class AlertController {
 
     @Autowired
     private RuleRepository repository;
@@ -46,7 +48,7 @@ public class AlertsController {
     private KafkaTransactionPusher transactionsPusher;
 
     @Autowired
-    private SimpMessagingTemplate simpSender;
+    private SimpMessagingTemplate simpTemplate;
 
     @Value("${web-socket.topic.alerts}")
     private String alertsWebSocketTopic;
@@ -54,13 +56,14 @@ public class AlertsController {
     @GetMapping("/rules/{id}/alert")
     public AlertEvent mockAlert(@PathVariable Integer id) {
         Rule rule = repository.findById(id).orElseThrow(() -> new NotFoundException(id));
-
+        log.info("alert controller mock alert rule: {}", rule);
         Transaction triggerEvent = transactionsPusher.getLastTransaction();
         String payload = rule.getPayload();
         BigDecimal triggerValue = triggerEvent.getPaymentAmount().multiply(BigDecimal.valueOf(10));
         AlertEvent alert = new AlertEvent(rule.getId(), payload, triggerEvent, triggerValue);
         String alertJson = UtilJson.toJson(alert);
-        simpSender.convertAndSend(alertsWebSocketTopic, alertJson);
+        log.info("alert controller mock alert alertJson: {}", alertJson);
+        simpTemplate.convertAndSend(alertsWebSocketTopic, alertJson);
         return alert;
     }
 }

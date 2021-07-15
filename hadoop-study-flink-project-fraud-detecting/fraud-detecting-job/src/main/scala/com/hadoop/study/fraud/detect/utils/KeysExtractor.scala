@@ -1,6 +1,5 @@
 package com.hadoop.study.fraud.detect.utils
 
-import scala.collection.mutable.ListBuffer
 import scala.reflect.runtime.universe.Type
 
 /**
@@ -20,21 +19,21 @@ object KeysExtractor {
      * @param value    target for values extraction
      */
     def getKey(value: Any, typeOf: Type, keyNames: List[String]): String = {
-        val buffer: ListBuffer[String] = ListBuffer()
-        buffer.append("{")
+        val builder = new StringBuilder
+        builder.append("{")
         if (keyNames.nonEmpty) {
             val it = keyNames.iterator
-            appendKeyValue(value, typeOf, it.next, buffer)
+            appendKeyValue(value, typeOf, it.next, builder)
             while (it.hasNext) {
-                buffer.append(";")
-                appendKeyValue(value, typeOf, it.next, buffer)
+                builder.append(";")
+                appendKeyValue(value, typeOf, it.next, builder)
             }
         }
-        buffer.append("}")
-        buffer.toString
+        builder.append("}")
+        builder.toString
     }
 
-    private def appendKeyValue(value: Any, typeOf: Type, fieldName: String, buffer: ListBuffer[String]): Unit = {
+    private def appendKeyValue(value: Any, typeOf: Type, fieldName: String, buffer: StringBuilder): Unit = {
         buffer.append(fieldName)
         buffer.append("=")
         buffer.append(FieldsExtractor.getStringByName(value, typeOf, fieldName))

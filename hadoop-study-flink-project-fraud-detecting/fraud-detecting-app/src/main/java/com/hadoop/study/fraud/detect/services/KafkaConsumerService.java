@@ -18,6 +18,7 @@
 package com.hadoop.study.fraud.detect.services;
 
 import com.hadoop.study.fraud.detect.entities.Rule;
+import com.hadoop.study.fraud.detect.model.AlertEvent;
 import com.hadoop.study.fraud.detect.model.RulePayload;
 import com.hadoop.study.fraud.detect.repositories.RuleRepository;
 import com.hadoop.study.fraud.detect.utils.UtilJson;
