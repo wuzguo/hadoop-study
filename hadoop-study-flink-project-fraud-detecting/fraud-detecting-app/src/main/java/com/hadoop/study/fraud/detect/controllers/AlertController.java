@@ -55,12 +55,12 @@ public class AlertController {
 
     @GetMapping("/rules/{id}/alert")
     public AlertEvent mockAlert(@PathVariable Integer id) {
+        log.info("alert controller mock alert id: {}", id);
         Rule rule = repository.findById(id).orElseThrow(() -> new NotFoundException(id));
-        log.info("alert controller mock alert rule: {}", rule);
         Transaction triggerEvent = transactionsPusher.getLastTransaction();
         String payload = rule.getPayload();
         BigDecimal triggerValue = triggerEvent.getPaymentAmount().multiply(BigDecimal.valueOf(10));
-        AlertEvent alert = new AlertEvent(rule.getId(), payload, triggerEvent, triggerValue);
+        AlertEvent alert = new AlertEvent(rule.getRuleId(), payload, triggerEvent, triggerValue);
         String alertJson = UtilJson.toJson(alert);
         log.info("alert controller mock alert alertJson: {}", alertJson);
         simpTemplate.convertAndSend(alertsWebSocketTopic, alertJson);

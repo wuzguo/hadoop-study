@@ -53,9 +53,8 @@ public class RuleController {
     @PostMapping("/rules")
     public Rule newRule(@RequestBody Rule newRule) {
         Rule savedRule = repository.save(newRule);
-        Integer id = savedRule.getId();
         RulePayload payload = UtilJson.readValue(savedRule.getPayload(), RulePayload.class);
-        payload.setRuleId(id);
+        payload.setRuleId(savedRule.getRuleId());
         String payloadJson = UtilJson.writeValueAsString(payload);
         savedRule.setPayload(payloadJson);
         Rule result = repository.save(savedRule);
@@ -86,8 +85,8 @@ public class RuleController {
     public void deleteAllRules() {
         List<Rule> rules = repository.findAll();
         for (Rule rule : rules) {
-            repository.deleteById(rule.getId());
-            kafkaRuleService.deleteRule(rule.getId());
+            repository.deleteById(rule.getRuleId());
+            kafkaRuleService.deleteRule(rule.getRuleId());
         }
     }
 }

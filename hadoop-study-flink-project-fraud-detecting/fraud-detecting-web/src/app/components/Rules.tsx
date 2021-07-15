@@ -42,7 +42,7 @@ const iconMap: {
   windowMinutes: faClock,
 };
 
-const seperator: {
+const separator: {
   [s: string]: string;
 } = {
   EQUAL: "to",
@@ -95,7 +95,7 @@ const fields = [
 
 // const omitFields = omit(["ruleId", "ruleState"]);
 
-const hasAlert = (alerts: Alert[], rule: Rule) => alerts.some(alert => alert.ruleId === rule.id);
+const hasAlert = (alerts: Alert[], rule: Rule) => alerts.some(alert => alert.ruleId === rule.ruleId);
 
 export const Rules: FC<Props> = props => {
   const handleDelete = (id: number) => () => {
@@ -121,7 +121,7 @@ export const Rules: FC<Props> = props => {
           return (
               <CenteredContainer
                   ref={rule.ref}
-                  key={rule.id}
+                  key={rule.ruleId}
                   tooManyItems={tooManyRules}
                   style={{
                     borderColor: hasAlert(props.alerts, rule) ? "#dc3545" : undefined,
@@ -131,12 +131,12 @@ export const Rules: FC<Props> = props => {
                 <CardHeader className="d-flex justify-content-between align-items-center" style={{padding: "0.3rem"}}>
                   <RuleTitle>
                     <FontAwesomeIcon icon={faInfoCircle} fixedWidth={true} className="mr-2"/>
-                    Rule #{rule.id}{" "}
+                    Rule #{rule.ruleId}{" "}
                     <Badge color={badgeColorMap[payload.ruleState]} className="ml-2">
                       {payload.ruleState}
                     </Badge>
                   </RuleTitle>
-                  <Button size="sm" color="danger" outline={true} onClick={handleDelete(rule.id)}>
+                  <Button size="sm" color="danger" outline={true} onClick={handleDelete(rule.ruleId)}>
                     Delete
                   </Button>
                 </CardHeader>
@@ -161,7 +161,7 @@ export const Rules: FC<Props> = props => {
                 <CardFooter style={{padding: "0.3rem"}}>
                   <em>{payload.aggregatorType}</em> of <em>{payload.aggregateFieldName}</em> aggregated by "
                   <em>{payload.groupingKeyNames.join(", ")}</em>" is <em>{payload.operatorType}</em>{" "}
-                  {seperator[payload.operatorType]} <em>{payload.limit}</em> within an interval of{" "}
+                  {separator[payload.operatorType]} <em>{payload.limit}</em> within an interval of{" "}
                   <em>{payload.windowMinutes}</em> minutes.
                 </CardFooter>
               </CenteredContainer>

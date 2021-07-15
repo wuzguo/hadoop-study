@@ -1,7 +1,7 @@
 import { RefObject } from "react";
 
 export interface Rule {
-  id: number;
+  ruleId: number;
   payload: string;
   ref: RefObject<HTMLDivElement>;
 }

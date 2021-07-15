@@ -56,7 +56,7 @@ export const App: FC = () => {
             endSocket: "left",
             startSocket: "right",
           }),
-          ruleId: rule.id,
+          ruleId: rule.ruleId,
         };
       } catch (e) {
         return {
@@ -66,7 +66,7 @@ export const App: FC = () => {
             remove: () => {
             },
           },
-          ruleId: rule.id,
+          ruleId: rule.ruleId,
         };
       }
     });
@@ -77,8 +77,8 @@ export const App: FC = () => {
   }, [rules]);
 
   useEffect(() => {
-    const alertingRules = intersectionWith((rule, alert) => rule.id === alert.ruleId, rules, alerts).map(
-        rule => rule.id
+    const alertingRules = intersectionWith((rule, alert) => rule.ruleId === alert.ruleId, rules, alerts).map(
+        rule => rule.ruleId
     );
     ruleLines.forEach(line => {
       try {
@@ -91,10 +91,10 @@ export const App: FC = () => {
 
   useEffect(() => {
     const newLines = alerts.map(alert => {
-      const rule = find(r => r.id === alert.ruleId, rules);
+      const rule = find(r => r.ruleId === alert.ruleId, rules);
       console.info(rule, alert)
       return {
-        line: new LeaderLine(rule!.ref.current, alert.ref.current, {
+        line: new LeaderLine(rule!.ref.current, alert!.ref.current, {
           color: "#fff",
           endPlugOutline: true,
           endSocket: "left",
@@ -102,7 +102,7 @@ export const App: FC = () => {
           outlineColor: "#dc3545",
           startSocket: "right",
         }),
-        ruleId: rule!.id,
+        ruleId: rule!.ruleId,
       };
     });
 
@@ -111,7 +111,7 @@ export const App: FC = () => {
     return () => newLines.forEach(line => line.line.remove());
   }, [alerts, rules]);
 
-  const clearRule = (id: number) => () => setRules(rules.filter(rule => id !== rule.id));
+  const clearRule = (id: number) => () => setRules(rules.filter(rule => id !== rule.ruleId));
 
   const clearAlert = (id: number) => () => {
     setAlerts(state => {
@@ -137,7 +137,6 @@ export const App: FC = () => {
   };
 
   const handleLatencyMessage = (latency: string) => {
-    // tslint:disable-next-line: no-console
     console.info(latency);
   };
 

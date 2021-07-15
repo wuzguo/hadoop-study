@@ -19,7 +19,7 @@ export const useLines: UseLines = (transactionsRef, rules, alerts) => {
   useEffect(() => {
     const newLines = flattenDeep<Line>(
       rules.map(rule => {
-        const hasAlert = alerts.some(alert => alert.ruleId === rule.id);
+        const hasAlert = alerts.some(alert => alert.ruleId === rule.ruleId);
 
         const inputLine = new LeaderLine(transactionsRef.current, rule.ref.current, {
           color: hasAlert ? "#dc3545" : undefined,
@@ -29,7 +29,7 @@ export const useLines: UseLines = (transactionsRef, rules, alerts) => {
         }) as Line;
 
         const outputLines = alerts.reduce<Line[]>((acc, alert) => {
-          if (alert.ruleId === rule.id) {
+          if (alert.ruleId === rule.ruleId) {
             return [
               ...acc,
               new LeaderLine(rule.ref.current, alert.ref.current, {

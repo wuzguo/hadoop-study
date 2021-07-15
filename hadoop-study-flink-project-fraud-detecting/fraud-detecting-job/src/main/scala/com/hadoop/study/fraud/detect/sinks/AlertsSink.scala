@@ -45,7 +45,7 @@ object AlertsSink extends AbstractSink {
             case DISCARD =>
                 new DiscardingSink[String]
             case _ =>
-                throw new IllegalArgumentException(s"Source ${alertType} unknown. Known values are: ${SinkType.values}")
+                throw new IllegalArgumentException(s"source ${alertType} unknown. Known values are: ${SinkType.values}")
         }
     }
 
