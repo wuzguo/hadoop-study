@@ -87,20 +87,21 @@ public class TransactionGenerator implements Runnable {
         final SplittableRandom random = new SplittableRandom();
 
         while (running) {
-            Transaction event = randomEvent(random);
-            log.debug("{}", event);
-            consumer.accept(event);
+            Transaction transaction = randomEvent(random);
+            log.debug("transaction generator {}", transaction);
+            consumer.accept(transaction);
             try {
                 throttler.throttle();
             } catch (InterruptedException e) {
+                log.error("transaction generator error: {}", e.getMessage());
                 throw new RuntimeException(e);
             }
         }
-        log.info("Finished run()");
+        log.info("transaction generator finished run");
     }
 
     public final void cancel() {
+        log.info("transaction generator cancelled");
         running = false;
-        log.info("Cancelled");
     }
 }
