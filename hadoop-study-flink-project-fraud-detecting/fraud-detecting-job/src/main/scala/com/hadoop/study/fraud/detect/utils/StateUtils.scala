@@ -26,7 +26,7 @@ object StateUtils {
             case DELETE =>
                 broadcastState.remove(rule.ruleId)
             case _ =>
-                log.info(s"unsupported rule function type: ${rule.ruleState}")
+                log.info(s"unsupported rule state type: ${rule.ruleState}")
         }
     }
 
