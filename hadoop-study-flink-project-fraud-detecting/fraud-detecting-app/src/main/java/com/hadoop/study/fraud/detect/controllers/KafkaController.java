@@ -36,18 +36,18 @@ public class KafkaController {
     private KafkaRuleService kafkaRuleService;
 
     @GetMapping("/rule/sync")
-    public void syncRules() {
-        Rule rule = createRule(RulePayload.ControlType.EXPORT_RULES_CURRENT);
+    public void syncRule() {
+        Rule rule = create(RulePayload.ControlType.EXPORT_RULES_CURRENT);
         kafkaRuleService.sendRule(rule);
     }
 
     @GetMapping("/state/clear")
     public void clearState() {
-        Rule rule = createRule(RulePayload.ControlType.CLEAR_STATE_ALL);
+        Rule rule = create(RulePayload.ControlType.CLEAR_STATE_ALL);
         kafkaRuleService.sendRule(rule);
     }
 
-    private Rule createRule(RulePayload.ControlType controlType) {
+    private Rule create(RulePayload.ControlType controlType) {
         RulePayload payload = new RulePayload();
         payload.setRuleState(RulePayload.RuleState.CONTROL);
         payload.setControlType(controlType);

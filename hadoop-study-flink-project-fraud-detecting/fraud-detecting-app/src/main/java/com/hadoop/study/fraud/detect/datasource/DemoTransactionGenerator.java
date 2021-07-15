@@ -24,14 +24,17 @@ import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class DemoTransactionsGenerator extends TransactionsGenerator {
+public class DemoTransactionGenerator extends TransactionGenerator {
 
     private final BigDecimal beneficiaryLimit = BigDecimal.valueOf(10000000L);
+
     private final BigDecimal payeeBeneficiaryLimit = BigDecimal.valueOf(20000000L);
+
     private long lastPayeeIdBeneficiaryIdTriggered = System.currentTimeMillis();
+
     private long lastBeneficiaryIdTriggered = System.currentTimeMillis();
 
-    public DemoTransactionsGenerator(Consumer<Transaction> consumer, int maxRecordsPerSecond) {
+    public DemoTransactionGenerator(Consumer<Transaction> consumer, int maxRecordsPerSecond) {
         super(consumer, maxRecordsPerSecond);
     }
 

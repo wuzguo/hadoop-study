@@ -17,8 +17,8 @@
 
 package com.hadoop.study.fraud.detect.controllers;
 
-import com.hadoop.study.fraud.detect.datasource.DemoTransactionsGenerator;
-import com.hadoop.study.fraud.detect.datasource.TransactionsGenerator;
+import com.hadoop.study.fraud.detect.datasource.DemoTransactionGenerator;
+import com.hadoop.study.fraud.detect.datasource.TransactionGenerator;
 import com.hadoop.study.fraud.detect.services.KafkaTransactionPusher;
 import io.swagger.annotations.Api;
 import java.util.concurrent.ExecutorService;
@@ -39,10 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/transaction")
 public class TransactionController {
 
-    private final TransactionsGenerator transactionsGenerator;
-
-    @Autowired
-    private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+    private final TransactionGenerator transactionGenerator;
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -57,35 +54,38 @@ public class TransactionController {
     private int transactionsRateDisplayLimit;
 
     @Autowired
+    private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+
+    @Autowired
     public TransactionController(KafkaTransactionPusher transactionsPusher) {
-        transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
+        transactionGenerator = new DemoTransactionGenerator(transactionsPusher, 1);
     }
 
     @GetMapping("/start")
-    public void starTransaction() {
+    public void start() {
         log.info("{}", "start generator Transaction called");
         startGenTransaction();
     }
 
     private void startGenTransaction() {
         if (!generatingTransactions) {
-            executor.submit(transactionsGenerator);
+            executor.submit(transactionGenerator);
             generatingTransactions = true;
         }
     }
 
     @GetMapping("/stop")
-    public void stopTransaction() {
-        transactionsGenerator.cancel();
+    public void stop() {
+        transactionGenerator.cancel();
         generatingTransactions = false;
         log.info("{}", "stop generator transaction called");
     }
 
     @GetMapping("/speed/{speed}")
-    public void setGenSpeed(@PathVariable Long speed) {
+    public void setSpeed(@PathVariable Long speed) {
         log.info("generator speed change request: " + speed);
         if (speed <= 0) {
-            transactionsGenerator.cancel();
+            transactionGenerator.cancel();
             generatingTransactions = false;
             return;
         } else {
@@ -100,6 +100,6 @@ public class TransactionController {
             listenerContainer.start();
         }
 
-        transactionsGenerator.adjustMaxRecordsPerSecond(speed);
+        transactionGenerator.adjustMaxRecordsPerSecond(speed);
     }
 }

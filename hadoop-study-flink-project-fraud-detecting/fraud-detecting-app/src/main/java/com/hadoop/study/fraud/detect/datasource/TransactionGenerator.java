@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class TransactionsGenerator implements Runnable {
+public class TransactionGenerator implements Runnable {
 
     private static final long MAX_PAYEE_ID = 100000L;
 
@@ -41,7 +41,7 @@ public class TransactionsGenerator implements Runnable {
 
     private volatile boolean running = true;
 
-    public TransactionsGenerator(Consumer<Transaction> consumer, int maxRecordsPerSecond) {
+    public TransactionGenerator(Consumer<Transaction> consumer, int maxRecordsPerSecond) {
         this.consumer = consumer;
         this.throttler = new Throttler(maxRecordsPerSecond);
     }
@@ -80,18 +80,14 @@ public class TransactionsGenerator implements Runnable {
             .build();
     }
 
-    public Transaction generateOne() {
-        return randomEvent(new SplittableRandom());
-    }
-
     @Override
     public final void run() {
         running = true;
 
-        final SplittableRandom rnd = new SplittableRandom();
+        final SplittableRandom random = new SplittableRandom();
 
         while (running) {
-            Transaction event = randomEvent(rnd);
+            Transaction event = randomEvent(random);
             log.debug("{}", event);
             consumer.accept(event);
             try {
