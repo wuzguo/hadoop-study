@@ -40,7 +40,7 @@ export const Alerts: FC<Props> = props => {
   const tooManyAlerts = props.alerts.length > 4;
 
   const handleScroll = () => {
-    props.lines.forEach(line => line!.line.position());
+    props.lines.forEach(line => line!.line!.position());
   };
 
   return (
