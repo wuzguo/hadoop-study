@@ -7,9 +7,8 @@ import {Col, Container, Row} from "reactstrap";
 import styled from "styled-components/macro";
 import SockJsClient from "react-stomp";
 import uuid from "uuid/v4";
-import LeaderLine from "leader-line";
 import {find, intersectionWith} from "lodash/fp";
-
+import LeaderLine from "leader-line";
 import "../assets/app.scss";
 import {Line} from "app/utils/useLines";
 
@@ -91,10 +90,11 @@ export const App: FC = () => {
 
   useEffect(() => {
     const newLines = alerts.map(alert => {
-      const rule = find(r => r.ruleId === alert.ruleId, rules);
+      const rule = find(rule => rule.ruleId === alert.ruleId, rules);
       console.info(rule, alert)
+      console.info(rule!.ref.current, alert.ref.current)
       return {
-        line: new LeaderLine(rule!.ref.current, alert!.ref.current, {
+        line: new LeaderLine(rule!.ref.current, alert.ref.current, {
           color: "#fff",
           endPlugOutline: true,
           endSocket: "left",
@@ -142,8 +142,10 @@ export const App: FC = () => {
 
   return (
       <>
-        <SockJsClient url="/ws/backend" topics={["/topic/alerts"]} onMessage={handleMessage} options = {{"timeout" : 10000} }/>
-        <SockJsClient url="/ws/backend" topics={["/topic/latency"]} onMessage={handleLatencyMessage} options = {{"timeout" : 10000} }/>
+        <SockJsClient url="/ws/backend" topics={["/topic/alerts"]} onMessage={handleMessage}
+                      options={{"timeout": 10000}}/>
+        <SockJsClient url="/ws/backend" topics={["/topic/latency"]} onMessage={handleLatencyMessage}
+                      options={{"timeout": 10000}}/>
         <LayoutContainer>
           <Header setRules={setRules}/>
           <Container fluid={true} className="flex-grow-1 d-flex w-100 flex-column overflow-hidden">
