@@ -91,8 +91,6 @@ export const App: FC = () => {
   useEffect(() => {
     const newLines = alerts.map(alert => {
       const rule = find(rule => rule.ruleId === alert.ruleId, rules);
-      console.info(rule, alert)
-      console.info(rule!.ref.current, alert.ref.current)
       return {
         line: new LeaderLine(rule!.ref.current, alert.ref.current, {
           color: "#fff",
@@ -107,7 +105,6 @@ export const App: FC = () => {
     });
 
     setAlertLines(newLines);
-
     return () => newLines.forEach(line => line.line.remove());
   }, [alerts, rules]);
 
