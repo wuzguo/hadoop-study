@@ -41,7 +41,7 @@ public class KafkaTransactionConsumerService implements ConsumerSeekAware {
     @KafkaListener(
         id = "${kafka.listeners.transactions.id}",
         topics = "${kafka.topic.transactions}",
-        groupId = "transactions")
+        groupId = "fraud-detect-transactions")
     public void consumeTransactions(@Payload String message) {
         log.info("kafka transaction consumer consume transactions {}", message);
         simpTemplate.convertAndSend(transactionsWebSocketTopic, message);

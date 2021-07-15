@@ -8,4 +8,4 @@ package com.hadoop.study.fraud.detect.beans
  * @date 2021/7/8 11:09
  */
 
-case class AlertEvent[E, V](ruleId: Int, rule: Rule, key: String, triggerEvent: E, triggerValue: V)
+case class AlertEvent[E, V](ruleId: Int, payload: Rule, key: String, triggerEvent: E, triggerValue: V)

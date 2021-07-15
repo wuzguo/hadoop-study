@@ -91,7 +91,7 @@ export const Alerts: FC<Props> = props => {
                     </tr>
                     <tr>
                       <td>Of</td>
-                      <td>{alert.violatedRule.aggregateFieldName}</td>
+                      <td>{alert.payload.aggregateFieldName}</td>
                     </tr>
                     </tbody>
                   </AlertTable>
@@ -99,7 +99,7 @@ export const Alerts: FC<Props> = props => {
                 <CardFooter style={{padding: "0.3rem"}}>
                   Alert for Rule <em>{alert.ruleId}</em> caused by Transaction{" "}
                   <em>{alert.triggerEvent.transactionId}</em> with Amount <em>{alert.triggerValue}</em> of{" "}
-                  <em>{alert.violatedRule.aggregateFieldName}</em>.
+                  <em>{alert.payload.aggregateFieldName}</em>.
                 </CardFooter>
               </CenteredContainer>
           );

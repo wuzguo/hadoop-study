@@ -92,7 +92,7 @@ export const App: FC = () => {
   useEffect(() => {
     const newLines = alerts.map(alert => {
       const rule = find(r => r.id === alert.ruleId, rules);
-
+      console.info(rule, alert)
       return {
         line: new LeaderLine(rule!.ref.current, alert.ref.current, {
           color: "#fff",

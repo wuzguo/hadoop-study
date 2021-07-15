@@ -5,7 +5,7 @@ import { RulePayload } from "./Rule";
 export interface Alert {
   alertId: string;
   ruleId: number;
-  violatedRule: RulePayload;
+  payload: RulePayload;
   triggerValue: number;
   triggerEvent: Transaction;
   ref: RefObject<HTMLDivElement>;
