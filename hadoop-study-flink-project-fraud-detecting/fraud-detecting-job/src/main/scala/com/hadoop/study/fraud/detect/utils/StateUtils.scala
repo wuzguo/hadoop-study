@@ -4,6 +4,7 @@ import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.enums.RuleState
 import com.hadoop.study.fraud.detect.enums.RuleState.{ACTIVE, DELETE, PAUSE}
 import org.apache.flink.api.common.state.{BroadcastState, MapState}
+import org.slf4j.LoggerFactory
 
 /**
  * <B>说明：描述</B>
@@ -14,6 +15,7 @@ import org.apache.flink.api.common.state.{BroadcastState, MapState}
  */
 
 object StateUtils {
+    private val log = LoggerFactory.getLogger("StateUtils")
 
     def handleBroadcast(rule: Rule, broadcastState: BroadcastState[Int, Rule]): Unit = {
         RuleState.withName(rule.ruleState) match {
@@ -23,6 +25,8 @@ object StateUtils {
                 broadcastState.put(rule.ruleId, rule)
             case DELETE =>
                 broadcastState.remove(rule.ruleId)
+            case _ =>
+                log.info(s"unsupported rule function type: ${rule.ruleState}")
         }
     }
 

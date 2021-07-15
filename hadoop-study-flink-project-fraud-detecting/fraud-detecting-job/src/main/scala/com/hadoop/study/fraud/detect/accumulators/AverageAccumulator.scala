@@ -29,7 +29,7 @@ case class AverageAccumulator(var count: Long, var sum: BigDecimal) extends Simp
             case accumulator: AverageAccumulator =>
                 count += accumulator.count
                 sum += accumulator.sum
-            case _ => throw new IllegalArgumentException("The merged accumulator must be AverageAccumulator.")
+            case _ => throw new IllegalArgumentException("the merged accumulator must be AverageAccumulator.")
         }
     }
 

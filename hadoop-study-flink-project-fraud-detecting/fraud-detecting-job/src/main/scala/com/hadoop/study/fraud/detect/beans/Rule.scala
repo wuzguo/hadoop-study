@@ -46,7 +46,7 @@ class Rule {
         case GREATER_EQUAL =>
             value.compareTo(limit) >= 0
         case _ =>
-            throw new RuntimeException("Unknown limit operator type: " + operatorType)
+            throw new RuntimeException("unknown limit operator type: " + operatorType)
     }
 
     def getWindowStartFor(timestamp: Long): Long = {

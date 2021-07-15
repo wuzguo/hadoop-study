@@ -28,7 +28,7 @@ object RuleHelper {
             case MIN =>
                 MinimumAccumulator()
             case _ =>
-                throw new RuntimeException(s"Unsupported aggregation function type: ${rule.aggregatorType}")
+                throw new RuntimeException(s"unsupported aggregation function type: ${rule.aggregatorType}")
         }
 
 }

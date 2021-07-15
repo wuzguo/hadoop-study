@@ -132,6 +132,7 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
                     rulesState.remove(ruleEntry.getKey)
                     log.trace(s"handleControlCommand removed ${ruleEntry.getValue}")
                 }
+            case _ =>
         }
     }
 
