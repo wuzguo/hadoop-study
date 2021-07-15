@@ -13,6 +13,8 @@ import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction
 import org.apache.flink.util.Collector
 import org.slf4j.LoggerFactory
 
+import scala.reflect.runtime.universe.typeOf
+
 /**
  * <B>说明：描述</B>
  *
@@ -41,7 +43,7 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
         var ruleCounter = 0
         rulesState.immutableEntries.forEach(entry => {
             val rule = entry.getValue
-            out.collect(Keyed(event, KeysExtractor.getKey(rule.groupingKeyNames, event), rule.ruleId))
+            out.collect(Keyed(event, KeysExtractor.getKey(event, typeOf[Transaction], rule.groupingKeyNames), rule.ruleId))
             ruleCounter += 1
         })
 

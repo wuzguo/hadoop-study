@@ -14,6 +14,8 @@ import org.apache.flink.streaming.api.functions.co.KeyedBroadcastProcessFunction
 import org.apache.flink.util.Collector
 import org.slf4j.LoggerFactory
 
+import scala.reflect.runtime.universe.typeOf
+
 /**
  * <B>说明：描述</B>
  *
@@ -87,7 +89,7 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
             }
         } else {
             for (event <- inWindow) {
-                val aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.aggregateFieldName, event)
+                val aggregatedValue = FieldsExtractor.getBigDecimalByName(event, typeOf[Transaction], rule.aggregateFieldName)
                 aggregator.add(aggregatedValue)
             }
         }
