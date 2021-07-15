@@ -46,8 +46,8 @@ public class TransactionsGenerator implements Runnable {
         this.throttler = new Throttler(maxRecordsPerSecond);
     }
 
-    private static Transaction.PaymentType paymentType(long id) {
-        int name = (int) (id % 2);
+    private static Transaction.PaymentType paymentType(long transactionId) {
+        int name = (int) (transactionId % 2);
         switch (name) {
             case 0:
                 return Transaction.PaymentType.CRD;
@@ -66,8 +66,7 @@ public class TransactionsGenerator implements Runnable {
         long transactionId = rnd.nextLong(Long.MAX_VALUE);
         long payeeId = rnd.nextLong(MAX_PAYEE_ID);
         long beneficiaryId = rnd.nextLong(MAX_BENEFICIARY_ID);
-        double paymentAmountDouble =
-            ThreadLocalRandom.current().nextDouble(MIN_PAYMENT_AMOUNT, MAX_PAYMENT_AMOUNT);
+        double paymentAmountDouble = ThreadLocalRandom.current().nextDouble(MIN_PAYMENT_AMOUNT, MAX_PAYMENT_AMOUNT);
         paymentAmountDouble = Math.floor(paymentAmountDouble * 100) / 100;
         BigDecimal paymentAmount = BigDecimal.valueOf(paymentAmountDouble);
 

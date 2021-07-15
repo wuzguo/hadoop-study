@@ -98,8 +98,8 @@ const fields = [
 const hasAlert = (alerts: Alert[], rule: Rule) => alerts.some(alert => alert.ruleId === rule.ruleId);
 
 export const Rules: FC<Props> = props => {
-  const handleDelete = (id: number) => () => {
-    Axios.delete(`/api/rules/${id}`).then(props.clearRule(id));
+  const handleDelete = (ruleId: number) => () => {
+    Axios.delete(`/api/rules/${ruleId}`).then(props.clearRule(ruleId));
   };
 
   const handleScroll = () => {
@@ -174,7 +174,7 @@ export const Rules: FC<Props> = props => {
 interface Props {
   alerts: Alert[];
   rules: Rule[];
-  clearRule: (id: number) => () => void;
+  clearRule: (ruleId: number) => () => void;
   ruleLines: Line[];
   alertLines: Line[];
 }

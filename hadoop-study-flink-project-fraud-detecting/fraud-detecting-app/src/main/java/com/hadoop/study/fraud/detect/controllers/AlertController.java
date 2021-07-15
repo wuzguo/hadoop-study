@@ -53,10 +53,10 @@ public class AlertController {
     @Value("${web-socket.topic.alerts}")
     private String alertsWebSocketTopic;
 
-    @GetMapping("/rules/{id}/alert")
-    public AlertEvent mockAlert(@PathVariable Integer id) {
-        log.info("alert controller mock alert id: {}", id);
-        Rule rule = repository.findById(id).orElseThrow(() -> new NotFoundException(id));
+    @GetMapping("/rules/{ruleId}/alert")
+    public AlertEvent mockAlert(@PathVariable Integer ruleId) {
+        log.info("alert controller mock alert id: {}", ruleId);
+        Rule rule = repository.findById(ruleId).orElseThrow(() -> new NotFoundException(ruleId));
         Transaction triggerEvent = transactionsPusher.getLastTransaction();
         String payload = rule.getPayload();
         BigDecimal triggerValue = triggerEvent.getPaymentAmount().multiply(BigDecimal.valueOf(10));

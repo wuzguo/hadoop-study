@@ -3,7 +3,7 @@ package com.hadoop.study.fraud.detect.dynamic
 import com.hadoop.study.fraud.detect.beans.{Rule, Transaction}
 import com.hadoop.study.fraud.detect.config.Config
 import com.hadoop.study.fraud.detect.config.Parameters._
-import com.hadoop.study.fraud.detect.functions.{AverageAggregate, DynamicAlertFunction, DynamicKeyFunction}
+import com.hadoop.study.fraud.detect.functions.{AverageFunction, DynamicAlertFunction, DynamicKeyFunction}
 import com.hadoop.study.fraud.detect.sinks.{AlertsSink, LatencySink, RulesSink}
 import com.hadoop.study.fraud.detect.sources.{RulesSource, TransactionsSource}
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
@@ -35,10 +35,7 @@ case class RulesEvaluator(config: Config) {
 
         // Streams setup
         val rulesStream = getRuleStream(env)
-        rulesStream.print("rule").setParallelism(1)
-
         val transactionStream = getTransactionsStream(env)
-        transactionStream.print("transaction").setParallelism(1)
 
         // Broadcast
         val ruleBroadcastStream = rulesStream.broadcast(Descriptors.rulesDescriptor)
@@ -65,7 +62,7 @@ case class RulesEvaluator(config: Config) {
 
         val latenciesStream = alertStream.getSideOutput(Tags.latencySinkTag)
         latenciesStream.timeWindowAll(Time.seconds(10))
-          .aggregate(AverageAggregate())
+          .aggregate(AverageFunction())
           .map(_.toString)
           .addSink(LatencySink.create(config))
           .name("Latency Sink")

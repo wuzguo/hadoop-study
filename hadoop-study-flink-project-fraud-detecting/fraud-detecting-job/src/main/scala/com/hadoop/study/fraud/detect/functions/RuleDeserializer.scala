@@ -21,7 +21,6 @@ case class RuleDeserializer() extends RichFlatMapFunction[String, Rule] {
 
     override def flatMap(value: String, out: Collector[Rule]): Unit = {
         val rule = ruleParser.from(value)
-
         val ruleState = RuleState.withName(rule.ruleState)
         if ((ruleState ne RuleState.CONTROL) && rule.ruleId == 0) {
             throw new NullPointerException("ruleId cannot be null: " + value)

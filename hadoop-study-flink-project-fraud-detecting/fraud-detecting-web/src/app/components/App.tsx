@@ -111,12 +111,12 @@ export const App: FC = () => {
     return () => newLines.forEach(line => line.line.remove());
   }, [alerts, rules]);
 
-  const clearRule = (id: number) => () => setRules(rules.filter(rule => id !== rule.ruleId));
+  const clearRule = (ruleId: number) => () => setRules(rules.filter(rule => ruleId !== rule.ruleId));
 
-  const clearAlert = (id: number) => () => {
+  const clearAlert = (ruleId: number) => () => {
     setAlerts(state => {
       const newAlerts = [...state];
-      newAlerts.splice(id, 1);
+      newAlerts.splice(ruleId, 1);
       return newAlerts;
     });
   };

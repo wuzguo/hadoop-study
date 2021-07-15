@@ -70,15 +70,15 @@ public class RuleController {
         }
     }
 
-    @GetMapping("/rules/{id}")
-    public Rule one(@PathVariable Integer id) {
-        return repository.findById(id).orElseThrow(() -> new NotFoundException(id));
+    @GetMapping("/rules/{ruleId}")
+    public Rule one(@PathVariable Integer ruleId) {
+        return repository.findById(ruleId).orElseThrow(() -> new NotFoundException(ruleId));
     }
 
-    @DeleteMapping("/rules/{id}")
-    public void deleteRule(@PathVariable Integer id) {
-        repository.deleteById(id);
-        kafkaRuleService.deleteRule(id);
+    @DeleteMapping("/rules/{ruleId}")
+    public void deleteRule(@PathVariable Integer ruleId) {
+        repository.deleteById(ruleId);
+        kafkaRuleService.deleteRule(ruleId);
     }
 
     @DeleteMapping("/rules")
