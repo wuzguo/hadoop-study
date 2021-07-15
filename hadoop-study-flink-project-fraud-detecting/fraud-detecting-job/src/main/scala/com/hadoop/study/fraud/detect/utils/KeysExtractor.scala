@@ -37,6 +37,6 @@ object KeysExtractor {
     private def appendKeyValue(value: Any, typeOf: Type, fieldName: String, buffer: ListBuffer[String]): Unit = {
         buffer.append(fieldName)
         buffer.append("=")
-        buffer.append(FieldsExtractor.getFieldAsString(value, typeOf, fieldName))
+        buffer.append(FieldsExtractor.getStringByName(value, typeOf, fieldName))
     }
 }

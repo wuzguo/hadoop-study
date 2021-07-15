@@ -14,7 +14,7 @@ import scala.reflect.runtime.universe.{TermName, Type, runtimeMirror, typeOf}
 
 object FieldsExtractor {
 
-    def getFieldAsString(instance: Any, typeOf: Type, fieldName: String): String = {
+    def getStringByName(instance: Any, typeOf: Type, fieldName: String): String = {
         reflectField(instance, typeOf, fieldName).toString
     }
 
