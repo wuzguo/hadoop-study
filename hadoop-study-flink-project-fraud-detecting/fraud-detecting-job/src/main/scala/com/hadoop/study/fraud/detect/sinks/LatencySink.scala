@@ -24,10 +24,8 @@ object LatencySink extends AbstractSink {
     private val log = LoggerFactory.getLogger("LatencySink")
 
     override def create(config: Config): SinkFunction[String] = {
-        log.info(s"LatencySink config: ${config}")
         val latencyType = config.get(LATENCY_SINK)
-        val sinkType = SinkType.withName(latencyType.toUpperCase)
-        sinkType match {
+        SinkType.withName(latencyType.toUpperCase) match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initProducerProperties(config)
                 val latencyTopic = config.get(LATENCY_TOPIC)

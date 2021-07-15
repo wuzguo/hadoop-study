@@ -34,7 +34,6 @@ object RulesSource extends AbstractSource {
     }
 
     override def create(config: Config): SourceFunction[String] = {
-        log.info(s"RulesSource config: ${config}")
         getSourceType(config) match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initConsumerProperties(config)

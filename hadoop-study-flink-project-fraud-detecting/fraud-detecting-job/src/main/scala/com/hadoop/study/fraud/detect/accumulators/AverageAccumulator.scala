@@ -24,8 +24,8 @@ case class AverageAccumulator(var count: Long, var sum: BigDecimal) extends Simp
         sum = BigDecimal(0)
     }
 
-    override def merge(other: Accumulator[BigDecimal, BigDecimal]): Unit = {
-        other match {
+    override def merge(accumulate: Accumulator[BigDecimal, BigDecimal]): Unit = {
+        accumulate match {
             case accumulator: AverageAccumulator =>
                 count += accumulator.count
                 sum += accumulator.sum

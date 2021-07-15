@@ -32,22 +32,23 @@ class Rule {
 
     var controlType: String = _
 
-    def apply(value: BigDecimal): Boolean = OperateType.withName(operatorType) match {
-        case EQUAL =>
-            value.compareTo(limit) == 0
-        case NOT_EQUAL =>
-            value.compareTo(limit) != 0
-        case GREATER =>
-            value.compareTo(limit) > 0
-        case LESS =>
-            value.compareTo(limit) < 0
-        case LESS_EQUAL =>
-            value.compareTo(limit) <= 0
-        case GREATER_EQUAL =>
-            value.compareTo(limit) >= 0
-        case _ =>
-            throw new RuntimeException("unknown limit operator type: " + operatorType)
-    }
+    def apply(value: BigDecimal): Boolean =
+        OperateType.withName(operatorType) match {
+            case EQUAL =>
+                value.compareTo(limit) == 0
+            case NOT_EQUAL =>
+                value.compareTo(limit) != 0
+            case GREATER =>
+                value.compareTo(limit) > 0
+            case LESS =>
+                value.compareTo(limit) < 0
+            case LESS_EQUAL =>
+                value.compareTo(limit) <= 0
+            case GREATER_EQUAL =>
+                value.compareTo(limit) >= 0
+            case _ =>
+                throw new RuntimeException("unknown limit operator type: " + operatorType)
+        }
 
     def getWindowStartFor(timestamp: Long): Long = {
         val ruleWindowMillis = getWindowMillis

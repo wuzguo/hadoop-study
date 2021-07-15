@@ -27,7 +27,6 @@ object AlertsSink extends AbstractSink {
     private val log = LoggerFactory.getLogger("AlertsSink")
 
     override def create(config: Config): SinkFunction[String] = {
-        log.info(s"AlertsSink config: ${config}")
         val alertType = config.get(ALERTS_SINK)
         SinkType.withName(alertType.toUpperCase) match {
             case KAFKA =>

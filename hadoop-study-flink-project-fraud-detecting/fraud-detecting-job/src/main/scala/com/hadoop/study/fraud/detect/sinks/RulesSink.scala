@@ -2,11 +2,10 @@ package com.hadoop.study.fraud.detect.sinks
 
 import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.config.Config
-import com.hadoop.study.fraud.detect.config.Parameters.{GCP_PROJECT_NAME, GCP_PUBSUB_RULES_SUBSCRIPTION, RULES_SINK, RULES_EXPORT_TOPIC}
+import com.hadoop.study.fraud.detect.config.Parameters.{GCP_PROJECT_NAME, GCP_PUBSUB_RULES_SUBSCRIPTION, RULES_EXPORT_TOPIC, RULES_SINK}
 import com.hadoop.study.fraud.detect.enums.SinkType
 import com.hadoop.study.fraud.detect.enums.SinkType.{KAFKA, PUBSUB, STDOUT}
 import com.hadoop.study.fraud.detect.functions.JsonSerializer
-import com.hadoop.study.fraud.detect.sinks.AlertsSink.log
 import com.hadoop.study.fraud.detect.utils.KafkaUtils
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
@@ -29,10 +28,8 @@ object RulesSink extends AbstractSink {
     private val log = LoggerFactory.getLogger("RulesSink")
 
     override def create(config: Config): SinkFunction[String] = {
-        log.info(s"RulesSink config: ${config}")
         val ruleType = config.get(RULES_SINK)
-        val sinkType = SinkType.withName(ruleType.toUpperCase)
-        sinkType match {
+        SinkType.withName(ruleType.toUpperCase) match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initProducerProperties(config)
                 val alertsTopic = config.get(RULES_EXPORT_TOPIC)
