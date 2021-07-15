@@ -29,8 +29,7 @@ object AlertsSink extends AbstractSink {
     override def create(config: Config): SinkFunction[String] = {
         log.info(s"AlertsSink config: ${config}")
         val alertType = config.get(ALERTS_SINK)
-        val sinkType = SinkType.withName(alertType.toUpperCase)
-        sinkType match {
+        SinkType.withName(alertType.toUpperCase) match {
             case KAFKA =>
                 val kafkaProps = KafkaUtils.initProducerProperties(config)
                 val alertsTopic = config.get(ALERTS_TOPIC)
@@ -46,7 +45,7 @@ object AlertsSink extends AbstractSink {
             case DISCARD =>
                 new DiscardingSink[String]
             case _ =>
-                throw new IllegalArgumentException(s"Source ${sinkType} unknown. Known values are: ${SinkType.values}")
+                throw new IllegalArgumentException(s"Source ${alertType} unknown. Known values are: ${SinkType.values}")
         }
     }
 

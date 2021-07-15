@@ -130,7 +130,7 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
                 while (entriesIterator.hasNext) {
                     val ruleEntry = entriesIterator.next
                     rulesState.remove(ruleEntry.getKey)
-                    log.trace(s"Removed ${ruleEntry.getValue}")
+                    log.trace(s"handleControlCommand removed ${ruleEntry.getValue}")
                 }
         }
     }
