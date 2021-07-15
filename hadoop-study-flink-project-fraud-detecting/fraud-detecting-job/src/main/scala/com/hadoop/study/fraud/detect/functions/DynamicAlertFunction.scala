@@ -33,8 +33,11 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
     private val COUNT_WITH_RESET = "COUNT_WITH_RESET_FLINK"
 
     private val WIDEST_RULE_KEY = Int.MinValue
+
     private val windowStateDescriptor = new MapStateDescriptor[Long, Set[Transaction]]("windowState", classOf[Long], classOf[Set[Transaction]])
+
     private var windowState: MapState[Long, Set[Transaction]] = _
+
     private var alertMeter: Meter = _
 
     override def processElement(value: Keyed[Transaction, String, Int], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#ReadOnlyContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
@@ -49,7 +52,7 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
 
         // This could happen if the BroadcastState in this CoProcessFunction was updated after it was
         if (rule == null) {
-            // updated and used in `DynamicKeyFunction`
+            // updated and used in 'DynamicKeyFunction'
             // TODO: you may want to handle this situation differently, e.g. by versioning rules and
             //       handling them by the same version throughout the whole pipeline, or by buffering
             //       events waiting for rules to come through
@@ -156,14 +159,10 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
     }
 
     private def evictAgedElementsFromWindow(threshold: Long): Unit = {
-        try {
-            val keys = windowState.keys.iterator
-            while (keys.hasNext) {
-                val stateEventTime = keys.next
-                if (stateEventTime < threshold) keys.remove()
-            }
-        } catch {
-            case ex: Exception => throw new RuntimeException(ex)
+        val keys = windowState.keys.iterator
+        while (keys.hasNext) {
+            val stateEventTime = keys.next
+            if (stateEventTime < threshold) keys.remove()
         }
     }
 }

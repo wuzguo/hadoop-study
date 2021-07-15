@@ -35,10 +35,10 @@ case class RulesEvaluator(config: Config) {
 
         // Streams setup
         val rulesStream = getRuleStream(env)
-        rulesStream.print("rule")
+        rulesStream.print("rule").setParallelism(1)
 
         val transactionStream = getTransactionsStream(env)
-        transactionStream.print("transaction")
+        transactionStream.print("transaction").setParallelism(1)
 
         // Broadcast
         val ruleBroadcastStream = rulesStream.broadcast(Descriptors.rulesDescriptor)

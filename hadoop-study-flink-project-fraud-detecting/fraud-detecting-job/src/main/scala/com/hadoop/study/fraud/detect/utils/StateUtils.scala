@@ -18,6 +18,7 @@ object StateUtils {
     def handleBroadcast(rule: Rule, broadcastState: BroadcastState[Int, Rule]): Unit = {
         RuleState.withName(rule.ruleState) match {
             case ACTIVE =>
+                broadcastState.put(rule.ruleId, rule)
             case PAUSE =>
                 broadcastState.put(rule.ruleId, rule)
             case DELETE =>
