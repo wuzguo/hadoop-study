@@ -14,7 +14,7 @@ import java.util.Locale
  * @date 2021/7/8 13:50
  */
 
-class Transaction extends TimestampAssignable[Long] {
+class Transaction extends TimestampAssignable[Long] with Serializable {
 
     var transactionId: Long = 0L
 

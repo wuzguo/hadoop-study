@@ -89,7 +89,6 @@
             <artifactId>jackson-module-scala_${scala.binary.version}</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-pubsub</artifactId>

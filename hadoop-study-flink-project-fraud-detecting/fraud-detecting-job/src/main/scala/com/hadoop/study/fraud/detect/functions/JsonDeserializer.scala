@@ -15,12 +15,12 @@ import org.apache.flink.util.Collector
 
 case class JsonDeserializer[T](target: Class[T]) extends RichFlatMapFunction[String, T] {
 
-    private var parser: JsonMapper2[T] = _
+    private var mapper: JsonMapper2[T] = _
 
     override def flatMap(value: String, out: Collector[T]): Unit = {
-        val parsed = parser.from(value)
+        val parsed = mapper.from(value)
         out.collect(parsed)
     }
 
-    override def open(parameters: Configuration): Unit = parser = JsonMapper2(target)
+    override def open(parameters: Configuration): Unit = mapper = JsonMapper2(target)
 }

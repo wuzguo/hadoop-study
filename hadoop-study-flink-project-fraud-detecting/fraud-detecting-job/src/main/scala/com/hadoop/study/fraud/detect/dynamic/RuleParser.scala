@@ -1,10 +1,7 @@
 package com.hadoop.study.fraud.detect.dynamic
 
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.hadoop.study.fraud.detect.beans.Rule
 import com.hadoop.study.fraud.detect.dynamic.RuleParser.parsePlain
-import com.hadoop.study.fraud.detect.enums._
 
 import java.io.IOException
 
@@ -18,11 +15,11 @@ import java.io.IOException
 
 case class RuleParser() {
 
-    private val mapper = JsonMapper.builder().addModule(DefaultScalaModule).build()
+    private val mapper = JsonMapper2[Rule](classOf[Rule])
 
     def from(line: String): Rule = if (line.nonEmpty && '{' == line.charAt(0)) parseJson(line) else parsePlain(line)
 
-    private def parseJson(ruleJson: String): Rule = mapper.readValue(ruleJson, classOf[Rule])
+    private def parseJson(ruleJson: String): Rule = mapper.from(ruleJson)
 }
 
 object RuleParser {

@@ -53,11 +53,11 @@ object Parameters {
     // General:
     // source/sink types: kafka / pubsub / socket
     val RULES_SOURCE: Param[String] = Param.string("rules-source", "KAFKA")
-    val TRANSACTIONS_SOURCE: Param[String] = Param.string("data-source", "KAFKA")
+    val TRANSACTIONS_SOURCE: Param[String] = Param.string("transactions-source", "GENERATOR")
     val ALERTS_SINK: Param[String] = Param.string("alerts-sink", "KAFKA")
     val LATENCY_SINK: Param[String] = Param.string("latency-sink", "KAFKA")
     val RULES_SINK: Param[String] = Param.string("rules-sink", "KAFKA")
-    val RECORDS_PER_SECOND: Param[Integer] = Param.integer("records-per-second", 2)
+    val RECORDS_PER_SECOND: Param[Integer] = Param.integer("records-per-second", 1)
     val LOCAL_MODE_DISABLE_WEB_UI = "-1"
     val LOCAL_EXECUTION: Param[String] = Param.string("local", LOCAL_MODE_DISABLE_WEB_UI)
     val SOURCE_PARALLELISM: Param[Integer] = Param.integer("source-parallelism", 1)

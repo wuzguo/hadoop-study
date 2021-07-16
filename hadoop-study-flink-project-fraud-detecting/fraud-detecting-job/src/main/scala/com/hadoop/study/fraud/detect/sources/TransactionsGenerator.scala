@@ -2,7 +2,6 @@ package com.hadoop.study.fraud.detect.sources
 
 import com.hadoop.study.fraud.detect.beans.Transaction
 import com.hadoop.study.fraud.detect.enums.PaymentType
-import com.hadoop.study.fraud.detect.enums.PaymentType.Payment
 
 import java.util.SplittableRandom
 import java.util.concurrent.ThreadLocalRandom
@@ -17,9 +16,9 @@ import java.util.concurrent.ThreadLocalRandom
 
 case class TransactionsGenerator(var maxRecordsPerSecond: Int) extends BaseGenerator[Transaction] {
 
-    private val MAX_PAYEE_ID = 100000
+    private val MAX_PAYEE_ID = 100000L
 
-    private val MAX_BENEFICIARY_ID = 100000
+    private val MAX_BENEFICIARY_ID = 100000L
 
     private val MIN_PAYMENT_AMOUNT = 5d
 
@@ -45,8 +44,8 @@ case class TransactionsGenerator(var maxRecordsPerSecond: Int) extends BaseGener
         transaction
     }
 
-    private def paymentType(id: Long): String = {
-        val name = (id % 2).toInt
+    private def paymentType(transactionId: Long): String = {
+        val name = (transactionId % 2).toInt
         name match {
             case 0 =>
                 PaymentType.CRD.toString
