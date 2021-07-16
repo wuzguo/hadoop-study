@@ -71,8 +71,7 @@ public class Transaction {
         try {
             Iterator<String> iter = tokens.iterator();
             transaction.transactionId = Long.parseLong(iter.next());
-            transaction.eventTime =
-                ZonedDateTime.parse(iter.next(), timeFormatter).toInstant().toEpochMilli();
+            transaction.eventTime = ZonedDateTime.parse(iter.next(), timeFormatter).toInstant().toEpochMilli();
             transaction.payeeId = Long.parseLong(iter.next());
             transaction.beneficiaryId = Long.parseLong(iter.next());
             transaction.paymentType = PaymentType.fromString(iter.next());

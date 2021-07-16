@@ -42,10 +42,13 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
 
     override def processElement(value: Keyed[Transaction, String, Int], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#ReadOnlyContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
         log.info("processElement value: {}", value)
-        val currentEventTime = value.wrapped.eventTime
-        StateUtils.addValues(windowState, currentEventTime, value.wrapped)
+        // 交易的eventTime
+        val eventTime = value.wrapped.eventTime
+        StateUtils.addValues(windowState, eventTime, value.wrapped)
 
+        // 进入Fink时间
         val ingestionTime = value.wrapped.ingestionTimestamp
+        // 延迟时间
         ctx.output(Tags.latencySinkTag, System.currentTimeMillis - ingestionTime)
 
         val rule = ctx.getBroadcastState(Descriptors.rulesDescriptor).get(value.id)
@@ -55,39 +58,51 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
             return
         }
 
+        // 如果规则是激活状态
         if (RuleState.withName(rule.ruleState) eq RuleState.ACTIVE) {
-            val windowStartForEvent = rule.getWindowStartFor(currentEventTime)
-            val cleanupTime = (currentEventTime / 1000) * 1000
+            val startWindowTime = rule.getWindowStartFor(eventTime)
+            // 秒数取整
+            val cleanupTime = (eventTime / 1000) * 1000
+            // 注册定时器
             ctx.timerService.registerEventTimeTimer(cleanupTime)
+            // 获取聚合函数
             val aggregator = RuleHelper.getAggregator(rule)
 
             windowState.keys.forEach(stateEventTime => {
-                if (isStateValueInWindow(stateEventTime, windowStartForEvent, currentEventTime))
+                if (isStateValueInWindow(stateEventTime, startWindowTime, eventTime))
                     aggregateValuesInState(stateEventTime, aggregator, rule)
             })
 
-            val aggregateResult = aggregator.getLocalValue
-            val ruleResult = rule.apply(aggregateResult)
-            log.trace(s"rule ${rule.ruleId} | ${value.key} : ${aggregateResult} -> ${ruleResult}")
+            // 获取结果
+            val result = aggregator.getLocalValue
+            // 计算是不是满足规则要求
+            val ruleResult = rule.apply(result)
+            log.trace(s"rule ${rule.ruleId} | ${value.key} : ${result} -> ${ruleResult}")
+
+            // 如果结果为真就输出
             if (ruleResult) {
+                // 如果需要重置
                 if (COUNT_WITH_RESET.equals(rule.aggregateFieldName))
                     evictAllStateElements()
+
                 alertMeter.markEvent()
-                out.collect(AlertEvent(rule.ruleId, rule, value.key, value.wrapped, aggregateResult))
+                out.collect(AlertEvent(rule.ruleId, rule, value.key, value.wrapped, result))
             }
         }
     }
 
-    private def isStateValueInWindow(stateEventTime: Long, windowStartForEvent: Long, currentEventTime: Long) = stateEventTime >= windowStartForEvent && stateEventTime <= currentEventTime
+    private def isStateValueInWindow(stateEventTime: Long, startWindowTime: Long, eventTime: Long) = stateEventTime >= startWindowTime && stateEventTime <= eventTime
 
     private def aggregateValuesInState(stateEventTime: Long, aggregator: SimpleAccumulator[BigDecimal], rule: Rule): Unit = {
-        val inWindow = windowState.get(stateEventTime)
+        val transactions = windowState.get(stateEventTime)
+        // 如果是计数
         if (COUNT.equals(rule.aggregateFieldName) || COUNT_WITH_RESET.equals(rule.aggregateFieldName)) {
-            for (_ <- inWindow) {
+            for (_ <- transactions) {
                 aggregator.add(BigDecimal(1))
             }
         } else {
-            for (event <- inWindow) {
+            for (event <- transactions) {
+                // 反射获取指定列的值，其实前端只支持 paymentAmount
                 val aggregatedValue = FieldsExtractor.getBigDecimalByName(event, typeOf[Transaction], rule.aggregateFieldName)
                 aggregator.add(aggregatedValue)
             }
@@ -95,14 +110,10 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
     }
 
     private def evictAllStateElements(): Unit = {
-        try {
-            val keys = windowState.keys.iterator
-            while (keys.hasNext) {
-                keys.next
-                keys.remove()
-            }
-        } catch {
-            case ex: Exception => throw new RuntimeException(ex)
+        val keys = windowState.keys.iterator
+        while (keys.hasNext) {
+            keys.next
+            keys.remove()
         }
     }
 
@@ -147,6 +158,7 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
 
     override def onTimer(timestamp: Long, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#OnTimerContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
         val widestWindowRule = ctx.getBroadcastState(Descriptors.rulesDescriptor).get(WIDEST_RULE_KEY)
+        // 每隔一秒钟清空已过时的数据，避免OOM
         if (widestWindowRule != null) {
             val cleanupEventTimeThreshold = timestamp - widestWindowRule.getWindowMillis
             if (cleanupEventTimeThreshold > 0L) {
