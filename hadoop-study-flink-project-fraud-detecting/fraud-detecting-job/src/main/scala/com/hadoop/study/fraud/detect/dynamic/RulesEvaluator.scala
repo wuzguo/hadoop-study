@@ -31,7 +31,6 @@ case class RulesEvaluator(config: Config) {
     def run(): Unit = {
         // Environment setup
         val env = configEnvironment()
-        log.info("rules run env: {}", env)
 
         // Streams setup
         val rulesStream = getRuleStream(env)

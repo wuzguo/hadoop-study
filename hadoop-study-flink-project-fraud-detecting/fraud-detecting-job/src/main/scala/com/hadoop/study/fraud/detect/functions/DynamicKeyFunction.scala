@@ -34,7 +34,7 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
     }
 
     override def processElement(event: Transaction, ctx: BroadcastProcessFunction[Transaction, Rule, Keyed[Transaction, String, Int]]#ReadOnlyContext, out: Collector[Keyed[Transaction, String, Int]]): Unit = {
-        log.info(s"dynamicKeyFunction processElement ${event}")
+        log.info(s"processElement: ${event}")
         val rulesState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
         forkEventForEachGroupingKey(event, rulesState, out)
     }
@@ -51,7 +51,7 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
     }
 
     override def processBroadcastElement(value: Rule, ctx: BroadcastProcessFunction[Transaction, Rule, Keyed[Transaction, String, Int]]#Context, out: Collector[Keyed[Transaction, String, Int]]): Unit = {
-        log.info(s"dynamicKeyFunction processBroadcastElement ${value}")
+        log.info(s"processBroadcastElement: ${value}")
         val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
         handleBroadcast(value, broadcastState)
         if (RuleState.withName(value.ruleState) eq RuleState.CONTROL)
@@ -64,7 +64,7 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
             while (iter.hasNext) {
                 val ruleEntry = iter.next
                 rulesState.remove(ruleEntry.getKey)
-                log.trace(s"dynamicKeyFunction removed ${ruleEntry.getValue}")
+                log.trace(s"removed ${ruleEntry.getValue}")
             }
         }
     }

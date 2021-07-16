@@ -34,7 +34,7 @@ object KeysExtractor {
             }
         }
         builder.append("}")
-        log.info("keys extractor getKey: {}", builder.toString)
+        log.info("getKey: {}", builder.toString)
         builder.toString
     }
 

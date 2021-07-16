@@ -41,7 +41,7 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
     private var alertMeter: Meter = _
 
     override def processElement(value: Keyed[Transaction, String, Int], ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#ReadOnlyContext, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
-        log.info("dynamicAlertFunction processElement value: {}, alert: {}", value)
+        log.info("processElement value: {}", value)
         val currentEventTime = value.wrapped.eventTime
         StateUtils.addValues(windowState, currentEventTime, value.wrapped)
 
@@ -72,7 +72,7 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
 
             val aggregateResult = aggregator.getLocalValue
             val ruleResult = rule.apply(aggregateResult)
-            log.trace(s"Rule ${rule.ruleId} | ${value.key} : ${aggregateResult} -> ${ruleResult}")
+            log.trace(s"rule ${rule.ruleId} | ${value.key} : ${aggregateResult} -> ${ruleResult}")
             if (ruleResult) {
                 if (COUNT_WITH_RESET.equals(rule.aggregateFieldName))
                     evictAllStateElements()
@@ -111,7 +111,7 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
     }
 
     override def processBroadcastElement(value: Rule, ctx: KeyedBroadcastProcessFunction[String, Keyed[Transaction, String, Int], Rule, AlertEvent[Transaction, BigDecimal]]#Context, out: Collector[AlertEvent[Transaction, BigDecimal]]): Unit = {
-        log.info(s"dynamicAlertFunction processBroadcastElement ${value}")
+        log.info(s"processBroadcastElement ${value}")
         val broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor)
         handleBroadcast(value, broadcastState)
         updateWidestWindowRule(value, broadcastState)
@@ -130,7 +130,7 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
                 while (entriesIterator.hasNext) {
                     val ruleEntry = entriesIterator.next
                     rulesState.remove(ruleEntry.getKey)
-                    log.trace(s"dynamicAlertFunction removed ${ruleEntry.getValue}")
+                    log.trace(s"removed ${ruleEntry.getValue}")
                 }
             case _ =>
         }
