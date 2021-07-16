@@ -93,15 +93,15 @@ public class TransactionGenerator implements Runnable {
             try {
                 throttler.throttle();
             } catch (InterruptedException e) {
-                log.error("transaction generator error: {}", e.getMessage());
+                log.error("error: {}", e.getMessage());
                 throw new RuntimeException(e);
             }
         }
-        log.info("transaction generator finished run");
+        log.info("finished run");
     }
 
     public final void cancel() {
-        log.info("transaction generator cancelled");
+        log.info("cancelled");
         running = false;
     }
 }

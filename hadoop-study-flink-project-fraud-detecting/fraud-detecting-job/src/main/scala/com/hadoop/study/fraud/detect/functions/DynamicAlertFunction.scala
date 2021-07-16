@@ -49,13 +49,9 @@ case class DynamicAlertFunction() extends KeyedBroadcastProcessFunction[String, 
         ctx.output(Tags.latencySinkTag, System.currentTimeMillis - ingestionTime)
 
         val rule = ctx.getBroadcastState(Descriptors.rulesDescriptor).get(value.id)
-
         // This could happen if the BroadcastState in this CoProcessFunction was updated after it was
         if (rule == null) {
-            // updated and used in 'DynamicKeyFunction'
-            // TODO: you may want to handle this situation differently, e.g. by versioning rules and
-            //       handling them by the same version throughout the whole pipeline, or by buffering
-            //       events waiting for rules to come through
+            log.info("rule get null, rule id: {}", value.id)
             return
         }
 

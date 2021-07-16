@@ -3,6 +3,7 @@ package com.hadoop.study.fraud.detect.beans
 import com.hadoop.study.fraud.detect.dynamic.JsonMapper2
 import com.hadoop.study.fraud.detect.enums.OperateType
 import com.hadoop.study.fraud.detect.enums.OperateType._
+import com.hadoop.study.fraud.detect.functions.TimeStamper
 import org.apache.flink.streaming.api.windowing.time.Time
 
 /**
