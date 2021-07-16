@@ -1,5 +1,7 @@
 package com.hadoop.study.fraud.detect.utils
 
+import org.slf4j.LoggerFactory
+
 import scala.reflect.runtime.universe.Type
 
 /**
@@ -11,6 +13,8 @@ import scala.reflect.runtime.universe.Type
  */
 
 object KeysExtractor {
+
+    private val log = LoggerFactory.getLogger("KeysExtractor")
 
     /**
      * Extracts and concatenates field values by names.
@@ -30,6 +34,7 @@ object KeysExtractor {
             }
         }
         builder.append("}")
+        log.info("keys extractor getKey: {}", builder.toString)
         builder.toString
     }
 

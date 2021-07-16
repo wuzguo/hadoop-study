@@ -41,7 +41,8 @@ object LatencySink extends AbstractSink {
             case DISCARD =>
                 new DiscardingSink[String]
             case _ =>
-                throw new IllegalArgumentException(s"Source ${sinkType} unknown. Known values are: ${SinkType.values}")
+                throw new IllegalArgumentException(s"source ${latencyType} unknown. Known values are: ${SinkType
+                  .values}")
         }
     }
 }

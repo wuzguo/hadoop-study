@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory
  */
 
 object StateUtils {
+
     private val log = LoggerFactory.getLogger("StateUtils")
 
     def handleBroadcast(rule: Rule, broadcastState: BroadcastState[Int, Rule]): Unit = {

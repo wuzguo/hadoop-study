@@ -64,7 +64,7 @@ case class DynamicKeyFunction() extends BroadcastProcessFunction[Transaction, Ru
             while (iter.hasNext) {
                 val ruleEntry = iter.next
                 rulesState.remove(ruleEntry.getKey)
-                log.trace(s"Removed ${ruleEntry.getValue}")
+                log.trace(s"dynamicKeyFunction removed ${ruleEntry.getValue}")
             }
         }
     }

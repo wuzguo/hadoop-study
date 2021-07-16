@@ -43,7 +43,7 @@ object RulesSink extends AbstractSink {
             case STDOUT =>
                 new PrintSinkFunction[String](true)
             case _ =>
-                throw new IllegalArgumentException(s"Source ${sinkType} unknown. Known values are: ${SinkType.values}")
+                throw new IllegalArgumentException(s"source ${ruleType} unknown. Known values are: ${SinkType.values}")
         }
     }
 
