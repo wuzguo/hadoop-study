@@ -28,6 +28,8 @@
         <module>hadoop-study-flink-project-pv-analysis</module>
         <module>hadoop-study-flink-project-fraud-detecting/fraud-detecting-job</module>
         <module>hadoop-study-flink-project-fraud-detecting/fraud-detecting-app</module>
+        <module>hadoop-study-flink-project-recommend/recommend-app</module>
+        <module>hadoop-study-flink-project-recommend/recommend-job</module>
     </modules>
 
     <properties>
