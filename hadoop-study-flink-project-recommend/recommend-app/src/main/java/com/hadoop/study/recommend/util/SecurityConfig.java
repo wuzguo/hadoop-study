@@ -8,21 +8,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and().csrf().disable();
+            .antMatchers("/**")
+            .permitAll()
+            .anyRequest()
+            .authenticated()
+            .and().csrf().disable();
         super.configure(http);
     }
 
     @Bean
-    /**
-     * 密码加密模块
-     * */
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }

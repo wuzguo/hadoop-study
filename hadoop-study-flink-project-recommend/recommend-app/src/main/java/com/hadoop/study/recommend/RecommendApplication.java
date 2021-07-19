@@ -1,4 +1,4 @@
-package com.geekbang.recommend;
+package com.hadoop.study.recommend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @RestController
 @EnableWebSecurity
-public class RecommendBackendApplication {
+public class RecommendApplication {
+
     public static void main(String[] args) {
-        SpringApplication.run(RecommendBackendApplication.class, args);
+        SpringApplication.run(RecommendApplication.class, args);
     }
 }

@@ -1,38 +1,36 @@
 package com.hadoop.study.recommend.service;
 
-import com.geekbang.recommend.dao.ProductRepository;
-import com.geekbang.recommend.util.HbaseClient;
-import com.geekbang.recommend.entity.ProductEntity;
+import com.google.common.collect.Lists;
+import com.hadoop.study.recommend.dao.ProductRepository;
+import com.hadoop.study.recommend.entity.ProductEntity;
+import com.hadoop.study.recommend.util.HbaseClient;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import javafx.util.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.*;
-
+@Slf4j
 @Service
 public class RecommendService {
-
-    private Logger logger = LoggerFactory.getLogger(RecommendService.class);
 
     @Autowired
     private ProductRepository productRepository;
 
     /**
      * 查出所有热门商品清单
-     * @param num
-     * @param tableName
-     * @return
+     *
+     * @param num       数量
+     * @param tableName 表名
+     * @return {@link ProductEntity}
      * @throws IOException
      */
     public List<ProductEntity> getHistoryHotOrGoodProducts(int num, String tableName) throws IOException {
-        List<ProductEntity> recommendEntityList = new ArrayList<>(num);
-
-        List<String> allProductsId = HbaseClient.getAllKey(tableName);
-        List<Pair<String, Double>> list = new ArrayList<>();
-        for (String productId : allProductsId) {
+        List<ProductEntity> recommendEntitys = Lists.newArrayList();
+        List<Pair<String, Double>> list = Lists.newArrayList();
+        for (String productId : HbaseClient.getAllKey(tableName)) {
             List<Map.Entry> row = HbaseClient.getRow(tableName, productId);
             if (row != null) {
                 double count = (double) row.get(0).getValue();
@@ -40,34 +38,33 @@ public class RecommendService {
             }
         }
         // 排序
-        Collections.sort(list, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+        list.sort((pre, next) -> next.getValue().compareTo(pre.getValue()));
 
         for (int i = 1; i <= num; i++) {
             ProductEntity product = getProductEntity(Integer.parseInt(list.get(i).getKey()));
             product.setScore(3.5);
-            logger.info(product.toString());
-            recommendEntityList.add(product);
+            log.info(product.toString());
+            recommendEntitys.add(product);
         }
-        return recommendEntityList;
+        return recommendEntitys;
     }
 
     public ProductEntity getProductEntity(int productId) {
-        ProductEntity productEntity = productRepository.getProductByProductId(productId);
-        System.out.println(productEntity);
-        return productEntity;
+        return productRepository.findByProductId(productId);
     }
 
     /**
      * 查询hbase获取itemCFRecommend表对应内容
-     * @param productId
-     * @param tableName
-     * @return
+     *
+     * @param productId 产品ID
+     * @param tableName 表名
+     * @return {@link ProductEntity}
      * @throws IOException
      */
     public List<ProductEntity> getItemCFProducts(int productId, String tableName) throws IOException {
-
-        List<ProductEntity> result = new ArrayList<>();
+        List<ProductEntity> result = Lists.newArrayList();
         List<Map.Entry> allProducts = HbaseClient.getRow(tableName, String.valueOf(productId));
+
         if (allProducts != null) {
             for (Map.Entry entry : allProducts) {
                 String id = (String) entry.getKey();
@@ -80,53 +77,40 @@ public class RecommendService {
         return result;
     }
 
-    public List<ProductEntity> getProductBySql(String sql) {
-        return productRepository.findByNameLike(sql);
+    public List<ProductEntity> getProductByName(String name) {
+        return productRepository.likeByName(name);
     }
 
     public List<ProductEntity> getOnlineRecs(String userId, String tableName) throws IOException {
         List<Map.Entry> allProducts = HbaseClient.getRow(tableName, userId);
-        List<ProductEntity> res = new ArrayList<>(allProducts.size());
+        List<ProductEntity> recommends = Lists.newArrayList();
+
         for (Map.Entry entry : allProducts) {
             String productId = (String) entry.getKey();
-            ProductEntity productEntity = productRepository.getProductByProductId(Integer.parseInt(productId));
+            ProductEntity productEntity = productRepository.findByProductId(Integer.parseInt(productId));
             productEntity.setScore(3.5);
-            res.add(productEntity);
-            logger.info("onlineRecs: " + productEntity);
+            recommends.add(productEntity);
+            log.info("onlineRecs: " + productEntity);
         }
-        return res;
+        return recommends;
     }
 
-    public List<ProductEntity> getOnlineHot(String tableName, int nums) {
-        List<String> allKeys = null;
-        try {
-            allKeys = HbaseClient.getAllKey(tableName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(allKeys);
-        List<ProductEntity> res = new ArrayList<>(nums);
-        try {
-            for (int i = 0; i < nums && i < allKeys.size(); i++) {
-                List<Map.Entry> row = HbaseClient.getRow(tableName, String.valueOf(i));
-                Double productId = null;
-                Double count = null;
-                for (Map.Entry entry : row) {
-                    if (entry.getKey().equals("productId")) {
-                        productId = (Double) entry.getValue();
-                    }
-                    if (entry.getKey().equals("count")) {
-                        count = (Double) entry.getValue();
-                    }
+    public List<ProductEntity> getOnlineHot(String tableName, int nums) throws IOException {
+        List<String> allKeys = HbaseClient.getAllKey(tableName);
+        List<ProductEntity> recommends = Lists.newArrayList();
+
+        for (int i = 0; i < nums && i < allKeys.size(); i++) {
+            List<Map.Entry> row = HbaseClient.getRow(tableName, String.valueOf(i));
+            Double productId = null;
+            for (Map.Entry entry : row) {
+                if (entry.getKey().equals("productId")) {
+                    productId = (Double) entry.getValue();
                 }
-                ProductEntity productEntity = productRepository.getProductByProductId((int) (double) productId);
-                productEntity.setScore(i + 1);
-                res.add(productEntity);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            ProductEntity productEntity = productRepository.findByProductId(productId.intValue());
+            productEntity.setScore(i + 1);
+            recommends.add(productEntity);
         }
-        return res;
+        return recommends;
     }
-
 }

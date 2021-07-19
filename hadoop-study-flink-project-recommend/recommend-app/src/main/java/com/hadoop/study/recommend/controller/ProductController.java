@@ -1,35 +1,47 @@
 package com.hadoop.study.recommend.controller;
 
-import com.geekbang.recommend.entity.ProductEntity;
-import com.geekbang.recommend.service.RecommendService;
-import com.geekbang.recommend.util.CustomKafkaProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+
+import com.hadoop.study.recommend.entity.ProductEntity;
+import com.hadoop.study.recommend.service.RecommendService;
+import com.hadoop.study.recommend.util.CustomKafkaProducer;
 import java.io.IOException;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/product")
 public class ProductController {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-    private String HISTORY_HOT_PRODCUTS = "historyHotProducts";
-    private String GOOD_PRODUCTS = "goodProducts";
-    private String ITEM_CF_RECOMMEND = "itemCFRecommend";
-    private String ONLINE_RECOMMEND = "onlineRecommend";
-    private String ONLINE_HOT = "onlineHot";
-    private Integer ONLINE_HOT_NUMS = 10;
+
+    private static final String HISTORY_HOT_PRODCUTS = "historyHotProducts";
+
+    private static final String GOOD_PRODUCTS = "goodProducts";
+
+    private static final String ITEM_CF_RECOMMEND = "itemCFRecommend";
+
+    private static final String ONLINE_RECOMMEND = "onlineRecommend";
+
+    private static final String ONLINE_HOT = "onlineHot";
+
+    private static final Integer ONLINE_HOT_NUMS = 10;
+
     @Autowired
     private RecommendService recommendService;
 
     /**
-    * 热门推荐
-    * */
-    @RequestMapping(value = "/historyhot", produces = "application/json", method = RequestMethod.GET)
+     * 热门推荐
+     */
+    @GetMapping(value = "/history/hot")
     @ResponseBody
-    public ModelMap getHistoryHotProducts(@RequestParam("num") int num) {
+    public ModelMap getHistoryHotProducts(@RequestParam("num") Integer num) {
         ModelMap model = new ModelMap();
         List<ProductEntity> recommendations = null;
         try {
@@ -40,26 +52,28 @@ public class ProductController {
             model.addAttribute("success", false);
             model.addAttribute("msg", e.getMessage());
         }
-        StringBuilder sb = new StringBuilder();
-        if(recommendations != null) {
+
+        StringBuilder builder = new StringBuilder();
+        if (recommendations != null) {
             for (ProductEntity product : recommendations) {
-                sb.append(product).append(" ");
+                builder.append(product).append(" ");
             }
         } else {
-            sb.append("数据为空");
+            builder.append("数据为空");
         }
-        logger.info(sb.toString());
+        log.info(builder.toString());
         return model;
     }
 
     /**
      * 优质商品推荐
-     * @param num
-     * @return
+     *
+     * @param num 数量
+     * @return {@link ModelMap}
      */
-    @RequestMapping(value = "/goodproducts", produces = "application/json", method = RequestMethod.GET)
+    @GetMapping(value = "/good/products")
     @ResponseBody
-    public ModelMap getGoodProducts(@RequestParam("num") int num) {
+    public ModelMap getGoodProducts(@RequestParam("num") Integer num) {
         ModelMap model = new ModelMap();
         List<ProductEntity> recommendations = null;
         try {
@@ -70,26 +84,29 @@ public class ProductController {
             model.addAttribute("success", false);
             model.addAttribute("msg", e.getMessage());
         }
-        StringBuilder sb = new StringBuilder();
-        if(recommendations != null) {
+
+        StringBuilder builder = new StringBuilder();
+
+        if (recommendations != null) {
             for (ProductEntity product : recommendations) {
-                sb.append(product).append("\t");
+                builder.append(product).append("\t");
             }
         } else {
-            sb.append("数据为空");
+            builder.append("数据为空");
         }
-        logger.info(sb.toString());
+        log.info(builder.toString());
         return model;
     }
 
     /**
      * 基于物品的推荐
-     * @param productId
-     * @return
+     *
+     * @param productId 产品ID
+     * @return {@link ModelMap}
      */
-    @RequestMapping(value = "/itemcf/{productId}", produces = "application/json", method = RequestMethod.GET)
+    @GetMapping(value = "/itemcf/{productId}")
     @ResponseBody
-    public ModelMap getItemCFProducts(@PathVariable("productId") int productId) {
+    public ModelMap getItemCFProducts(@PathVariable("productId") Integer productId) {
         ModelMap model = new ModelMap();
         List<ProductEntity> recommendatitons = null;
         try {
@@ -106,12 +123,13 @@ public class ProductController {
 
     /**
      * 查询单个商品
-     * @param productId
-     * @return
+     *
+     * @param productId 产品ID
+     * @return {@link ModelMap}
      */
-    @RequestMapping(value = "/query/{productId}", produces = "application/json", method = RequestMethod.GET)
+    @GetMapping(value = "/query/{productId}")
     @ResponseBody
-    public ModelMap queryProductInfo(@PathVariable("productId") int productId) {
+    public ModelMap queryProductInfo(@PathVariable("productId") Integer productId) {
         ModelMap model = new ModelMap();
         try {
             model.addAttribute("success", true);
@@ -126,16 +144,17 @@ public class ProductController {
 
     /**
      * 模糊查询商品
-     * @param sql
-     * @return
+     *
+     * @param name 名称
+     * @return {@link ModelMap}
      */
-    @RequestMapping(value = "/search", produces = "application/json", method = RequestMethod.GET)
+    @GetMapping(value = "/search")
     @ResponseBody
-    public ModelMap queryProductInfo(@RequestParam("sql") String sql) {
+    public ModelMap queryProductInfo(@RequestParam("name") String name) {
         ModelMap model = new ModelMap();
         try {
             model.addAttribute("success", true);
-            model.addAttribute("products", recommendService.getProductBySql(sql));
+            model.addAttribute("products", recommendService.getProductByName(name));
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("success", false);
@@ -146,15 +165,16 @@ public class ProductController {
 
     /**
      * 将评分数据发送到 kafka 'rating' Topic
-     * @param productId
-     * @param score
-     * @param userId
-     * @return
+     *
+     * @param productId 产品ID
+     * @param score     评分
+     * @param userId    用户ID
+     * @return {@link ModelMap}
      */
-    @RequestMapping(value = "/rate/{productId}", produces = "application/json", method = RequestMethod.GET)
+    @GetMapping(value = "/rate/{productId}")
     @ResponseBody
-    public ModelMap queryProductInfo(@PathVariable("productId") int productId,
-                                     @RequestParam("score") Double score, @RequestParam("userId") int userId) {
+    public ModelMap queryProductInfo(@PathVariable("productId") Integer productId,
+        @RequestParam("score") Double score, @RequestParam("userId") Integer userId) {
         ModelMap model = new ModelMap();
         try {
             String msg = userId + "," + productId + "," + score + "," + System.currentTimeMillis() / 1000;
@@ -173,10 +193,11 @@ public class ProductController {
 
     /**
      * 实时用户个性化推荐
-     * @param userId
-     * @return
+     *
+     * @param userId 用户ID
+     * @return {@link ModelMap}
      */
-    @RequestMapping(value="/stream", produces = "application/json", method = RequestMethod.GET)
+    @GetMapping(value = "/stream")
     @ResponseBody
     public ModelMap onlineRecs(@RequestParam("userId") String userId) {
         ModelMap model = new ModelMap();
@@ -193,9 +214,10 @@ public class ProductController {
 
     /**
      * 实时热门推荐
-     * @return
+     *
+     * @return {@link ModelMap}
      */
-    @RequestMapping(value = "/onlinehot", produces = "application/json", method = RequestMethod.GET)
+    @GetMapping(value = "/onlinehot")
     @ResponseBody
     public ModelMap onlineHot() {
         ModelMap model = new ModelMap();
