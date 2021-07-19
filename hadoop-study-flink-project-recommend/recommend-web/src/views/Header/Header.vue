@@ -7,7 +7,7 @@
         <div class="ddnewhead_welcome" >
           <a>个人中心</a>
           <el-popover placement="bottom" width="200" trigger="hover">
-            <img src="@/assets/userEntity.png" height="20px" width="20px" slot="reference" />
+            <img src="@/assets/user.png" height="20px" width="20px" slot="reference" />
             <p>用户名：{{username}}</p>
             <p>系统状态：在线</p>
             <el-button v-on:click="doLogout">退出登陆</el-button>
