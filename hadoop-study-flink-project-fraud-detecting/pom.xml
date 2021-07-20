@@ -9,12 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hadoop-study-flink-project-recommend</artifactId>
+    <artifactId>hadoop-study-flink-project-fraud-detecting</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>recommend-app</module>
-        <module>recommend-flink-job</module>
-        <module>recommend-spark-job</module>
+        <module>fraud-detecting-app</module>
+        <module>fraud-detecting-job</module>
     </modules>
 
     <properties>
