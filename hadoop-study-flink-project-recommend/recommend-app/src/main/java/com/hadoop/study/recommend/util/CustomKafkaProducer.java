@@ -10,7 +10,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 @Slf4j
 public class CustomKafkaProducer {
 
-    private static String RATING_TOPIC = "topic-recommend-rating";
+    private static final String RATING_TOPIC = "topic-recommend-rating";
 
     private static final KafkaProducer producer;
 

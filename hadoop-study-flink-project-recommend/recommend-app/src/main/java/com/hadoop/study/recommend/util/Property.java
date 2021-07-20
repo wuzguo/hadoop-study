@@ -10,17 +10,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Property {
 
-    private static Properties contextProperties;
+    private static Properties properties;
 
     private final static String CONFIG_NAME = "config.properties";
 
     static {
         InputStream config = Thread.currentThread().getContextClassLoader().getResourceAsStream(CONFIG_NAME);
-        System.setProperty("hadoop.home.dir", "D:\\Program\\hadoop");
-        contextProperties = new Properties();
+        System.setProperty("hadoop.home.dir", "D:\\app\\hadoop\\hadoop-2.9.2");
+        properties = new Properties();
         try {
             InputStreamReader inputStreamReader = new InputStreamReader(config, StandardCharsets.UTF_8);
-            contextProperties.load(inputStreamReader);
+            properties.load(inputStreamReader);
         } catch (IOException e) {
             log.error("配置文件加载失败");
             e.printStackTrace();
@@ -28,7 +28,7 @@ public class Property {
     }
 
     public static String getStrValue(String key) {
-        return contextProperties.getProperty(key);
+        return properties.getProperty(key);
     }
 
     public static Integer getIntegerValue(String key) {

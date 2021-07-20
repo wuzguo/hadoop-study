@@ -39,7 +39,7 @@ public class HbaseClient {
         conf.set("hbase.zookeeper.quorum", Property.getStrValue("hbase.zookeeper.quorum"));
         conf.set("hbase.client.scanner.timeout.period", Property.getStrValue("hbase.client.scanner.timeout.period"));
         conf.set("hbase.rpc.timeout", Property.getStrValue("hbase.rpc.timeout"));
-        System.out.println(Property.getStrValue("hbase.rootdir"));
+        log.info("root dir: {}", Property.getStrValue("hbase.rootdir"));
         try {
             connection = ConnectionFactory.createConnection(conf);
             admin = connection.getAdmin();
@@ -51,7 +51,8 @@ public class HbaseClient {
 
     /**
      * 创建表
-     * @param tableName 表名
+     *
+     * @param tableName      表名
      * @param columnFamilies 列族
      * @throws IOException
      */
@@ -101,7 +102,7 @@ public class HbaseClient {
      * @throws IOException
      */
     public static List<Map.Entry> getRow(String tableName, String rowKey) throws IOException {
-        System.setProperty("hadoop.home.dir", "D:\\Program\\hadoop");
+        System.setProperty("hadoop.home.dir", "D:\\app\\hadoop\\hadoop-2.9.2");
         Table table = connection.getTable(TableName.valueOf(tableName));
         byte[] row = Bytes.toBytes(rowKey);
         Get get = new Get(row);
