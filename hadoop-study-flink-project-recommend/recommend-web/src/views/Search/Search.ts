@@ -11,13 +11,13 @@ export default class Search extends Vue {
     public routerChanged() {
         console.log("进入watch")
         console.log(this.$route.query.searchInput)
-        this.getData('/business/product/search', String(this.$route.query.searchInput))
+        this.getData('/api/product/search', String(this.$route.query.searchInput))
     }
 
     public created() {
         console.log("进入create")
 
-        this.getData('/business/product/search', String(this.$route.query.searchInput))
+        this.getData('/api/product/search', String(this.$route.query.searchInput))
     }
 
     public async getData(url: string, searchInput: string) {
@@ -49,7 +49,7 @@ export default class Search extends Vue {
     public async doRate(rate: number, productId: number) {
         console.log('收到评分数据,productId: ' + productId + " rate: " + rate)
         let user = localStorage.getItem('user')
-        let res = await this.axios.get('/business/product/rate/' + productId, {
+        let res = await this.axios.get('/api/product/rate/' + productId, {
             params: {
                 score: rate,
                 username: user

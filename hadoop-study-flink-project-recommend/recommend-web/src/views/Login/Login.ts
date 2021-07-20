@@ -49,7 +49,7 @@ export default class Login extends Vue {
   public async doLogin() {
     console.dir(this.form)
     // 发送登录请求
-    let res = await this.axios.get('/business/user/login', {
+    let res = await this.axios.get('/api/user/login', {
       params: {
         username: this.form.username,
         password: this.form.password
@@ -82,7 +82,7 @@ export default class Login extends Vue {
   public async doRegister() {
     console.dir(this.form)
     // 向后端发送注册请求
-    let res = await this.axios.get('/business/user/register', {
+    let res = await this.axios.get('/api/user/register', {
       params: {
         username: this.form.username,
         password: this.form.password

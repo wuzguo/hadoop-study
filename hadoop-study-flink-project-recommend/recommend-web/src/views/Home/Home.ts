@@ -25,18 +25,18 @@ export default class Home extends Vue {
     public colors: any = ['#99A9BF', '#F7BA2A', '#FF9900']
 
     public created() {
-        this.getRecommendData('/business/product/stream', 0)
-        this.getRecommendData('/business/product/history/hot', 1)
-        this.getRecommendData('/business/product/good/products', 2)
-        this.getRecommendData('/business/product/onlinehot', 3)
-        // this.getRecommendData('/business/rest/product/offline', 3)
+        this.getRecommendData('/api/product/stream', 0)
+        this.getRecommendData('/api/product/history/hot', 1)
+        this.getRecommendData('/api/product/good/products', 2)
+        this.getRecommendData('/api/product/onlinehot', 3)
+        // this.getRecommendData('/api/rest/product/offline', 3)
     }
     
     // 刷新数据
     @Watch('$route')
     private routerChanged(val: Route, oldVal: Route) {
         // this.created();
-        // this.getRecommendData('/business/product/stream', 0)
+        // this.getRecommendData('/api/product/stream', 0)
     }
 
     public getRecommendData(url: string, index: number) {
@@ -114,7 +114,7 @@ export default class Home extends Vue {
         // ?score=8&username=abc
         console.log('收到评分数据,productId: ' + productId + " rate: " + rate)
         let userId = localStorage.getItem('userId')
-        let res = await this.axios.get('/business/product/rate/' + productId, {
+        let res = await this.axios.get('/api/product/rate/' + productId, {
             params: {
                 score: rate,
                 userId: userId
