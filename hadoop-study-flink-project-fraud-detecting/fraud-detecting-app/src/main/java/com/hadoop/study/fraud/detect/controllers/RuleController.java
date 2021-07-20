@@ -39,54 +39,52 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class RuleController {
 
-    @Autowired
-    private RuleRepository repository;
+  @Autowired private RuleRepository repository;
 
-    @Autowired
-    private KafkaRuleService kafkaRuleService;
+  @Autowired private KafkaRuleService kafkaRuleService;
 
-    @GetMapping("/rules")
-    public List<Rule> listAll() {
-        return repository.findAll();
+  @GetMapping("/rules")
+  public List<Rule> listAll() {
+    return repository.findAll();
+  }
+
+  @PostMapping("/rules")
+  public Rule save(@RequestBody Rule rule) {
+    Rule savedRule = repository.save(rule);
+    RulePayload payload = UtilJson.readValue(savedRule.getPayload(), RulePayload.class);
+    payload.setRuleId(savedRule.getRuleId());
+    String payloadJson = UtilJson.writeValueAsString(payload);
+    savedRule.setPayload(payloadJson);
+    Rule result = repository.save(savedRule);
+    kafkaRuleService.sendRule(result);
+    return result;
+  }
+
+  @GetMapping("/rules/push")
+  public void push() {
+    List<Rule> rules = repository.findAll();
+    for (Rule rule : rules) {
+      kafkaRuleService.sendRule(rule);
     }
+  }
 
-    @PostMapping("/rules")
-    public Rule save(@RequestBody Rule rule) {
-        Rule savedRule = repository.save(rule);
-        RulePayload payload = UtilJson.readValue(savedRule.getPayload(), RulePayload.class);
-        payload.setRuleId(savedRule.getRuleId());
-        String payloadJson = UtilJson.writeValueAsString(payload);
-        savedRule.setPayload(payloadJson);
-        Rule result = repository.save(savedRule);
-        kafkaRuleService.sendRule(result);
-        return result;
-    }
+  @GetMapping("/rules/{ruleId}")
+  public Rule one(@PathVariable Integer ruleId) {
+    return repository.findById(ruleId).orElseThrow(() -> new NotFoundException(ruleId));
+  }
 
-    @GetMapping("/rules/push")
-    public void push() {
-        List<Rule> rules = repository.findAll();
-        for (Rule rule : rules) {
-            kafkaRuleService.sendRule(rule);
-        }
-    }
+  @DeleteMapping("/rules/{ruleId}")
+  public void delete(@PathVariable Integer ruleId) {
+    repository.deleteById(ruleId);
+    kafkaRuleService.deleteRule(ruleId);
+  }
 
-    @GetMapping("/rules/{ruleId}")
-    public Rule one(@PathVariable Integer ruleId) {
-        return repository.findById(ruleId).orElseThrow(() -> new NotFoundException(ruleId));
+  @DeleteMapping("/rules")
+  public void deleteAll() {
+    List<Rule> rules = repository.findAll();
+    for (Rule rule : rules) {
+      repository.deleteById(rule.getRuleId());
+      kafkaRuleService.deleteRule(rule.getRuleId());
     }
-
-    @DeleteMapping("/rules/{ruleId}")
-    public void delete(@PathVariable Integer ruleId) {
-        repository.deleteById(ruleId);
-        kafkaRuleService.deleteRule(ruleId);
-    }
-
-    @DeleteMapping("/rules")
-    public void deleteAll() {
-        List<Rule> rules = repository.findAll();
-        for (Rule rule : rules) {
-            repository.deleteById(rule.getRuleId());
-            kafkaRuleService.deleteRule(rule.getRuleId());
-        }
-    }
+  }
 }

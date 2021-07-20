@@ -16,21 +16,20 @@ import org.springframework.web.util.HtmlUtils;
  * @version 1.0.0
  * @date 2021/7/13 17:50
  */
-
 @Slf4j
 @Controller
 public class HelloController {
 
-    @GetMapping("/index")
-    public String hello() {
-        return "index";
-    }
+  @GetMapping("/index")
+  public String hello() {
+    return "index";
+  }
 
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    public Greeting greeting(HelloMessage message) throws Exception {
-        log.info("greetings: {}", message);
-        Thread.sleep(200);
-        return new Greeting(String.format("Hello, %s", HtmlUtils.htmlEscape(message.getName())));
-    }
+  @MessageMapping("/hello")
+  @SendTo("/topic/greetings")
+  public Greeting greeting(HelloMessage message) throws Exception {
+    log.info("greetings: {}", message);
+    Thread.sleep(200);
+    return new Greeting(String.format("Hello, %s", HtmlUtils.htmlEscape(message.getName())));
+  }
 }

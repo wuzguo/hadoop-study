@@ -29,22 +29,21 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaTransactionPusher implements Consumer<Transaction> {
 
-    @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate;
+  @Autowired private KafkaTemplate<String, Object> kafkaTemplate;
 
-    private Transaction lastTransaction;
+  private Transaction lastTransaction;
 
-    @Value("${kafka.topic.transactions}")
-    private String topic;
+  @Value("${kafka.topic.transactions}")
+  private String topic;
 
-    @Override
-    public void accept(Transaction transaction) {
-        log.debug("kafka transaction pusher {}", transaction);
-        lastTransaction = transaction;
-        kafkaTemplate.send(topic, transaction);
-    }
+  @Override
+  public void accept(Transaction transaction) {
+    log.debug("kafka transaction pusher {}", transaction);
+    lastTransaction = transaction;
+    kafkaTemplate.send(topic, transaction);
+  }
 
-    public Transaction getLastTransaction() {
-        return lastTransaction;
-    }
+  public Transaction getLastTransaction() {
+    return lastTransaction;
+  }
 }

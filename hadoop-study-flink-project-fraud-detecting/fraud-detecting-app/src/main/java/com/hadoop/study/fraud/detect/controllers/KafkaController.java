@@ -32,25 +32,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class KafkaController {
 
-    @Autowired
-    private KafkaRuleService kafkaRuleService;
+  @Autowired private KafkaRuleService kafkaRuleService;
 
-    @GetMapping("/rule/sync")
-    public void syncRule() {
-        Rule rule = create(RulePayload.ControlType.EXPORT_RULES_CURRENT);
-        kafkaRuleService.sendRule(rule);
-    }
+  @GetMapping("/rule/sync")
+  public void syncRule() {
+    Rule rule = create(RulePayload.ControlType.EXPORT_RULES_CURRENT);
+    kafkaRuleService.sendRule(rule);
+  }
 
-    @GetMapping("/state/clear")
-    public void clearState() {
-        Rule rule = create(RulePayload.ControlType.CLEAR_STATE_ALL);
-        kafkaRuleService.sendRule(rule);
-    }
+  @GetMapping("/state/clear")
+  public void clearState() {
+    Rule rule = create(RulePayload.ControlType.CLEAR_STATE_ALL);
+    kafkaRuleService.sendRule(rule);
+  }
 
-    private Rule create(RulePayload.ControlType controlType) {
-        RulePayload payload = new RulePayload();
-        payload.setRuleState(RulePayload.RuleState.CONTROL);
-        payload.setControlType(controlType);
-        return new Rule(UtilJson.writeValueAsString(payload));
-    }
+  private Rule create(RulePayload.ControlType controlType) {
+    RulePayload payload = new RulePayload();
+    payload.setRuleState(RulePayload.RuleState.CONTROL);
+    payload.setControlType(controlType);
+    return new Rule(UtilJson.writeValueAsString(payload));
+  }
 }

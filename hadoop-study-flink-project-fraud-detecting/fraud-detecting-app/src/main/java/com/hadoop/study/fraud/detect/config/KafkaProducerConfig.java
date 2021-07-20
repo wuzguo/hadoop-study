@@ -32,46 +32,46 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 @Configuration
 public class KafkaProducerConfig {
 
-    @Value("${kafka.bootstrap-servers}")
-    private String bootstrapServers;
+  @Value("${kafka.bootstrap-servers}")
+  private String bootstrapServers;
 
-    @Bean
-    public Map<String, Object> producerConfigsJson() {
-        Map<String, Object> props = Maps.newHashMap();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return props;
-    }
+  @Bean
+  public Map<String, Object> producerConfigsJson() {
+    Map<String, Object> props = Maps.newHashMap();
+    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+    return props;
+  }
 
-    @Bean
-    public Map<String, Object> producerConfigsString() {
-        Map<String, Object> props = Maps.newHashMap();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        return props;
-    }
+  @Bean
+  public Map<String, Object> producerConfigsString() {
+    Map<String, Object> props = Maps.newHashMap();
+    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    return props;
+  }
 
-    // Transactions
-    @Bean
-    public ProducerFactory<String, Object> producerFactoryForJson() {
-        return new DefaultKafkaProducerFactory<>(producerConfigsJson());
-    }
+  // Transactions
+  @Bean
+  public ProducerFactory<String, Object> producerFactoryForJson() {
+    return new DefaultKafkaProducerFactory<>(producerConfigsJson());
+  }
 
-    @Bean
-    public KafkaTemplate<String, Object> kafkaTemplateForJson() {
-        return new KafkaTemplate<>(producerFactoryForJson());
-    }
+  @Bean
+  public KafkaTemplate<String, Object> kafkaTemplateForJson() {
+    return new KafkaTemplate<>(producerFactoryForJson());
+  }
 
-    // Strings
-    @Bean
-    public ProducerFactory<String, String> producerFactoryForString() {
-        return new DefaultKafkaProducerFactory<>(producerConfigsString());
-    }
+  // Strings
+  @Bean
+  public ProducerFactory<String, String> producerFactoryForString() {
+    return new DefaultKafkaProducerFactory<>(producerConfigsString());
+  }
 
-    @Bean
-    public KafkaTemplate<String, String> kafkaTemplateForString() {
-        return new KafkaTemplate<>(producerFactoryForString());
-    }
+  @Bean
+  public KafkaTemplate<String, String> kafkaTemplateForString() {
+    return new KafkaTemplate<>(producerFactoryForString());
+  }
 }

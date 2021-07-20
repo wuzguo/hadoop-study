@@ -41,28 +41,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class AlertController {
 
-    @Autowired
-    private RuleRepository repository;
+  @Autowired private RuleRepository repository;
 
-    @Autowired
-    private KafkaTransactionPusher transactionsPusher;
+  @Autowired private KafkaTransactionPusher transactionsPusher;
 
-    @Autowired
-    private SimpMessagingTemplate simpTemplate;
+  @Autowired private SimpMessagingTemplate simpTemplate;
 
-    @Value("${web-socket.topic.alerts}")
-    private String alertsWebSocketTopic;
+  @Value("${web-socket.topic.alerts}")
+  private String alertsWebSocketTopic;
 
-    @GetMapping("/rules/{ruleId}/alert")
-    public AlertEvent mockAlert(@PathVariable Integer ruleId) {
-        log.info("mock alert ruleId: {}", ruleId);
-        Rule rule = repository.findById(ruleId).orElseThrow(() -> new NotFoundException(ruleId));
-        Transaction triggerEvent = transactionsPusher.getLastTransaction();
-        BigDecimal triggerValue = triggerEvent.getPaymentAmount().multiply(BigDecimal.valueOf(10));
-        AlertEvent alertEvent = new AlertEvent(rule.getRuleId(), rule.getPayload(), triggerEvent, triggerValue);
-        String alertJson = UtilJson.toJson(alertEvent);
-        log.info("mock alert alertJson: {}", alertJson);
-        simpTemplate.convertAndSend(alertsWebSocketTopic, alertJson);
-        return alertEvent;
-    }
+  @GetMapping("/rules/{ruleId}/alert")
+  public AlertEvent mockAlert(@PathVariable Integer ruleId) {
+    log.info("mock alert ruleId: {}", ruleId);
+    Rule rule = repository.findById(ruleId).orElseThrow(() -> new NotFoundException(ruleId));
+    Transaction triggerEvent = transactionsPusher.getLastTransaction();
+    BigDecimal triggerValue = triggerEvent.getPaymentAmount().multiply(BigDecimal.valueOf(10));
+    AlertEvent alertEvent =
+        new AlertEvent(rule.getRuleId(), rule.getPayload(), triggerEvent, triggerValue);
+    String alertJson = UtilJson.toJson(alertEvent);
+    log.info("mock alert alertJson: {}", alertJson);
+    simpTemplate.convertAndSend(alertsWebSocketTopic, alertJson);
+    return alertEvent;
+  }
 }

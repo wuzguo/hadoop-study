@@ -32,33 +32,32 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaTransactionConsumerService implements ConsumerSeekAware {
 
-    @Autowired
-    private SimpMessagingTemplate simpTemplate;
+  @Autowired private SimpMessagingTemplate simpTemplate;
 
-    @Value("${web-socket.topic.transactions}")
-    private String transactionsWebSocketTopic;
+  @Value("${web-socket.topic.transactions}")
+  private String transactionsWebSocketTopic;
 
-    @KafkaListener(
-        id = "${kafka.listeners.transactions.id}",
-        topics = "${kafka.topic.transactions}",
-        groupId = "fraud-detect-transactions")
-    public void consumeTransactions(@Payload String message) {
-        log.info("consume transactions {}", message);
-        simpTemplate.convertAndSend(transactionsWebSocketTopic, message);
-    }
+  @KafkaListener(
+      id = "${kafka.listeners.transactions.id}",
+      topics = "${kafka.topic.transactions}",
+      groupId = "fraud-detect-transactions")
+  public void consumeTransactions(@Payload String message) {
+    log.info("consume transactions {}", message);
+    simpTemplate.convertAndSend(transactionsWebSocketTopic, message);
+  }
 
-    @Override
-    public void registerSeekCallback(ConsumerSeekCallback callback) {
-    }
+  @Override
+  public void registerSeekCallback(ConsumerSeekCallback callback) {}
 
-    @Override
-    public void onPartitionsAssigned(
-        Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
-        assignments.forEach((topicPartition, value) ->
+  @Override
+  public void onPartitionsAssigned(
+      Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
+    assignments.forEach(
+        (topicPartition, value) ->
             callback.seekToEnd(topicPartition.topic(), topicPartition.partition()));
-    }
+  }
 
-    @Override
-    public void onIdleContainer(Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
-    }
+  @Override
+  public void onIdleContainer(
+      Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {}
 }

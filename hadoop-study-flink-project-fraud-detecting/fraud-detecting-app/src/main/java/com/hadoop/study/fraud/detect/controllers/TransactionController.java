@@ -39,67 +39,67 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/transaction")
 public class TransactionController {
 
-    private final TransactionGenerator transactionGenerator;
+  private final TransactionGenerator transactionGenerator;
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+  private ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private boolean generatingTransactions = false;
+  private boolean generatingTransactions = false;
 
-    private boolean listenerContainerRunning = true;
+  private boolean listenerContainerRunning = true;
 
-    @Value("${kafka.listeners.transactions.id}")
-    private String transactionListenerId;
+  @Value("${kafka.listeners.transactions.id}")
+  private String transactionListenerId;
 
-    @Value("${transactionsRateDisplayLimit}")
-    private int transactionsRateDisplayLimit;
+  @Value("${transactionsRateDisplayLimit}")
+  private int transactionsRateDisplayLimit;
 
-    @Autowired
-    private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+  @Autowired private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 
-    @Autowired
-    public TransactionController(KafkaTransactionPusher transactionsPusher) {
-        transactionGenerator = new DemoTransactionGenerator(transactionsPusher, 1);
+  @Autowired
+  public TransactionController(KafkaTransactionPusher transactionsPusher) {
+    transactionGenerator = new DemoTransactionGenerator(transactionsPusher, 1);
+  }
+
+  @GetMapping("/start")
+  public void start() {
+    log.info("{}", "start generator Transaction called");
+    startGenTransaction();
+  }
+
+  private void startGenTransaction() {
+    if (!generatingTransactions) {
+      executor.submit(transactionGenerator);
+      generatingTransactions = true;
+    }
+  }
+
+  @GetMapping("/stop")
+  public void stop() {
+    transactionGenerator.cancel();
+    generatingTransactions = false;
+    log.info("{}", "stop generator transaction called");
+  }
+
+  @GetMapping("/speed/{speed}")
+  public void setSpeed(@PathVariable Long speed) {
+    log.info("generator speed change request: " + speed);
+    if (speed <= 0) {
+      transactionGenerator.cancel();
+      generatingTransactions = false;
+      return;
+    } else {
+      startGenTransaction();
     }
 
-    @GetMapping("/start")
-    public void start() {
-        log.info("{}", "start generator Transaction called");
-        startGenTransaction();
+    MessageListenerContainer listenerContainer =
+        kafkaListenerEndpointRegistry.getListenerContainer(transactionListenerId);
+    if (speed > transactionsRateDisplayLimit) {
+      listenerContainer.stop();
+      listenerContainerRunning = false;
+    } else if (!listenerContainerRunning) {
+      listenerContainer.start();
     }
 
-    private void startGenTransaction() {
-        if (!generatingTransactions) {
-            executor.submit(transactionGenerator);
-            generatingTransactions = true;
-        }
-    }
-
-    @GetMapping("/stop")
-    public void stop() {
-        transactionGenerator.cancel();
-        generatingTransactions = false;
-        log.info("{}", "stop generator transaction called");
-    }
-
-    @GetMapping("/speed/{speed}")
-    public void setSpeed(@PathVariable Long speed) {
-        log.info("generator speed change request: " + speed);
-        if (speed <= 0) {
-            transactionGenerator.cancel();
-            generatingTransactions = false;
-            return;
-        } else {
-            startGenTransaction();
-        }
-
-        MessageListenerContainer listenerContainer = kafkaListenerEndpointRegistry.getListenerContainer(transactionListenerId);
-        if (speed > transactionsRateDisplayLimit) {
-            listenerContainer.stop();
-            listenerContainerRunning = false;
-        } else if (!listenerContainerRunning) {
-            listenerContainer.start();
-        }
-
-        transactionGenerator.adjustMaxRecordsPerSecond(speed);
-    }
+    transactionGenerator.adjustMaxRecordsPerSecond(speed);
+  }
 }
