@@ -29,7 +29,7 @@ object DataLoader {
         val spark = SparkSession.builder().config(sparkConf).getOrCreate()
 
         import spark.implicits._
-        implicit val mongoConfig: MongoConfig = MongoConfig(config("mongo.uri"), config("mongo.db"))
+        implicit val mongoConfig = MongoConfig(config("mongo.uri"), config("mongo.db"))
 
         // 加载数据
         val productRDD = spark.sparkContext.textFile("./hadoop-study-datas/project/data/products.csv")
@@ -37,7 +37,7 @@ object DataLoader {
             // product数据通过^分隔，切分出来
             val attr = item.split("\\^")
             // 转换成Product
-            Product(attr(0).toInt, attr(1).trim, attr(4).trim, attr(5).trim, attr(6).trim)
+            Product(attr(0).toInt, attr(1).trim, attr(4).trim, attr(5).trim, attr(6).trim, System.currentTimeMillis())
         }).toDF()
 
         store(productDF, "Product", List("productId"))
@@ -45,7 +45,7 @@ object DataLoader {
         val ratingRDD = spark.sparkContext.textFile("./hadoop-study-datas/project/data/ratings.csv")
         val ratingDF = ratingRDD.map(item => {
             val attr = item.split(",")
-            Rating(attr(0).toInt, attr(1).toInt, attr(2).toDouble, attr(3).toInt)
+            Rating(attr(0).toInt, attr(1).toInt, attr(2).toDouble, attr(3).toInt, System.currentTimeMillis())
         }).toDF()
 
         store(ratingDF, "Rating", List("productId", "userId"))

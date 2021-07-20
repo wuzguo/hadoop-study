@@ -18,4 +18,4 @@ package com.hadoop.study.spark.recomnend.beans
  * 外设产品|鼠标|电脑/办公           商品分类
  * 富勒|鼠标|电子产品|好用|外观漂亮   商品UGC标签
  */
-case class Product(productId: Int, name: String, imageUrl: String, categories: String, tags: String)
+case class Product(productId: Int, name: String, imageUrl: String, categories: String, tags: String, createTime: Long)
