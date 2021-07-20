@@ -22,6 +22,34 @@
 - hadoop-study-flink-project-fraud-detecting：基于Flink的交易欺诈检测项目。
 - hadoop-study-flink-project-recommend：基于Flink和Spark的推荐系统。
 
+### 项目结构
+
+```xml
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] hadoop-study                                                       [pom]
+[INFO] hadoop-study-kafka                                                 [jar]
+[INFO] hadoop-study-scala                                                 [jar]
+[INFO] hadoop-study-hdfs                                                  [jar]
+[INFO] hadoop-study-reactor                                               [jar]
+[INFO] hadoop-study-zookeeper                                             [jar]
+[INFO] hadoop-study-mapreduce                                             [jar]
+[INFO] hadoop-study-hbase                                                 [jar]
+[INFO] hadoop-study-spark                                                 [jar]
+[INFO] hadoop-study-hive                                                  [jar]
+[INFO] hadoop-study-flink                                                 [jar]
+[INFO] hadoop-study-flink-project-pv-analysis                             [jar]
+[INFO] hadoop-study-flink-project-fraud-detecting                         [pom]
+[INFO] fraud-detecting-app                                                [jar]
+[INFO] fraud-detecting-job                                                [jar]
+[INFO] hadoop-study-flink-project-recommend                               [pom]
+[INFO] recommend-app                                                      [jar]
+[INFO] recommend-flink-job                                                [jar]
+[INFO] recommend-spark-job                                                [jar]
+```
+
 ### 依赖工具
 要运行本项目首先要保证安装以下工具，基础工具安装步骤请自行百度。
 - JDK 1.8+
@@ -40,30 +68,30 @@
 ```xml
 [INFO] Reactor Summary:
 [INFO] 
-[INFO] hadoop-study 1.0-SNAPSHOT .......................... SUCCESS [  0.005 s]
-[INFO] hadoop-study-kafka ................................. SUCCESS [  2.218 s]
-[INFO] hadoop-study-scala ................................. SUCCESS [  0.044 s]
-[INFO] hadoop-study-hdfs .................................. SUCCESS [  0.857 s]
-[INFO] hadoop-study-reactor ............................... SUCCESS [  3.065 s]
-[INFO] hadoop-study-zookeeper ............................. SUCCESS [  2.074 s]
-[INFO] hadoop-study-mapreduce ............................. SUCCESS [  0.338 s]
-[INFO] hadoop-study-hbase ................................. SUCCESS [  5.384 s]
-[INFO] hadoop-study-spark ................................. SUCCESS [ 37.767 s]
-[INFO] hadoop-study-hive .................................. SUCCESS [  5.377 s]
-[INFO] hadoop-study-flink ................................. SUCCESS [  0.817 s]
-[INFO] hadoop-study-flink-project-pv-analysis ............. SUCCESS [  0.832 s]
-[INFO] hadoop-study-flink-project-fraud-detecting ......... SUCCESS [  0.002 s]
-[INFO] fraud-detecting-app ................................ SUCCESS [  9.905 s]
-[INFO] fraud-detecting-job ................................ SUCCESS [  1.323 s]
-[INFO] hadoop-study-flink-project-recommend ............... SUCCESS [  0.002 s]
-[INFO] recommend-app ...................................... SUCCESS [  4.002 s]
-[INFO] recommend-flink-job ................................ SUCCESS [  0.316 s]
-[INFO] recommend-spark-job 1.0-SNAPSHOT ................... SUCCESS [  0.306 s]
+[INFO] hadoop-study 1.0-SNAPSHOT .......................... SUCCESS [  0.003 s]
+[INFO] hadoop-study-kafka ................................. SUCCESS [ 11.086 s]
+[INFO] hadoop-study-scala ................................. SUCCESS [  0.209 s]
+[INFO] hadoop-study-hdfs .................................. SUCCESS [  5.937 s]
+[INFO] hadoop-study-reactor ............................... SUCCESS [  5.257 s]
+[INFO] hadoop-study-zookeeper ............................. SUCCESS [  3.592 s]
+[INFO] hadoop-study-mapreduce ............................. SUCCESS [ 43.117 s]
+[INFO] hadoop-study-hbase ................................. SUCCESS [  9.078 s]
+[INFO] hadoop-study-spark ................................. SUCCESS [01:36 min]
+[INFO] hadoop-study-hive .................................. SUCCESS [ 30.532 s]
+[INFO] hadoop-study-flink ................................. SUCCESS [ 13.489 s]
+[INFO] hadoop-study-flink-project-pv-analysis ............. SUCCESS [  0.787 s]
+[INFO] hadoop-study-flink-project-fraud-detecting ......... SUCCESS [  0.003 s]
+[INFO] fraud-detecting-app ................................ SUCCESS [ 14.219 s]
+[INFO] fraud-detecting-job ................................ SUCCESS [  7.763 s]
+[INFO] hadoop-study-flink-project-recommend ............... SUCCESS [  0.004 s]
+[INFO] recommend-app ...................................... SUCCESS [  6.772 s]
+[INFO] recommend-flink-job ................................ SUCCESS [  1.332 s]
+[INFO] recommend-spark-job 1.0-SNAPSHOT ................... SUCCESS [  3.315 s]
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 01:15 min
-[INFO] Finished at: 2021-07-20T11:49:50+08:00
+[INFO] Total time: 04:15 min
+[INFO] Finished at: 2021-07-20T17:30:04+08:00
 [INFO] ------------------------------------------------------------------------
 ```
 
@@ -71,11 +99,11 @@
 
 #### 一、PV/UV数据分析
 
-![](.\hadoop-study-docs\intro\2.png)
+![](./hadoop-study-docs/intro/2.png)
 
 #### 二、欺诈交易检测
 
-![](.\hadoop-study-docs\intro\1.png)
+![](./hadoop-study-docs/intro/1.png)
 
 
 
