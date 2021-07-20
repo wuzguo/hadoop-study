@@ -36,3 +36,5 @@ dump.rdb
 node_modules
 
 build
+
+logs
