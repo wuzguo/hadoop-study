@@ -20,11 +20,12 @@ object DataLoader {
     def main(args: Array[String]): Unit = {
         // 配置文件
         val config = Map(
+            "spark.cores" -> "local[*]",
             "mongo.uri" -> "mongodb://localhost:27017/recommender",
             "mongo.db" -> "recommender"
         )
         // 创建一个spark config
-        val sparkConf = new SparkConf().setMaster("local[*]").setAppName("DataLoader")
+        val sparkConf = new SparkConf().setMaster(config("spark.cores")).setAppName("DataLoader")
         // 创建spark session
         val spark = SparkSession.builder().config(sparkConf).getOrCreate()
 
@@ -40,7 +41,7 @@ object DataLoader {
             Product(attr(0).toInt, attr(1).trim, attr(4).trim, attr(5).trim, attr(6).trim, System.currentTimeMillis())
         }).toDF()
 
-        store(productDF, "Product", List("productId"))
+        store(productDF, "products", List("productId"))
 
         val ratingRDD = spark.sparkContext.textFile("./hadoop-study-datas/project/data/ratings.csv")
         val ratingDF = ratingRDD.map(item => {
@@ -48,7 +49,7 @@ object DataLoader {
             Rating(attr(0).toInt, attr(1).toInt, attr(2).toDouble, attr(3).toInt, System.currentTimeMillis())
         }).toDF()
 
-        store(ratingDF, "Rating", List("productId", "userId"))
+        store(ratingDF, "ratings", List("productId", "userId"))
         spark.stop()
     }
 
