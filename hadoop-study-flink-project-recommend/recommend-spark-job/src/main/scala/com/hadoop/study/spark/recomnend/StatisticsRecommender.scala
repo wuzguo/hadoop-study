@@ -55,8 +55,8 @@ object StatisticsRecommender {
 
         // TODO: 用spark sql去做不同的统计推荐
         // 1. 历史热门商品，按照评分个数统计，productId，count
-        val rateMoreProductsDF = spark.sql("select productId, count(productId) as count from ratings group by productId order by count desc")
-        store(rateMoreProductsDF, RATE_MORE_PRODUCTS)
+        val rateProductsDF = spark.sql("select productId, count(productId) as count from ratings group by productId order by count desc")
+        store(rateProductsDF, RATE_MORE_PRODUCTS)
 
         // 2. 近期热门商品，把时间戳转换成yyyyMM格式进行评分个数统计，最终得到productId, count, yearmonth
         // 创建一个日期格式化工具
@@ -66,9 +66,9 @@ object StatisticsRecommender {
         // 把原始rating数据转换成想要的结构productId, score, yearmonth
         val ratingOfYearMonthDF = spark.sql("select productId, score, changeDate(timestamp) as yearmonth from ratings")
         ratingOfYearMonthDF.createOrReplaceTempView("ratingOfMonth")
-        val rateMoreRecentlyProductsDF = spark.sql("select productId, count(productId) as count, yearmonth from ratingOfMonth group by yearmonth, productId order by yearmonth desc, count desc")
+        val rateRecentlyProductsDF = spark.sql("select productId, count(productId) as count, yearmonth from ratingOfMonth group by yearmonth, productId order by yearmonth desc, count desc")
         // 把df保存到mongodb
-        store(rateMoreRecentlyProductsDF, RATE_MORE_RECENTLY_PRODUCTS)
+        store(rateRecentlyProductsDF, RATE_MORE_RECENTLY_PRODUCTS)
 
         // 3. 优质商品统计，商品的平均评分，productId，avg
         val averageProductsDF = spark.sql("select productId, avg(score) as avg from ratings group by productId order by avg desc")
