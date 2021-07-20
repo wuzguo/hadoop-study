@@ -112,4 +112,21 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <activatedProfile>dev</activatedProfile>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <activatedProfile>test</activatedProfile>
+            </properties>
+        </profile>
+    </profiles>
 </project>

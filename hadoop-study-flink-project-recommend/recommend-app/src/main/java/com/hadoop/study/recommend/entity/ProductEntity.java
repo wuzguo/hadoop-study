@@ -1,5 +1,6 @@
 package com.hadoop.study.recommend.entity;
 
+import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,31 +13,30 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 
 @Entity
-@Table(name = "product")
+@Table(name = "rec_product")
 @NoArgsConstructor
 @Data
 public class ProductEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column
     @JsonIgnore
-    private int id;
+    private Integer id;
 
-    @Column(name = "product_id")
-    private int productId;
+    private Integer productId;
 
-    @Column(name = "name")
+    @Column(length = 64)
     private String name;
 
-    @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "categories")
+    @Column(length = 32)
     private String categories;
 
-    @Column(name = "tags")
+    @Column(length = 64)
     private String tags;
 
-    private double score;
+    private Double score;
+
+    private Timestamp createTime;
 }

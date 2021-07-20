@@ -108,7 +108,7 @@ public class RecommendService {
                 }
             }
             ProductEntity productEntity = productRepository.findByProductId(productId.intValue());
-            productEntity.setScore(i + 1);
+            productEntity.setScore(i + 1D);
             recommends.add(productEntity);
         }
         return recommends;

@@ -49,7 +49,7 @@ public class UserController {
             model.addAttribute("msg", "用户已存在");
         } else {
             model.addAttribute("success", true);
-            userEntity.setTimestamp(System.currentTimeMillis());
+            userEntity.setCreateTime(System.currentTimeMillis());
             UserEntity res = userService.add(userEntity);
             model.addAttribute("user", res);
             model.addAttribute("msg", "注册成功");

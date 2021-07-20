@@ -1,9 +1,9 @@
 spring:
   datasource:
     username: root
-    password: 123456
+    password: 136501412
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://hadoop003:3306/user?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://hadoop003/recommend?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
   jpa:
     database: MYSQL
     hibernate:
@@ -16,7 +16,7 @@ spring:
 
 ## hbase config
 hbase:
-  rootdir: hdfs://node01:8020/hbase
+  rootdir: hdfs://hadoop001:8020/hbase
   zookeeper:
     quorum: hadoop001,hadoop002,hadoop003
   client:
