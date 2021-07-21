@@ -31,7 +31,7 @@ object State_BroadcastState_Case {
         env.setParallelism(1)
 
         val properties = new Properties
-        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.20.0.92:9092")
+        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "hadoop002:9092")
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "broadcast-state")
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")

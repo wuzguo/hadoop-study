@@ -35,7 +35,7 @@ redis:
 ## kafka config
 kafka:
   bootstrap:
-    servers: 10.20.0.92:9092
+    servers: hadoop002:9092
   zookeeper:
     connect: 10.20.0.92:2181
 

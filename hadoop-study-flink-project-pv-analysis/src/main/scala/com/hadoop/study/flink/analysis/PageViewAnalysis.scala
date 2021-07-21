@@ -43,7 +43,7 @@ object PageViewAnalysis {
     def main(args: Array[String]): Unit = {
         val parameterTool = ParameterTool.fromArgs(args)
         val kafkaTopic = parameterTool.get("topic", "topic_behavior")
-        val brokers = parameterTool.get("broker", "10.20.0.92:9092")
+        val brokers = parameterTool.get("broker", "hadoop002:9092")
 
         println(s"reading from kafka topic ${kafkaTopic} @ ${brokers}")
 

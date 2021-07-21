@@ -5,7 +5,7 @@ security:
 transactionsRateDisplayLimit: 50
 
 kafka:
-  bootstrap-servers: 10.20.0.92:9092
+  bootstrap-servers: hadoop002:9092
   topic:
     transactions: topic-detect-live-transactions
     rules: topic-detect-rules
@@ -35,6 +35,6 @@ spring:
     cache: false
   kafka:
     producer:
-      bootstrap-servers: 10.20.0.92:9092
+      bootstrap-servers: hadoop002:9092
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer

@@ -68,7 +68,7 @@ object OnlineRecommender {
 
         // 创建kafka配置参数
         val kafkaParam = Map(
-            "bootstrap.servers" -> "localhost:9092",
+            "bootstrap.servers" -> "hadoop002:9092",
             "key.deserializer" -> classOf[StringDeserializer],
             "value.deserializer" -> classOf[StringDeserializer],
             "group.id" -> "recommender",

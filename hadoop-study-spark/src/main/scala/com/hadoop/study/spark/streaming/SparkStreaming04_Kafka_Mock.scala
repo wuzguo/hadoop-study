@@ -23,7 +23,7 @@ object SparkStreaming04_Kafka_Mock {
         // Application => Kafka => SparkStreaming => Analysis
         val properties = new Properties()
         // 添加配置
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.20.0.92:9092")
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "hadoop002:9092")
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
 
