@@ -3,11 +3,11 @@ package com.hadoop.study.recommend.controller;
 
 import com.hadoop.study.recommend.entity.ProductEntity;
 import com.hadoop.study.recommend.service.RecommendService;
-import com.hadoop.study.recommend.util.CustomKafkaProducer;
 import java.io.IOException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +35,9 @@ public class ProductController {
 
     @Autowired
     private RecommendService recommendService;
+
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
 
     /**
      * 热门推荐
@@ -133,7 +136,7 @@ public class ProductController {
         ModelMap model = new ModelMap();
         try {
             model.addAttribute("success", true);
-            model.addAttribute("products", recommendService.getProductEntity(productId));
+            model.addAttribute("products", recommendService.findProduct(productId));
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("success", false);
@@ -178,8 +181,7 @@ public class ProductController {
         ModelMap model = new ModelMap();
         try {
             String msg = userId + "," + productId + "," + score + "," + System.currentTimeMillis() / 1000;
-            CustomKafkaProducer.produce(msg);
-            System.out.println(msg);
+            kafkaTemplate.send("recommender", msg);
             model.addAttribute("success", true);
             model.addAttribute("message", "完成评分");
         } catch (Exception e) {
