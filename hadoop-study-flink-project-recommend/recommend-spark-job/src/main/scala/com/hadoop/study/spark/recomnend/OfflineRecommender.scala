@@ -21,8 +21,10 @@ object OfflineRecommender {
     val MONGODB_RATING_COLLECTION = "ratings"
 
     val USER_RECS = "user_recs"
+
     val PRODUCT_RECS = "product_recs"
-    val USER_MAX_RECOMMENDATION = 20
+
+    val USER_MAX_RECOMMENDATION = 10
 
     def main(args: Array[String]): Unit = {
         val config = Map(
