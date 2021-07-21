@@ -33,6 +33,7 @@ object ContentRecommender {
         val sparkConf = new SparkConf().setMaster(config("spark.cores")).setAppName("ContentRecommender")
         // 创建spark session
         val spark = SparkSession.builder().config(sparkConf).getOrCreate()
+
         import spark.implicits._
         implicit val mongoConfig = MongoConfig(config("mongo.uri"), config("mongo.db"))
 
