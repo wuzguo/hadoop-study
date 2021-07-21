@@ -25,6 +25,7 @@
         <jblas.version>1.2.5</jblas.version>
         <spark.version>3.1.1</spark.version>
         <janino.version>3.0.16</janino.version>
+        <jedis.version>3.6.1</jedis.version>
     </properties>
 
     <dependencies>
@@ -102,6 +103,21 @@
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
             <version>${janino.version}</version>
+        </dependency>
+        <!-- redis -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming-kafka-0-10_${scala.binary.version}</artifactId>
+            <version>${spark.version}</version>
         </dependency>
     </dependencies>
     <build>
