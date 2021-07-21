@@ -48,7 +48,7 @@ public class ProductController {
         ModelMap model = new ModelMap();
         List<ProductEntity> recommendations = null;
         try {
-            recommendations = recommendService.getHistoryHotOrGoodProducts(num, HISTORY_HOT_PRODCUTS);
+            recommendations = recommendService.listHistoryHotProducts(num, HISTORY_HOT_PRODCUTS);
             model.addAttribute("success", true);
             model.addAttribute("products", recommendations);
         } catch (Exception e) {
@@ -80,7 +80,7 @@ public class ProductController {
         ModelMap model = new ModelMap();
         List<ProductEntity> recommendations = null;
         try {
-            recommendations = recommendService.getHistoryHotOrGoodProducts(num, GOOD_PRODUCTS);
+            recommendations = recommendService.listHistoryHotProducts(num, GOOD_PRODUCTS);
             model.addAttribute("success", true);
             model.addAttribute("products", recommendations);
         } catch (Exception e) {

@@ -10,6 +10,8 @@ import com.hadoop.study.recommend.entity.ProductEntity;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -31,27 +33,20 @@ public class RecommendService {
     /**
      * 查出所有热门商品清单
      *
-     * @param num       数量
+     * @param nums      数量
      * @param tableName 表名
      * @return {@link ProductEntity}
      */
-    public List<ProductEntity> getHistoryHotOrGoodProducts(int num, String tableName) {
-        List<RateProduct> products = mongoTemplate.findAll(RateProduct.class, tableName);
-        if (CollectionUtils.isEmpty(products)) {
-            return Lists.newArrayList();
-        }
-
-        // 排序
-        products.sort(Comparator.comparingInt(RateProduct::getCount));
-
-        List<ProductEntity> recommendEntitys = Lists.newArrayList();
-        for (int i = 1; i <= num; i++) {
-            ProductEntity product = findProduct(products.get(i).getProductId());
-            product.setScore(3.5);
-            log.info(product.toString());
-            recommendEntitys.add(product);
-        }
-        return recommendEntitys;
+    public List<ProductEntity> listHistoryHotProducts(Integer nums, String tableName) {
+        return Optional.of(mongoTemplate.findAll(RateProduct.class, tableName))
+            .orElse(Lists.newArrayList()).stream()
+            .sorted(Comparator.comparingInt(RateProduct::getCount)).limit(nums)
+            .map(product -> {
+                ProductEntity productEntity = findProduct(product.getProductId());
+                productEntity.setScore(3.5);
+                log.info(productEntity.toString());
+                return productEntity;
+            }).collect(Collectors.toList());
     }
 
     public ProductEntity findProduct(int productId) {
@@ -66,8 +61,8 @@ public class RecommendService {
      * @return {@link ProductEntity}
      * @throws IOException
      */
-    public List<ProductEntity> getItemCFProducts(int productId, String tableName) throws IOException {
-        List<ProductEntity> result = Lists.newArrayList();
+    public List<ProductEntity> getItemCFProducts(Integer productId, String tableName) throws IOException {
+        List<ProductEntity> productEntities = Lists.newArrayList();
         // 创建条件对象
         Criteria criteria = Criteria.where("productId").is(productId);
         // 创建查询对象，然后将条件对象添加到其中
@@ -76,18 +71,17 @@ public class RecommendService {
             productRecs.getRecs().forEach(recommend -> {
                 ProductEntity product = findProduct(recommend.getProductId());
                 product.setScore(recommend.getDouble());
-                result.add(product);
+                productEntities.add(product);
             });
         }
-        return result;
+        return productEntities;
     }
 
     public List<ProductEntity> getProductByName(String name) {
         return productRepository.likeByName(name);
     }
 
-    public List<ProductEntity> getOnlineRecs(String userId, String tableName) throws IOException {
-
+    public List<ProductEntity> getOnlineRecs(String userId, String tableName) {
         // 创建条件对象
         Criteria criteria = Criteria.where("userId").is(userId);
         // 创建查询对象，然后将条件对象添加到其中
@@ -107,10 +101,10 @@ public class RecommendService {
         return recommends;
     }
 
-    public List<ProductEntity> getOnlineHot(String tableName, int nums) throws IOException {
-        List<RateProduct> rateProducts = mongoTemplate.findAll(RateProduct.class, tableName);
+    public List<ProductEntity> getOnlineHot(String tableName, Integer nums) {
+        List<RateProduct> rateProducts = Optional.of(mongoTemplate.findAll(RateProduct.class, tableName))
+            .orElse(Lists.newArrayList());
         List<ProductEntity> recommends = Lists.newArrayList();
-
         for (int i = 0; i < nums && i < rateProducts.size(); i++) {
             RateProduct product = rateProducts.get(i);
             ProductEntity productEntity = productRepository.findByProductId(product.getProductId());
