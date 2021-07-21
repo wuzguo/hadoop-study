@@ -110,7 +110,7 @@ object OnlineRecommender {
         // 启动streaming
         ssc.start()
 
-        println("streaming started!")
+        println("streaming started")
         ssc.awaitTermination()
     }
 
@@ -122,7 +122,7 @@ object OnlineRecommender {
 
     def getUserRecentlyRatings(num: Int, userId: Int, jedis: Jedis): Array[(Int, Double)] = {
         // 从redis中用户的评分队列里获取评分数据，list键名为uid:USERID，值格式是 PRODUCTID:SCORE
-        jedis.lrange("userId:" + userId.toString, 0, num)
+        jedis.lrange("userId:" + userId, 0, num)
           .map { item =>
               val attr = item.split("\\:")
               (attr(0).trim.toInt, attr(1).trim.toDouble)
@@ -156,8 +156,8 @@ object OnlineRecommender {
         // 定义一个长度可变数组ArrayBuffer，用于保存每一个备选商品的基础得分，(productId, score)
         val scores = scala.collection.mutable.ArrayBuffer[(Int, Double)]()
         // 定义两个map，用于保存每个商品的高分和低分的计数器，productId -> count
-        val increMap = scala.collection.mutable.HashMap[Int, Int]()
-        val decreMap = scala.collection.mutable.HashMap[Int, Int]()
+        val mapIncr = scala.collection.mutable.HashMap[Int, Int]()
+        val mapDecr = scala.collection.mutable.HashMap[Int, Int]()
 
         // 遍历每个备选商品，计算和已评分商品的相似度
         for (candidateProduct <- candidateProducts; userRecentlyRating <- userRecentlyRatings) {
@@ -167,17 +167,17 @@ object OnlineRecommender {
                 // 按照公式进行加权计算，得到基础评分
                 scores += ((candidateProduct, simScore * userRecentlyRating._2))
                 if (userRecentlyRating._2 > 3) {
-                    increMap(candidateProduct) = increMap.getOrDefault(candidateProduct, 0) + 1
+                    mapIncr(candidateProduct) = mapIncr.getOrDefault(candidateProduct, 0) + 1
                 } else {
-                    decreMap(candidateProduct) = decreMap.getOrDefault(candidateProduct, 0) + 1
+                    mapDecr(candidateProduct) = mapDecr.getOrDefault(candidateProduct, 0) + 1
                 }
             }
         }
 
-        // 根据公式计算所有的推荐优先级，首先以productId做groupby
+        // 根据公式计算所有的推荐优先级，首先以 productId 做 groupBy
         scores.groupBy(_._1).map {
             case (productId, scoreList) =>
-                (productId, scoreList.map(_._2).sum / scoreList.length + log(increMap.getOrDefault(productId, 1)) - log(decreMap.getOrDefault(productId, 1)))
+                (productId, scoreList.map(_._2).sum / scoreList.length + log(mapIncr.getOrDefault(productId, 1)) - log(mapDecr.getOrDefault(productId, 1)))
         }
           // 返回推荐列表，按照得分排序
           .toArray
