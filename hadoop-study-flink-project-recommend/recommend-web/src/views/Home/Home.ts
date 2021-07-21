@@ -28,7 +28,7 @@ export default class Home extends Vue {
         this.getRecommendData('/api/product/stream', 0)
         this.getRecommendData('/api/product/history/hot', 1)
         this.getRecommendData('/api/product/good/products', 2)
-        this.getRecommendData('/api/product/onlinehot', 3)
+        this.getRecommendData('/api/product/online/hot', 3)
         // this.getRecommendData('/api/rest/product/offline', 3)
     }
     

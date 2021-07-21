@@ -219,7 +219,7 @@ public class ProductController {
      *
      * @return {@link ModelMap}
      */
-    @GetMapping(value = "/onlinehot")
+    @GetMapping(value = "/online/hot")
     @ResponseBody
     public ModelMap onlineHot() {
         ModelMap model = new ModelMap();
