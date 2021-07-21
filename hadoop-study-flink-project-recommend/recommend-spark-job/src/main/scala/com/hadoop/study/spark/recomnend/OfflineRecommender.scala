@@ -66,9 +66,7 @@ object OfflineRecommender {
 
         // 从预测评分矩阵中提取得到用户推荐列表
         val userRecs = preRating.filter(_.rating > 0)
-          .map(
-              rating => (rating.user, (rating.product, rating.rating))
-          )
+          .map(rating => (rating.user, (rating.product, rating.rating)))
           .groupByKey()
           .map {
               case (userId, recs) =>
@@ -102,8 +100,8 @@ object OfflineRecommender {
           .map {
               case (productId, recs) =>
                   ProductRecs(productId, recs.toList.sortWith(_._2 > _._2).map(x => Recommendation(x._1, x._2)))
-          }
-          .toDF()
+          }.toDF()
+
         productRecs.write
           .option("uri", mongoConfig.uri)
           .option("collection", PRODUCT_RECS)

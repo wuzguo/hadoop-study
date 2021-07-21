@@ -26,7 +26,7 @@ object ALSTrainer {
             "mongo.db" -> "recommender"
         )
         // 创建一个spark config
-        val sparkConf = new SparkConf().setMaster(config("spark.cores")).setAppName("OfflineRecommender")
+        val sparkConf = new SparkConf().setMaster(config("spark.cores")).setAppName("ALSTrainer")
         // 创建spark session
         val spark = SparkSession.builder().config(sparkConf).getOrCreate()
 
@@ -77,7 +77,7 @@ object ALSTrainer {
 
         sqrt(
             observed.join(predict).map {
-                case ((userId, productId), (actual, pre)) =>
+                case ((_, _), (actual, pre)) =>
                     val err = actual - pre
                     err * err
             }.mean()
