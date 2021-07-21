@@ -1,9 +1,7 @@
 package com.hadoop.study.recommend.beans;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import java.util.List;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.springframework.data.mongodb.core.mapping.MongoId;
@@ -13,13 +11,13 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/7/21 16:06
+ * @date 2021/7/21 17:19
  */
 
 @Data
 @ToString
 @Accessors(chain = true)
-public class RateProduct {
+public class UserRecs {
 
     /**
      * 消息ID
@@ -28,12 +26,12 @@ public class RateProduct {
     private String id;
 
     /**
-     * 产品ID
+     * 用户ID
      */
-    private Integer productId;
+    private Integer userId;
 
     /**
-     * 数量
+     * 相似度列表
      */
-    private Integer count;
+    private List<Recommendation> recs;
 }
