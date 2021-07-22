@@ -17,7 +17,7 @@ public class User {
 
     @Id
     @JsonIgnore
-    private Integer id;
+    private String id;
 
     @Indexed
     private String name;

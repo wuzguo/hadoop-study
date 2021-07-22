@@ -16,7 +16,7 @@ public class Product {
 
     @Id
     @JsonIgnore
-    private Integer id;
+    private String id;
 
     private Integer productId;
 
