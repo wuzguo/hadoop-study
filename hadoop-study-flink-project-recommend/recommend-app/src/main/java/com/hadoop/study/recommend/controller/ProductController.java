@@ -79,26 +79,15 @@ public class ProductController {
     @ResponseBody
     public ModelMap getGoodProducts(@RequestParam("num") Integer num) {
         ModelMap model = new ModelMap();
-        List<Product> recommendations = null;
         try {
-            recommendations = recommendService.listHistoryHotProducts(num, GOOD_PRODUCTS);
+            List<Product> recommendations = recommendService.listHistoryHotProducts(num, GOOD_PRODUCTS);
             model.addAttribute("success", true);
             model.addAttribute("products", recommendations);
         } catch (Exception e) {
+            log.error("error: {}", e.getMessage());
             model.addAttribute("success", false);
             model.addAttribute("msg", e.getMessage());
         }
-
-        StringBuilder builder = new StringBuilder();
-
-        if (recommendations != null) {
-            for (Product product : recommendations) {
-                builder.append(product).append("\t");
-            }
-        } else {
-            builder.append("数据为空");
-        }
-        log.info(builder.toString());
         return model;
     }
 
@@ -118,7 +107,7 @@ public class ProductController {
             model.addAttribute("success", true);
             model.addAttribute("products", recommendatitons);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error: {}", e.getMessage());
             model.addAttribute("success", false);
             model.addAttribute("msg", e.getMessage());
         }
@@ -139,7 +128,7 @@ public class ProductController {
             model.addAttribute("success", true);
             model.addAttribute("products", recommendService.findProduct(productId));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error: {}", e.getMessage());
             model.addAttribute("success", false);
             model.addAttribute("msg", e.getMessage());
         }
@@ -160,7 +149,7 @@ public class ProductController {
             model.addAttribute("success", true);
             model.addAttribute("products", recommendService.getProductByName(name));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error: {}", e.getMessage());
             model.addAttribute("success", false);
             model.addAttribute("msg", e.getMessage());
         }
@@ -187,7 +176,7 @@ public class ProductController {
             model.addAttribute("success", true);
             model.addAttribute("message", "完成评分");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error: {}", e.getMessage());
             model.addAttribute("success", false);
             model.addAttribute("msg", e.getMessage());
         }
@@ -210,6 +199,7 @@ public class ProductController {
             model.addAttribute("success", true);
             model.addAttribute("products", res);
         } catch (Exception e) {
+            log.error("error: {}", e.getMessage());
             model.addAttribute("success", false);
             model.addAttribute("msg", "查询失败");
         }
@@ -230,6 +220,7 @@ public class ProductController {
             model.addAttribute("success", true);
             model.addAttribute("products", res);
         } catch (Exception e) {
+            log.error("error: {}", e.getMessage());
             model.addAttribute("success", false);
             model.addAttribute("msg", e.getMessage());
         }
