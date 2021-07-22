@@ -26,15 +26,6 @@
     </properties>
 
     <dependencies>
-        <!--引入日志依赖-->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
         <!--flink 依赖-->
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -75,6 +66,20 @@
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-planner-blink_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
+        </dependency>
+        <!--引入日志依赖-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>redis.clients</groupId>

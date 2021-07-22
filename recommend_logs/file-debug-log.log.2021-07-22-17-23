@@ -1,0 +1,90 @@
+2021-07-22 17:23:51 [INFO ](TypeExtractor                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] class com.hadoop.study.flink.recommend.beans.Rating does not contain a setter for field userId
+2021-07-22 17:23:51 [INFO ](TypeExtractor                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Class class com.hadoop.study.flink.recommend.beans.Rating cannot be used as a POJO type because not all fields are valid POJO fields, and must be processed as GenericType. Please read the Flink documentation on "Data Types & Serialization" for details of the effect on performance.
+2021-07-22 17:23:52 [DEBUG](sql2rel                       ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Plan after converting SqlNode to RelNode
+LogicalProject(f0=[$0])
+  FlinkLogicalDataSetScan(ref=[298724898], fields=[f0])
+
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Rule Attempts Info for HepPlanner
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] 
+Rules                                                                   Attempts           Time (us)
+* Total                                                                        0                   0
+
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] For final plan, using rel#4:LogicalProject.NONE(input=HepRelVertex#3,inputs=0)
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] For final plan, using rel#1:FlinkLogicalDataSetScan.LOGICAL(ref=298724898,fields=f0)
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Rule Attempts Info for HepPlanner
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] 
+Rules                                                                   Attempts           Time (us)
+* Total                                                                        0                   0
+
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] For final plan, using rel#7:LogicalProject.NONE(input=HepRelVertex#6,inputs=0)
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] For final plan, using rel#1:FlinkLogicalDataSetScan.LOGICAL(ref=298724898,fields=f0)
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Rule Attempts Info for HepPlanner
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] 
+Rules                                                                   Attempts           Time (us)
+* Total                                                                        0                   0
+
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] For final plan, using rel#10:LogicalProject.NONE(input=HepRelVertex#9,inputs=0)
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] For final plan, using rel#1:FlinkLogicalDataSetScan.LOGICAL(ref=298724898,fields=f0)
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] call#1: Apply rule [ReduceExpressionsRule(Project)] to [rel#13:LogicalProject.NONE(input=HepRelVertex#12,inputs=0)]
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Rule Attempts Info for HepPlanner
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] 
+Rules                                                                   Attempts           Time (us)
+ReduceExpressionsRule(Project)                                                 1              19,599
+* Total                                                                        1              19,599
+
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] For final plan, using rel#13:LogicalProject.NONE(input=HepRelVertex#12,inputs=0)
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] For final plan, using rel#1:FlinkLogicalDataSetScan.LOGICAL(ref=298724898,fields=f0)
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] PLANNER = org.apache.calcite.plan.volcano.IterativeRuleDriver@7ee3d262; COST = {inf}
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Pop match: rule [ProjectRemoveRule] rels [#16]
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] call#15: Apply rule [ProjectRemoveRule] to [rel#16:LogicalProject.NONE(input=RelSubset#15,inputs=0)]
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Transform to: rel#20 via ProjectRemoveRule
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] call#15 generated 1 successors: [rel#20:RelSubset#0.NONE]
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] PLANNER = org.apache.calcite.plan.volcano.IterativeRuleDriver@7ee3d262; COST = {1000.0 rows, 1000.0 cpu, 128000.0 io}
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Skip match: rule [ProjectToCalcRule] rels [#16]
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Rule Attempts Info for VolcanoPlanner
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] 
+Rules                                                                   Attempts           Time (us)
+ProjectRemoveRule                                                              1               3,697
+* Total                                                                        1               3,697
+
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Cheapest plan:
+FlinkLogicalDataSetScan(ref=[298724898], fields=[f0]): rowcount = 1000.0, cumulative cost = {1000.0 rows, 1000.0 cpu, 128000.0 io}, id = 1
+
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Provenance:
+rel#1:FlinkLogicalDataSetScan.LOGICAL(ref=298724898,fields=f0)
+  no parent
+
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Rule Attempts Info for HepPlanner
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] 
+Rules                                                                   Attempts           Time (us)
+* Total                                                                        0                   0
+
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] For final plan, using rel#1:FlinkLogicalDataSetScan.LOGICAL(ref=298724898,fields=f0)
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] PLANNER = org.apache.calcite.plan.volcano.IterativeRuleDriver@7ee3d262; COST = {inf}
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Pop match: rule [DataSetScanRule(in:LOGICAL,out:DATASET)] rels [#1]
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] call#38: Apply rule [DataSetScanRule(in:LOGICAL,out:DATASET)] to [rel#1:FlinkLogicalDataSetScan.LOGICAL(ref=298724898,fields=f0)]
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Transform to: rel#25 via DataSetScanRule(in:LOGICAL,out:DATASET)
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] call#38 generated 1 successors: [rel#25:DataSetScan.DATASET(ref=298724898,fields=f0)]
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] PLANNER = org.apache.calcite.plan.volcano.IterativeRuleDriver@7ee3d262; COST = {1000.0 rows, 1000.0 cpu, 0.0 io}
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Rule Attempts Info for VolcanoPlanner
+2021-07-22 17:23:53 [DEBUG](rule_execution_summary        ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] 
+Rules                                                                   Attempts           Time (us)
+DataSetScanRule(in:LOGICAL,out:DATASET)                                        1              18,182
+ProjectRemoveRule                                                              1               3,697
+* Total                                                                        2              21,879
+
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Cheapest plan:
+DataSetScan(ref=[298724898], fields=[f0]): rowcount = 1000.0, cumulative cost = {1000.0 rows, 1000.0 cpu, 0.0 io}, id = 25
+
+2021-07-22 17:23:53 [DEBUG](RelOptPlanner                 ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Provenance:
+rel#25:DataSetScan.DATASET(ref=298724898,fields=f0)
+  call#38 rule [DataSetScanRule(in:LOGICAL,out:DATASET)]
+    rel#1:FlinkLogicalDataSetScan.LOGICAL(ref=298724898,fields=f0)
+      no parent
+
+2021-07-22 17:23:53 [DEBUG](ClosureCleaner                ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Dig to clean the java.lang.String
+2021-07-22 17:23:53 [DEBUG](ClosureCleaner                ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Dig to clean the [C
+2021-07-22 17:23:53 [DEBUG](ClosureCleaner                ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Dig to clean the java.lang.Integer
+2021-07-22 17:23:53 [DEBUG](ClosureCleaner                ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Dig to clean the java.lang.String
+2021-07-22 17:23:53 [DEBUG](ClosureCleaner                ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Dig to clean the [C
+2021-07-22 17:23:53 [DEBUG](ClosureCleaner                ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Dig to clean the java.lang.Integer
