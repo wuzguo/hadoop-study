@@ -45,14 +45,17 @@ case class RatingMongoSource(db: String, collection: String) extends RichInputFo
         resultSet = mongoClient.find().toList
         index = 0
         hasNext = resultSet.nonEmpty
+        println(s"长度：${resultSet.size}，hasNext: ${hasNext}, index: ${index}")
     }
 
     override def reachedEnd(): Boolean = !hasNext
 
     override def nextRecord(reuse: Rating): Rating = {
+        if (!hasNext) return null
         val value = resultSet(index)
         index += 1
-        hasNext = resultSet.size > index
+        hasNext = resultSet.size > (index + 1)
+        println(s"长度：${resultSet.size}，hasNext: ${hasNext}, index: ${index}")
         Rating(Integer.parseInt(value.get("userId").toString),
             Integer.parseInt(value.get("productId").toString),
             java.lang.Double.parseDouble(value.get("score").toString),

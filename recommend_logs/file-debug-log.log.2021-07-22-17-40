@@ -1,0 +1,2 @@
+2021-07-22 17:40:00 [DEBUG](cluster                       ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Checking status of localhost:27017
+2021-07-22 17:40:00 [DEBUG](cluster                       ) [TxId :  , SpanId : ] [ET:,AN:,SN:,CN:,CI:] Updating cluster description to  {type=STANDALONE, servers=[{address=localhost:27017, type=STANDALONE, roundTripTime=0.5 ms, state=CONNECTED}]

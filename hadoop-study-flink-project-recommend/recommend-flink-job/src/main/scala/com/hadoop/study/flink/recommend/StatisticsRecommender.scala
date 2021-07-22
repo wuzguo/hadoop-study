@@ -6,6 +6,7 @@ import com.hadoop.study.flink.recommend.sinks.MongoSink
 import com.hadoop.study.flink.recommend.sources.RatingMongoSource
 import org.apache.flink.api.scala.{ExecutionEnvironment, createTypeInformation}
 import org.apache.flink.table.api.bridge.scala.BatchTableEnvironment
+import org.apache.flink.types.Row
 
 /**
  * <B>说明：描述</B>
@@ -36,10 +37,10 @@ object StatisticsRecommender {
         val sql = "select * from ratings "
         val table = benv.sqlQuery(sql)
         table.printSchema()
-        val result = benv.toDataSet[RateProducts](table)
+        val result = benv.toDataSet[Row](table)
         result.print
 
-        val mongoConfig = MongoConfig("mongodb://localhost:27017/recommender", "recommender")
-        result.output(MongoSink[RateProducts]("recommender", "rate_products"))
+     //   val mongoConfig = MongoConfig("mongodb://localhost:27017/recommender", "recommender")
+      //  result.output(MongoSink[RateProducts]("recommender", "rate_products"))
     }
 }
