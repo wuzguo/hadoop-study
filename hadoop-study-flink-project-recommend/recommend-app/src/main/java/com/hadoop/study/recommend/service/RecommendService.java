@@ -33,7 +33,7 @@ public class RecommendService {
      * @param tableName 表名
      * @return {@link Product}
      */
-    public List<Product> listHistoryHotProducts(Integer nums, String tableName) {
+    public List<Product> listHistoryHotProducts(String tableName, Integer nums) {
         return Optional.of(mongoTemplate.findAll(RateProduct.class, tableName))
             .orElse(Lists.newArrayList()).stream()
             .sorted(Comparator.comparingInt(RateProduct::getCount)).limit(nums)
@@ -58,7 +58,7 @@ public class RecommendService {
      * @return {@link Product}
      * @throws IOException
      */
-    public List<Product> getItemCFProducts(Integer productId, String tableName) throws IOException {
+    public List<Product> getItemCFProducts(String tableName, Integer productId) throws IOException {
         List<Product> productEntities = Lists.newArrayList();
         // 创建条件对象
         Criteria criteria = Criteria.where("productId").is(productId);
@@ -79,7 +79,7 @@ public class RecommendService {
         return mongoTemplate.find(new Query(criteria), Product.class);
     }
 
-    public List<Product> getOnlineRecs(String userId, String tableName) {
+    public List<Product> getOnlineRecs(String tableName, String userId) {
         // 创建查询对象，然后将条件对象添加到其中
         UserRecs userRecs = mongoTemplate
             .findOne(new Query(Criteria.where("userId").is(userId)), UserRecs.class, tableName);

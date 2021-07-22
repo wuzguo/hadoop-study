@@ -15,17 +15,17 @@ public class Constant {
 
     public static String MONGODB_PRODUCT_RECS_COLLECTION = "product_recs";
 
-    public static String MONGODB_RATE_MORE_PRODUCTS_COLLECTION = "rate_products";
+    public static String MONGODB_RATE_PRODUCTS_COLLECTION = "rate_products";
 
-    public static String MONGODB_RATE_MORE_PRODUCTS_RECENTLY_COLLECTION = "rate_recently_products";
+    public static String MONGODB_RATE_PRODUCTS_RECENTLY_COLLECTION = "rate_recently_products";
 
     public static String MONGODB_STREAM_RECS_COLLECTION = "stream_recs";
 
     public static String MONGODB_USER_RECS_COLLECTION = "user_recs";
 
-    public static String MONGODB_ITEMCF_COLLECTION = "itemcf_product_recs";
+    public static String MONGODB_ITEM_CF_COLLECTION = "item_cf_product_recs";
 
-    public static String MONGODB_CONTENTBASED_COLLECTION = "content_product_recs";
+    public static String MONGODB_CONTENT_COLLECTION = "content_product_recs";
 
     public static String PRODUCT_RATING_PREFIX = "rating:";
 

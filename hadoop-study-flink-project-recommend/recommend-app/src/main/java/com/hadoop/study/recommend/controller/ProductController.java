@@ -22,12 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/product")
 public class ProductController {
 
-    private static final String HISTORY_HOT_PRODCUTS = "historyHotProducts";
-
-    private static final String GOOD_PRODUCTS = "goodProducts";
-
-    private static final String ITEM_CF_RECOMMEND = "itemCFRecommend";
-
     private static final String ONLINE_RECOMMEND = "onlineRecommend";
 
     private static final String ONLINE_HOT = "onlineHot";
@@ -45,42 +39,34 @@ public class ProductController {
      */
     @GetMapping(value = "/history/hot")
     @ResponseBody
-    public ModelMap getHistoryHotProducts(@RequestParam("num") Integer num) {
+    public ModelMap historyHotProducts(@RequestParam("num") Integer nums) {
         ModelMap model = new ModelMap();
-        List<Product> recommendations = null;
         try {
-            recommendations = recommendService.listHistoryHotProducts(num, HISTORY_HOT_PRODCUTS);
+            List<Product> recommendations = recommendService
+                .listHistoryHotProducts(Constant.MONGODB_RATE_PRODUCTS_RECENTLY_COLLECTION, nums);
             model.addAttribute("success", true);
             model.addAttribute("products", recommendations);
         } catch (Exception e) {
+            log.error("error: {}", e.getMessage());
             model.addAttribute("success", false);
             model.addAttribute("msg", e.getMessage());
         }
-
-        StringBuilder builder = new StringBuilder();
-        if (recommendations != null) {
-            for (Product product : recommendations) {
-                builder.append(product).append(" ");
-            }
-        } else {
-            builder.append("数据为空");
-        }
-        log.info(builder.toString());
         return model;
     }
 
     /**
      * 优质商品推荐
      *
-     * @param num 数量
+     * @param nums 数量
      * @return {@link ModelMap}
      */
     @GetMapping(value = "/good/products")
     @ResponseBody
-    public ModelMap getGoodProducts(@RequestParam("num") Integer num) {
+    public ModelMap getGoodProducts(@RequestParam("num") Integer nums) {
         ModelMap model = new ModelMap();
         try {
-            List<Product> recommendations = recommendService.listHistoryHotProducts(num, GOOD_PRODUCTS);
+            List<Product> recommendations = recommendService
+                .listHistoryHotProducts(Constant.MONGODB_RATE_PRODUCTS_COLLECTION, nums);
             model.addAttribute("success", true);
             model.addAttribute("products", recommendations);
         } catch (Exception e) {
@@ -101,9 +87,9 @@ public class ProductController {
     @ResponseBody
     public ModelMap getItemCFProducts(@PathVariable("productId") Integer productId) {
         ModelMap model = new ModelMap();
-        List<Product> recommendatitons = null;
         try {
-            recommendatitons = recommendService.getItemCFProducts(productId, ITEM_CF_RECOMMEND);
+            List<Product> recommendatitons = recommendService
+                .getItemCFProducts(Constant.MONGODB_ITEM_CF_COLLECTION, productId);
             model.addAttribute("success", true);
             model.addAttribute("products", recommendatitons);
         } catch (IOException e) {
@@ -195,7 +181,7 @@ public class ProductController {
     public ModelMap onlineRecs(@RequestParam("userId") String userId) {
         ModelMap model = new ModelMap();
         try {
-            List<Product> res = recommendService.getOnlineRecs(userId, ONLINE_RECOMMEND);
+            List<Product> res = recommendService.getOnlineRecs(Constant.MONGODB_STREAM_RECS_COLLECTION, userId);
             model.addAttribute("success", true);
             model.addAttribute("products", res);
         } catch (Exception e) {
