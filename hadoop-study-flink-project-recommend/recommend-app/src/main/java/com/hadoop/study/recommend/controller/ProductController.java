@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/product")
 public class ProductController {
 
-    private static final String ONLINE_RECOMMEND = "onlineRecommend";
-
     private static final String ONLINE_HOT = "onlineHot";
 
     private static final Integer ONLINE_HOT_NUMS = 10;
