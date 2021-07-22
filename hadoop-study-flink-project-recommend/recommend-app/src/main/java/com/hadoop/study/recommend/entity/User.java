@@ -1,6 +1,7 @@
 package com.hadoop.study.recommend.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -15,6 +16,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 public class User {
 
     @Id
+    @JsonIgnore
     private Integer id;
 
     @Indexed

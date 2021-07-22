@@ -1,7 +1,7 @@
 package com.hadoop.study.recommend.controller;
 
 
-import com.hadoop.study.recommend.entity.ProductEntity;
+import com.hadoop.study.recommend.entity.Product;
 import com.hadoop.study.recommend.service.RecommendService;
 import java.io.IOException;
 import java.util.List;
@@ -46,7 +46,7 @@ public class ProductController {
     @ResponseBody
     public ModelMap getHistoryHotProducts(@RequestParam("num") Integer num) {
         ModelMap model = new ModelMap();
-        List<ProductEntity> recommendations = null;
+        List<Product> recommendations = null;
         try {
             recommendations = recommendService.listHistoryHotProducts(num, HISTORY_HOT_PRODCUTS);
             model.addAttribute("success", true);
@@ -58,7 +58,7 @@ public class ProductController {
 
         StringBuilder builder = new StringBuilder();
         if (recommendations != null) {
-            for (ProductEntity product : recommendations) {
+            for (Product product : recommendations) {
                 builder.append(product).append(" ");
             }
         } else {
@@ -78,7 +78,7 @@ public class ProductController {
     @ResponseBody
     public ModelMap getGoodProducts(@RequestParam("num") Integer num) {
         ModelMap model = new ModelMap();
-        List<ProductEntity> recommendations = null;
+        List<Product> recommendations = null;
         try {
             recommendations = recommendService.listHistoryHotProducts(num, GOOD_PRODUCTS);
             model.addAttribute("success", true);
@@ -91,7 +91,7 @@ public class ProductController {
         StringBuilder builder = new StringBuilder();
 
         if (recommendations != null) {
-            for (ProductEntity product : recommendations) {
+            for (Product product : recommendations) {
                 builder.append(product).append("\t");
             }
         } else {
@@ -111,7 +111,7 @@ public class ProductController {
     @ResponseBody
     public ModelMap getItemCFProducts(@PathVariable("productId") Integer productId) {
         ModelMap model = new ModelMap();
-        List<ProductEntity> recommendatitons = null;
+        List<Product> recommendatitons = null;
         try {
             recommendatitons = recommendService.getItemCFProducts(productId, ITEM_CF_RECOMMEND);
             model.addAttribute("success", true);
@@ -204,7 +204,7 @@ public class ProductController {
     public ModelMap onlineRecs(@RequestParam("userId") String userId) {
         ModelMap model = new ModelMap();
         try {
-            List<ProductEntity> res = recommendService.getOnlineRecs(userId, ONLINE_RECOMMEND);
+            List<Product> res = recommendService.getOnlineRecs(userId, ONLINE_RECOMMEND);
             model.addAttribute("success", true);
             model.addAttribute("products", res);
         } catch (Exception e) {
@@ -224,7 +224,7 @@ public class ProductController {
     public ModelMap onlineHot() {
         ModelMap model = new ModelMap();
         try {
-            List<ProductEntity> res = recommendService.getOnlineHot(ONLINE_HOT, ONLINE_HOT_NUMS);
+            List<Product> res = recommendService.getOnlineHot(ONLINE_HOT, ONLINE_HOT_NUMS);
             model.addAttribute("success", true);
             model.addAttribute("products", res);
         } catch (Exception e) {

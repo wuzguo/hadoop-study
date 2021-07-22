@@ -5,8 +5,7 @@ import com.hadoop.study.recommend.beans.ProductRecs;
 import com.hadoop.study.recommend.beans.RateProduct;
 import com.hadoop.study.recommend.beans.Recommendation;
 import com.hadoop.study.recommend.beans.UserRecs;
-import com.hadoop.study.recommend.dao.ProductRepository;
-import com.hadoop.study.recommend.entity.ProductEntity;
+import com.hadoop.study.recommend.entity.Product;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
@@ -25,9 +24,6 @@ import org.springframework.util.CollectionUtils;
 public class RecommendService {
 
     @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
     private MongoTemplate mongoTemplate;
 
     /**
@@ -35,22 +31,23 @@ public class RecommendService {
      *
      * @param nums      数量
      * @param tableName 表名
-     * @return {@link ProductEntity}
+     * @return {@link Product}
      */
-    public List<ProductEntity> listHistoryHotProducts(Integer nums, String tableName) {
+    public List<Product> listHistoryHotProducts(Integer nums, String tableName) {
         return Optional.of(mongoTemplate.findAll(RateProduct.class, tableName))
             .orElse(Lists.newArrayList()).stream()
             .sorted(Comparator.comparingInt(RateProduct::getCount)).limit(nums)
             .map(product -> {
-                ProductEntity productEntity = findProduct(product.getProductId());
+                Product productEntity = findProduct(product.getProductId());
                 productEntity.setScore(3.5);
                 log.info(productEntity.toString());
                 return productEntity;
             }).collect(Collectors.toList());
     }
 
-    public ProductEntity findProduct(int productId) {
-        return productRepository.findByProductId(productId);
+    public Product findProduct(Integer productId) {
+        Criteria criteria = Criteria.where("productId").is(productId);
+        return mongoTemplate.findOne(new Query(criteria), Product.class);
     }
 
     /**
@@ -58,18 +55,18 @@ public class RecommendService {
      *
      * @param productId 产品ID
      * @param tableName 表名
-     * @return {@link ProductEntity}
+     * @return {@link Product}
      * @throws IOException
      */
-    public List<ProductEntity> getItemCFProducts(Integer productId, String tableName) throws IOException {
-        List<ProductEntity> productEntities = Lists.newArrayList();
+    public List<Product> getItemCFProducts(Integer productId, String tableName) throws IOException {
+        List<Product> productEntities = Lists.newArrayList();
         // 创建条件对象
         Criteria criteria = Criteria.where("productId").is(productId);
         // 创建查询对象，然后将条件对象添加到其中
         ProductRecs productRecs = mongoTemplate.findOne(new Query(criteria), ProductRecs.class, tableName);
         if (productRecs != null) {
             productRecs.getRecs().forEach(recommend -> {
-                ProductEntity product = findProduct(recommend.getProductId());
+                Product product = findProduct(recommend.getProductId());
                 product.setScore(recommend.getDouble());
                 productEntities.add(product);
             });
@@ -77,39 +74,40 @@ public class RecommendService {
         return productEntities;
     }
 
-    public List<ProductEntity> getProductByName(String name) {
-        return productRepository.likeByName(name);
+    public List<Product> getProductByName(String name) {
+        Criteria criteria = Criteria.where("name").regex(String.format(".*%s.*", name), "i");
+        return mongoTemplate.find(new Query(criteria), Product.class);
     }
 
-    public List<ProductEntity> getOnlineRecs(String userId, String tableName) {
-        // 创建条件对象
-        Criteria criteria = Criteria.where("userId").is(userId);
+    public List<Product> getOnlineRecs(String userId, String tableName) {
         // 创建查询对象，然后将条件对象添加到其中
-        UserRecs userRecs = mongoTemplate.findOne(new Query(criteria), UserRecs.class, tableName);
+        UserRecs userRecs = mongoTemplate
+            .findOne(new Query(Criteria.where("userId").is(userId)), UserRecs.class, tableName);
         if (userRecs == null || CollectionUtils.isEmpty(userRecs.getRecs())) {
             return Lists.newArrayList();
         }
-        List<ProductEntity> recommends = Lists.newArrayList();
-        for (Recommendation entry : userRecs.getRecs()) {
-            Integer productId = entry.getProductId();
-            ProductEntity productEntity = productRepository.findByProductId(productId);
-            productEntity.setScore(3.5);
-            recommends.add(productEntity);
-            log.info("onlineRecs: " + productEntity);
+        List<Product> products = Lists.newArrayList();
+        for (Recommendation recommendation : userRecs.getRecs()) {
+            Integer productId = recommendation.getProductId();
+            Product product = mongoTemplate
+                .findOne(new Query(Criteria.where("productId").is(productId)), Product.class);
+            product.setScore(3.5);
+            products.add(product);
+            log.info("onlineRecs: " + product);
         }
-
-        return recommends;
+        return products;
     }
 
-    public List<ProductEntity> getOnlineHot(String tableName, Integer nums) {
+    public List<Product> getOnlineHot(String tableName, Integer nums) {
         List<RateProduct> rateProducts = Optional.of(mongoTemplate.findAll(RateProduct.class, tableName))
             .orElse(Lists.newArrayList());
-        List<ProductEntity> recommends = Lists.newArrayList();
+        List<Product> recommends = Lists.newArrayList();
         for (int i = 0; i < nums && i < rateProducts.size(); i++) {
-            RateProduct product = rateProducts.get(i);
-            ProductEntity productEntity = productRepository.findByProductId(product.getProductId());
-            productEntity.setScore(i + 1D);
-            recommends.add(productEntity);
+            RateProduct rateProduct = rateProducts.get(i);
+            Product product = mongoTemplate
+                .findOne(new Query(Criteria.where("productId").is(rateProduct.getProductId())), Product.class);
+            product.setScore(i + 1D);
+            recommends.add(product);
         }
         return recommends;
     }

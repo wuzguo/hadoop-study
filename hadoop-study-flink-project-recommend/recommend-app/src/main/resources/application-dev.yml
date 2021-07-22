@@ -1,18 +1,4 @@
 spring:
-  datasource:
-    username: root
-    password: 136501412
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://hadoop003/recommend?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-  jpa:
-    database: MYSQL
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      dialect: org.hibernate.dialect.MySQL8Dialect
-      storage_engine: innodb
-      format_sql: true
   kafka:
     bootstrap-servers: 10.20.0.92:9092
     consumer:
