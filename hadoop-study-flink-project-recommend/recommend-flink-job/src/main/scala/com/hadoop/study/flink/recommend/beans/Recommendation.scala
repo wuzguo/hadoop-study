@@ -1,4 +1,4 @@
-package com.hadoop.study.spark.recomnend.beans
+package com.hadoop.study.flink.recommend.beans
 
 /**
  * <B>说明：描述</B>
