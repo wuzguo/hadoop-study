@@ -18,6 +18,7 @@ spring:
     consumer:
       group-id: recommender
       auto-offset-reset: latest
+      enable-auto-commit: false
   data:
     mongodb:
       host: 127.0.0.1
