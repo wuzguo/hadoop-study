@@ -3,6 +3,7 @@ package com.hadoop.study.recommend.controller;
 
 import com.hadoop.study.recommend.entity.Product;
 import com.hadoop.study.recommend.service.RecommendService;
+import com.hadoop.study.recommend.utils.Constant;
 import java.io.IOException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ public class ProductController {
     private RecommendService recommendService;
 
     @Autowired
-    private KafkaTemplate kafkaTemplate;
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     /**
      * 热门推荐
@@ -180,8 +181,9 @@ public class ProductController {
         @RequestParam("score") Double score, @RequestParam("userId") Integer userId) {
         ModelMap model = new ModelMap();
         try {
-            String msg = userId + "," + productId + "," + score + "," + System.currentTimeMillis() / 1000;
-            kafkaTemplate.send("recommender", msg);
+            String logger = userId + "," + productId + "," + score + "," + System.currentTimeMillis() / 1000;
+            kafkaTemplate.send("recommender", logger);
+            log.info(Constant.PRODUCT_RATING_PREFIX + logger);
             model.addAttribute("success", true);
             model.addAttribute("message", "完成评分");
         } catch (Exception e) {

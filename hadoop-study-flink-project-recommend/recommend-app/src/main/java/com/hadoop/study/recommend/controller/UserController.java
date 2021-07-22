@@ -3,6 +3,7 @@ package com.hadoop.study.recommend.controller;
 
 import com.hadoop.study.recommend.entity.User;
 import com.hadoop.study.recommend.service.UserService;
+import java.util.Calendar;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -25,8 +26,8 @@ public class UserController {
     public ModelMap login(@RequestParam("username") String username, @RequestParam("password") String password) {
         ModelMap model = new ModelMap();
         // 查询用户数据
-        User userEntity = new User(username, password);
-        ModelMap query = userService.login(userEntity);
+        User user = new User(username, password);
+        ModelMap query = userService.login(user);
         if (Boolean.parseBoolean(query.get("result").toString())) {
             model.addAttribute("success", true);
             model.addAttribute("user", query.get("user"));
@@ -47,10 +48,10 @@ public class UserController {
             model.addAttribute("msg", "用户已存在");
         } else {
             // 查询用户数据
-            User userEntity = new User(username, password);
+            User entity = new User(username, password);
             model.addAttribute("success", true);
-            userEntity.setCreateTime(System.currentTimeMillis());
-            User res = userService.add(userEntity);
+            entity.setCreateTime(Calendar.getInstance().getTime());
+            User res = userService.add(entity);
             model.addAttribute("user", res);
             model.addAttribute("msg", "注册成功");
         }

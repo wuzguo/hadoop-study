@@ -63,7 +63,7 @@ export default class Login extends Vue {
 
       // 将登陆信息缓存在浏览器里面
       localStorage.setItem('user', res.data.user.name)
-      localStorage.setItem('userId', res.data.user.id)
+      localStorage.setItem('userId', res.data.user.userId)
 
       // 通知Head组件该更新数据了
       this.propMsg()

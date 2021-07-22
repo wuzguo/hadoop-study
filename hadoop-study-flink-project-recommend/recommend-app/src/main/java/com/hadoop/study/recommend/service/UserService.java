@@ -2,6 +2,7 @@ package com.hadoop.study.recommend.service;
 
 import com.hadoop.study.recommend.entity.User;
 import java.util.Calendar;
+import java.util.Random;
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,7 +23,9 @@ public class UserService {
 
     public User add(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setCreateTime(Calendar.getInstance().getTimeInMillis());
+        // 随便搞一个
+        user.setUserId(new Random().nextInt(100000));
+        user.setCreateTime(Calendar.getInstance().getTime());
         return mongoTemplate.insert(user);
     }
 

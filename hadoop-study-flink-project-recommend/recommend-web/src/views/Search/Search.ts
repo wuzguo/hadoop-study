@@ -33,7 +33,7 @@ export default class Search extends Vue {
 
             let res = await this.axios.get(url, {
                 params: {
-                    sql: searchInput
+                    name: searchInput
                 }
             })
             console.dir(res)
@@ -48,11 +48,11 @@ export default class Search extends Vue {
 
     public async doRate(rate: number, productId: number) {
         console.log('收到评分数据,productId: ' + productId + " rate: " + rate)
-        let user = localStorage.getItem('user')
+        let userId = localStorage.getItem('userId')
         let res = await this.axios.get('/api/product/rate/' + productId, {
             params: {
                 score: rate,
-                username: user
+                userId: userId
             }
         })
         if (res.data.success == true) {

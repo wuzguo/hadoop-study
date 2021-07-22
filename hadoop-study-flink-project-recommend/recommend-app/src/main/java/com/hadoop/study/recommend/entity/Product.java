@@ -1,12 +1,14 @@
 package com.hadoop.study.recommend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.sql.Timestamp;
+import java.util.Date;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.MongoId;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 
 @Data
@@ -14,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "products")
 public class Product {
 
-    @Id
+    @MongoId
     @JsonIgnore
     private String id;
 
@@ -31,5 +33,6 @@ public class Product {
 
     private Double score;
 
-    private Timestamp createTime;
+    @DateTimeFormat(iso = ISO.DATE_TIME)
+    private Date createTime;
 }
