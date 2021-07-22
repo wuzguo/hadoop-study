@@ -25,7 +25,7 @@ export default class Login extends Vue {
 
   public form: any = {
     'username': 'admin',
-    'password': 'admin'
+    'password': '123456'
   }
 
   public user: any = {

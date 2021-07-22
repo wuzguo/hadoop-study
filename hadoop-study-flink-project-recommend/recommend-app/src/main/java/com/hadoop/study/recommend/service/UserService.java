@@ -1,9 +1,11 @@
 package com.hadoop.study.recommend.service;
 
 import com.hadoop.study.recommend.dao.UserRepository;
-import com.hadoop.study.recommend.entity.UserEntity;
+import com.hadoop.study.recommend.entity.User;
+import java.util.Calendar;
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -14,17 +16,21 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
     @Resource
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserEntity add(UserEntity userEntity) {
+    public User add(User userEntity) {
         userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
-        return userRepository.save(userEntity);
+        userEntity.setCreateTime(Calendar.getInstance().getTimeInMillis());
+        return mongoTemplate.insert(userEntity);
     }
 
-    public ModelMap login(UserEntity userEntity) {
+    public ModelMap login(User userEntity) {
         ModelMap modelMap = new ModelMap();
-        UserEntity user = userRepository.getUserByName(userEntity.getName());
+        User user = userRepository.getUserByName(userEntity.getName());
         if (user == null) {
             modelMap.addAttribute("result", false);
             modelMap.addAttribute("msg", "用户不存在");
@@ -42,7 +48,7 @@ public class UserService {
         return modelMap;
     }
 
-    public UserEntity findByName(String name) {
+    public User findByName(String name) {
         return userRepository.getUserByName(name);
     }
 }

@@ -1,7 +1,7 @@
 package com.hadoop.study.recommend.controller;
 
 
-import com.hadoop.study.recommend.entity.UserEntity;
+import com.hadoop.study.recommend.entity.User;
 import com.hadoop.study.recommend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class UserController {
     public ModelMap login(@RequestParam("username") String username, @RequestParam("password") String password) {
         ModelMap model = new ModelMap();
         // 查询用户数据
-        UserEntity userEntity = new UserEntity(username, password);
+        User userEntity = new User(username, password);
         ModelMap query = userService.login(userEntity);
         if (Boolean.parseBoolean(query.get("result").toString())) {
             model.addAttribute("success", true);
@@ -41,16 +41,16 @@ public class UserController {
     @ResponseBody
     public ModelMap register(@RequestParam("username") String username, @RequestParam("password") String password) {
         ModelMap model = new ModelMap();
-        // 查询用户数据
-        UserEntity userEntity = new UserEntity(username, password);
-        UserEntity userEntity2 = userService.findByName(username);
-        if (userEntity2 != null) {
+        User user = userService.findByName(username);
+        if (user != null) {
             model.addAttribute("success", false);
             model.addAttribute("msg", "用户已存在");
         } else {
+            // 查询用户数据
+            User userEntity = new User(username, password);
             model.addAttribute("success", true);
             userEntity.setCreateTime(System.currentTimeMillis());
-            UserEntity res = userService.add(userEntity);
+            User res = userService.add(userEntity);
             model.addAttribute("user", res);
             model.addAttribute("msg", "注册成功");
         }
