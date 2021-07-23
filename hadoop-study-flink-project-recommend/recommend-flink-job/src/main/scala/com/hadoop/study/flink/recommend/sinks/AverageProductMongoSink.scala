@@ -15,7 +15,7 @@ import org.apache.flink.types.Row
  * @date 2021/7/22 15:07
  */
 
-case class RateRecentlyProductMongoSink(db: String, collection: String) extends RichSinkFunction[(Boolean, Row)] {
+case class AverageProductMongoSink(db: String, collection: String) extends RichSinkFunction[(Boolean, Row)] {
 
     private var mongoCollection: MongoCollection = _
 
@@ -25,9 +25,8 @@ case class RateRecentlyProductMongoSink(db: String, collection: String) extends 
 
     override def invoke(value: (Boolean, Row), context: SinkFunction.Context): Unit = {
         // 删除数据
-        mongoCollection.remove(MongoDBObject("productId" -> value._2.getField(0), "yearMonth" -> value._2.getField(2)))
+        mongoCollection.remove(MongoDBObject("productId" -> value._2.getField(0)))
         // 保存数据
-        mongoCollection.insert(MongoDBObject("productId" -> value._2.getField(0),
-            "count" -> value._2.getField(1), "yearMonth" -> value._2.getField(2)))
+        mongoCollection.insert(MongoDBObject("productId" -> value._2.getField(0), "avg" -> value._2.getField(1)))
     }
 }

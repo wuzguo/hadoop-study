@@ -1,7 +1,7 @@
 package com.hadoop.study.flink.recommend
 
 import com.hadoop.study.flink.recommend.beans.{Rating, RecentRating}
-import com.hadoop.study.flink.recommend.sinks.{RateProductMongoSink, RateRecentlyProductMongoSink}
+import com.hadoop.study.flink.recommend.sinks.{AverageProductMongoSink, RateProductMongoSink, RateRecentlyProductMongoSink}
 import com.hadoop.study.flink.recommend.sources.RatingMongoSource
 import org.apache.flink.api.common.functions.MapFunction
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, createTypeInformation}
@@ -43,9 +43,9 @@ object StatisticsRecommender {
     def historyHotProducts(tableEnv: StreamTableEnvironment, ratingStream: DataStream[Rating]): Unit = {
         val tableRating = tableEnv.fromDataStream(ratingStream, $"productId")
         // 5. 创建视图，执行SQL
-        tableEnv.createTemporaryView("ratings", tableRating)
+        tableEnv.createTemporaryView("rate_products", tableRating)
         // 只保存前 100 热门数据
-        val sql = "select productId, count(productId) as counts from ratings group by productId order by counts desc limit 100"
+        val sql = "select productId, count(productId) as counts from rate_products group by productId order by counts desc limit 100"
         // 执行
         val table = tableEnv.sqlQuery(sql)
         // 写表
@@ -59,19 +59,32 @@ object StatisticsRecommender {
             override def map(value: Rating): RecentRating = {
                 val format = new SimpleDateFormat(patton)
                 val time = format.format(new Date(value.timestamp * 1000L))
-                RecentRating(value.userId, value.productId, time.toInt)
+                RecentRating(value.productId, time)
             }
         }
-        
+
         val sourceStream = ratingStream.map(YearMonthFunction("yyyyMM"))
 
         val tableRating = tableEnv.fromDataStream(sourceStream, $"productId", $"yearMonth")
         // 5. 创建视图，执行SQL
-        tableEnv.createTemporaryView("recentRatings", tableRating)
-        val sql = "select productId, count(productId) as counts, yearMonth from recentRatings group by yearMonth, productId order by counts desc"
+        tableEnv.createTemporaryView("rate_recently_products", tableRating)
+        val sql = "select productId, count(productId) as counts, yearMonth from rate_recently_products group by yearMonth, productId"
         // 执行
         val table = tableEnv.sqlQuery(sql)
         // 写表
         table.toRetractStream[Row].addSink(RateRecentlyProductMongoSink("recommender", "rate_recently_products")).setParallelism(1)
+    }
+
+    // 优质商品
+    def goodProducts(tableEnv: StreamTableEnvironment, ratingStream: DataStream[Rating]): Unit = {
+        val tableRating = tableEnv.fromDataStream(ratingStream, $"productId", $"score")
+        // 5. 创建视图，执行SQL
+        tableEnv.createTemporaryView("average_products", tableRating)
+        // 只保存前 100 热门数据
+        val sql = "select productId, avg(score) as avgScore from average_products group by productId order by avgScore desc limit 100"
+        // 执行
+        val table = tableEnv.sqlQuery(sql)
+        // 写表
+        table.toRetractStream[Row].addSink(AverageProductMongoSink("recommender", "average_products")).setParallelism(1)
     }
 }
