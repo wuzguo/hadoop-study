@@ -2,7 +2,6 @@ package com.hadoop.study.flink.recommend.sinks
 
 import com.hadoop.study.flink.recommend.utils.ConnHelper
 import com.mongodb.casbah.MongoCollection
-import lombok.extern.slf4j.Slf4j
 import org.apache.flink.api.common.io.OutputFormat
 import org.apache.flink.configuration.Configuration
 
@@ -14,7 +13,6 @@ import org.apache.flink.configuration.Configuration
  * @date 2021/7/22 15:07
  */
 
-@Slf4j
 case class MongoSink[T](db: String, collection: String) extends OutputFormat[T] {
 
     private var mongoClient: MongoCollection = _

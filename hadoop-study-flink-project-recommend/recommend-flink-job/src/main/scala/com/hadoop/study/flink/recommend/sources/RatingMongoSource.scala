@@ -22,11 +22,12 @@ case class RatingMongoSource(db: String, collection: String) extends RichSourceF
     override def run(ctx: SourceFunction.SourceContext[Rating]): Unit = {
         val resultSet = mongoCollection.find()
         if (resultSet.nonEmpty) {
-            resultSet.foreach(value => ctx.collect(Rating(value.get("userId").toString.toInt,
-                value.get("productId").toString.toInt,
-                value.get("score").toString.toDouble,
-                value.get("timestamp").toString.toInt,
-                value.get("createTime").toString.toLong)))
+            resultSet.foreach(value => ctx.collect(
+                Rating(value.get("userId").toString.toInt,
+                    value.get("productId").toString.toInt,
+                    value.get("score").toString.toDouble,
+                    value.get("timestamp").toString.toInt,
+                    value.get("createTime").toString.toLong)))
         }
     }
 
