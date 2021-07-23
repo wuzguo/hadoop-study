@@ -1,6 +1,5 @@
 package com.hadoop.study.flink.recommend
 
-import com.hadoop.study.flink.recommend.beans.RateProduct
 import com.hadoop.study.flink.recommend.sinks.RateProductMongoSink
 import com.hadoop.study.flink.recommend.sources.RatingMongoSource
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
@@ -42,9 +41,8 @@ object StatisticsRecommender {
 
     // 历史热门
     def historyHotProducts(tableEnv: StreamTableEnvironment): Unit = {
-        val sql2 = " SELECT * , ROW_NUMBER() OVER (PARTITION BY productId ORDER BY hot DESC) as rowNumber FROM (SELECT productId, COUNT(productId) as hot FROM ratings GROUP BY productId ORDER BY hot DESC)"
         // 只保存前 100 热门数据
-        val sql = "SELECT productId, COUNT(productId) as counts FROM ratings GROUP BY productId ORDER BY counts DESC  LIMIT 100"
+        val sql = "select productId, count(productId) as counts from ratings group by productId order by counts desc limit 100"
         // 执行
         val table = tableEnv.sqlQuery(sql)
         // 写表

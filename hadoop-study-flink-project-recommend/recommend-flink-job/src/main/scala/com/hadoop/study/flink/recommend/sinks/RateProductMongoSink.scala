@@ -24,7 +24,6 @@ case class RateProductMongoSink(db: String, collection: String) extends RichSink
     override def close(): Unit = mongoCollection = null
 
     override def invoke(value: (Boolean, Row), context: SinkFunction.Context): Unit = {
-        println(s"row: ${value._2.getField(0)},  ${value._2.getField(1)}")
         // 删除数据
         mongoCollection.remove(MongoDBObject("productId" -> value._2.getField(0)))
         // 保存数据

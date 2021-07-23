@@ -106,7 +106,7 @@ public class RecommendService {
             RateProduct rateProduct = rateProducts.get(i);
             Product product = mongoTemplate
                 .findOne(new Query(Criteria.where("productId").is(rateProduct.getProductId())), Product.class);
-            product.setScore(i + 1D);
+            product.setScore(i + 1d);
             recommends.add(product);
         }
         return recommends;
