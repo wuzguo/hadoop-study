@@ -13,7 +13,7 @@ import org.apache.flink.table.functions.ScalarFunction
 
 class SimilarityFunction extends ScalarFunction {
 
-    def eval(product1: Int, product2: Int, coCount: BigInt, count1: Int, count2: Int): CoSimProduct = {
+    def eval(product1: Int, product2: Int, coCount: BigDecimal, count1: Int, count2: Int): CoSimProduct = {
         val coSim = coCount.toDouble / Math.sqrt(count1 * count2)
         CoSimProduct(product1, product2, coSim)
     }

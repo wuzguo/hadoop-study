@@ -44,24 +44,25 @@ object ItemCFRecommender {
     }
 
     def calSimilarity(tableEnv: StreamTableEnvironment, ratingStream: DataStream[Rating]): Unit = {
-        val countStream = ratingStream.flatMap(new FlatMapFunction[Rating, ProductCount] {
+        val keyedStream = ratingStream.flatMap(new FlatMapFunction[Rating, ProductCount] {
             override def flatMap(value: Rating, out: Collector[ProductCount]): Unit = ProductCount(value.userId, value.productId, value.score, 1)
-        })
+        }).keyBy(_.userId).sum("score")
 
-        val keyedStream = countStream.keyBy(_.userId).sum("score")
         val joinedStream = keyedStream.join(keyedStream)
           .where(_.userId).equalTo(_.userId)
           .window(TumblingEventTimeWindows.of(Time.of(5, TimeUnit.SECONDS)))
           .apply(new FlatJoinFunction[ProductCount, ProductCount, (Int, Int, Int, Int, Int)] {
-              override def join(first: ProductCount, second: ProductCount, out: Collector[(Int, Int, Int, Int, Int)]): Unit = out.collect((first.userId, first.productId, first.count, second.productId, second.count))
+              override def join(first: ProductCount, second: ProductCount, out: Collector[(Int, Int, Int, Int, Int)]): Unit =
+                  out.collect((first.userId, first.productId, first.count, second.productId, second.count))
           })
-
         // 转换
         val tableJoined = tableEnv.fromDataStream(joinedStream, $"userId", $"productId1", $"count1", $"productId2", $"count2")
+        tableJoined.printSchema()
+
         // 创建视图，执行SQL
         tableEnv.createTemporaryView("item_cf_recommends", tableJoined)
         // SQL
-        val sql = "select productId1, productId2 ,count(userId) as coCount, avg(count1) as count1, avg(count2) as count2 from item_cf_recommends group by productId1, productId2"
+        val sql = "select productId1, productId2, count(userId) as coCount, avg(count1) as count1, avg(count2) as count2 from item_cf_recommends group by productId1, productId2"
         // 执行
         val table = tableEnv.sqlQuery(sql)
         table.printSchema()
@@ -87,6 +88,6 @@ object ItemCFRecommender {
         })
 
         // sink
-        recsStream.addSink(ProductRecsMongoSink("recommender", "rate_products")).setParallelism(1)
+        recsStream.addSink(ProductRecsMongoSink("recommender", "product_recs")).setParallelism(1)
     }
 }
