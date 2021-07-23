@@ -22,7 +22,7 @@ object StatisticsRecommender {
         // 2、添加自定义source  连接mongodb
         val dataStream = env.addSource(RatingMongoSource("recommender", "ratings"))
         // 3、打印数据
-       // dataStream.print()
+        // dataStream.print()
 
         // 4. 创建表环境
         val tableEnv = StreamTableEnvironment.create(env)
@@ -38,22 +38,20 @@ object StatisticsRecommender {
         env.execute("statistics recommender")
     }
 
-    import org.apache.flink.api.java.typeutils.TupleTypeInfo
-
     // 历史热门
     def historyHotProducts(tableEnv: StreamTableEnvironment): Unit = {
         val sql2 = " SELECT * , ROW_NUMBER() OVER (PARTITION BY productId ORDER BY hot DESC) as rowNumber FROM (SELECT productId, COUNT(productId) as hot FROM ratings GROUP BY productId ORDER BY hot DESC)"
         // 只保存前 100 热门数据
-         val sql = "SELECT productId, COUNT(productId) as counts FROM ratings GROUP BY productId ORDER BY counts DESC  LIMIT 100"
+        val sql = "SELECT productId, COUNT(productId) as counts FROM ratings GROUP BY productId ORDER BY counts DESC  LIMIT 100"
 
-      // val sql = "select * from ratings "
+        // val sql = "select * from ratings "
         val table = tableEnv.sqlQuery(sql)
-       table.printSchema()
-    //    value.print("sql")
+        table.printSchema()
+        //    value.print("sql")
 
         table.toRetractStream[Row].print()
 
-       // tableEnv.execute("xx")
+        // tableEnv.execute("xx")
         //   val mongoConfig = MongoConfig("mongodb://localhost:27017/recommender", "recommender")
         //  result.output(MongoSink[RateProducts]("recommender", "rate_products"))
     }
