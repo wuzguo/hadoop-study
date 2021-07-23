@@ -34,7 +34,8 @@ object StatisticsRecommender {
         historyHotProducts(tableEnv, dataStream)
         // 6.2 近期热门
         recentHotProducts(tableEnv, dataStream)
-
+        // 6.3 优质商品
+        goodProducts(tableEnv, dataStream)
         // 7、执行任务
         env.execute("statistics recommender")
     }
