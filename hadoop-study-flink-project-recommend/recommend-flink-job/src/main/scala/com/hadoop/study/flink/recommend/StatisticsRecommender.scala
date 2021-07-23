@@ -1,8 +1,9 @@
 package com.hadoop.study.flink.recommend
 
-import com.hadoop.study.flink.recommend.beans.Rating
+import com.hadoop.study.flink.recommend.beans.{Rating, RecentRating}
 import com.hadoop.study.flink.recommend.sinks.{RateProductMongoSink, RateRecentlyProductMongoSink}
 import com.hadoop.study.flink.recommend.sources.RatingMongoSource
+import org.apache.flink.api.common.functions.MapFunction
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.table.api.FieldExpression
 import org.apache.flink.table.api.bridge.scala.{StreamTableEnvironment, tableConversions}
@@ -53,19 +54,23 @@ object StatisticsRecommender {
 
     // 近期热门
     def recentHotProducts(tableEnv: StreamTableEnvironment, ratingStream: DataStream[Rating]): Unit = {
-        val sourceStream = ratingStream.map(rating => {
-            val format = new SimpleDateFormat("yyyyMM")
-            val time = format.format(new Date(rating.timestamp * 1000L))
-            (rating.userId, rating.productId, time.toInt)
-        })
+        val sourceStream = ratingStream.map(YearMonthFunction("yyyyMM"))
 
         val tableRating = tableEnv.fromDataStream(sourceStream, $"userId", $"productId", $"yearMonth")
         // 5. 创建视图，执行SQL
         tableEnv.createTemporaryView("recentRatings", tableRating)
-        val sql = "select productId, count(productId) as counts, yearMonth from recentRatings group by yearMonth, productId order by yearMonth desc, counts desc"
+        val sql = "select productId, count(productId) as counts, yearMonth from recentRatings group by yearMonth, productId"
         // 执行
         val table = tableEnv.sqlQuery(sql)
         // 写表
         table.toRetractStream[Row].addSink(RateRecentlyProductMongoSink("recommender", "rate_recently_products")).setParallelism(1)
+    }
+
+    case class YearMonthFunction(patton: String) extends MapFunction[Rating, RecentRating] {
+        override def map(value: Rating): RecentRating = {
+            val format = new SimpleDateFormat(patton)
+            val time = format.format(new Date(value.timestamp * 1000L))
+            RecentRating(value.userId, value.productId, time.toInt)
+        }
     }
 }
