@@ -2,14 +2,9 @@ package com.hadoop.study.flink.recommend.sources
 
 import com.hadoop.study.flink.recommend.beans.Rating
 import com.hadoop.study.flink.recommend.utils.ConnHelper
-import com.mongodb.casbah.Imports.DBObject
 import com.mongodb.casbah.MongoCollection
-import org.apache.flink.api.common.io.statistics.BaseStatistics
-import org.apache.flink.api.common.io.{DefaultInputSplitAssigner, RichInputFormat}
-import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.api.java.typeutils.ResultTypeQueryable
 import org.apache.flink.configuration.Configuration
-import org.apache.flink.core.io.{GenericInputSplit, InputSplit, InputSplitAssigner}
+import org.apache.flink.streaming.api.functions.source.{RichSourceFunction, SourceFunction}
 
 
 /**
@@ -20,48 +15,22 @@ import org.apache.flink.core.io.{GenericInputSplit, InputSplit, InputSplitAssign
  * @date 2021/7/22 15:55
  */
 
-case class RatingMongoSource(db: String, collection: String) extends RichInputFormat[Rating, InputSplit] with ResultTypeQueryable[Rating] {
+case class RatingMongoSource(db: String, collection: String) extends RichSourceFunction[Rating] {
 
-    private var mongoClient: MongoCollection = _
+    private var mongoCollection: MongoCollection = _
 
-    private var hasNext = false
-
-    private var index = 0
-
-    private var resultSet: List[DBObject] = _
-
-    override def getProducedType: TypeInformation[Rating] = TypeInformation.of(classOf[Rating])
-
-    override def configure(parameters: Configuration): Unit = {}
-
-    override def getStatistics(cachedStatistics: BaseStatistics): BaseStatistics = cachedStatistics
-
-    override def createInputSplits(minNumSplits: Int): Array[InputSplit] = Array(new GenericInputSplit(0, 1))
-
-    override def getInputSplitAssigner(inputSplits: Array[InputSplit]): InputSplitAssigner = new DefaultInputSplitAssigner(inputSplits)
-
-    override def open(split: InputSplit): Unit = {
-        mongoClient = ConnHelper.mongoClient(db)(collection)
-        resultSet = mongoClient.find().toList
-        index = 0
-        hasNext = resultSet.nonEmpty
-        println(s"长度：${resultSet.size}，hasNext: ${hasNext}, index: ${index}")
+    override def run(ctx: SourceFunction.SourceContext[Rating]): Unit = {
+        val resultSet = mongoCollection.find()
+        if (resultSet.nonEmpty) {
+            resultSet.foreach(value => ctx.collect(Rating(value.get("userId").toString.toInt,
+                value.get("productId").toString.toInt,
+                value.get("score").toString.toDouble,
+                value.get("timestamp").toString.toInt,
+                value.get("createTime").toString.toLong)))
+        }
     }
 
-    override def reachedEnd(): Boolean = !hasNext
+    override def cancel(): Unit = mongoCollection = null
 
-    override def nextRecord(reuse: Rating): Rating = {
-        if (!hasNext) return null
-        val value = resultSet(index)
-        index += 1
-        hasNext = resultSet.size > (index + 1)
-        println(s"长度：${resultSet.size}，hasNext: ${hasNext}, index: ${index}")
-        Rating(Integer.parseInt(value.get("userId").toString),
-            Integer.parseInt(value.get("productId").toString),
-            java.lang.Double.parseDouble(value.get("score").toString),
-            Integer.parseInt(value.get("timestamp").toString),
-            java.lang.Long.parseLong(value.get("createTime").toString))
-    }
-
-    override def close(): Unit = {}
+    override def open(parameters: Configuration): Unit = mongoCollection = ConnHelper.mongoClient(db)(collection)
 }
