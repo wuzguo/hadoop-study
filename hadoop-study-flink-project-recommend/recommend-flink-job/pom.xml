@@ -18,7 +18,7 @@
         <encoding>UTF-8</encoding>
         <flink.version>1.12.4</flink.version>
         <scala.binary.version>2.12</scala.binary.version>
-        <scala.version>2.12.12</scala.version>
+        <scala.version>2.12.10</scala.version>
         <jedis.version>3.6.1</jedis.version>
         <casbah.version>3.1.1</casbah.version>
     </properties>
@@ -74,6 +74,20 @@
             <groupId>org.mongodb</groupId>
             <artifactId>casbah-core_${scala.binary.version}</artifactId>
             <version>${casbah.version}</version>
+        </dependency>
+        <!--引入日志依赖-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>

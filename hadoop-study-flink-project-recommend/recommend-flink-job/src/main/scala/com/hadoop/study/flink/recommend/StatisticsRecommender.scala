@@ -1,5 +1,7 @@
 package com.hadoop.study.flink.recommend
 
+import com.hadoop.study.flink.recommend.beans.RateProduct
+import com.hadoop.study.flink.recommend.sinks.RateProductMongoSink
 import com.hadoop.study.flink.recommend.sources.RatingMongoSource
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.table.api.FieldExpression
@@ -43,16 +45,9 @@ object StatisticsRecommender {
         val sql2 = " SELECT * , ROW_NUMBER() OVER (PARTITION BY productId ORDER BY hot DESC) as rowNumber FROM (SELECT productId, COUNT(productId) as hot FROM ratings GROUP BY productId ORDER BY hot DESC)"
         // 只保存前 100 热门数据
         val sql = "SELECT productId, COUNT(productId) as counts FROM ratings GROUP BY productId ORDER BY counts DESC  LIMIT 100"
-
-        // val sql = "select * from ratings "
+        // 执行
         val table = tableEnv.sqlQuery(sql)
-        table.printSchema()
-        //    value.print("sql")
-
-        table.toRetractStream[Row].print()
-
-        // tableEnv.execute("xx")
-        //   val mongoConfig = MongoConfig("mongodb://localhost:27017/recommender", "recommender")
-        //  result.output(MongoSink[RateProducts]("recommender", "rate_products"))
+        // 写表
+        table.toRetractStream[Row].addSink(RateProductMongoSink("recommender", "rate_products"))
     }
 }

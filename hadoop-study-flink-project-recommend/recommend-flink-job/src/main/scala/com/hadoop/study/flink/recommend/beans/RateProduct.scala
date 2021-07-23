@@ -8,4 +8,4 @@ package com.hadoop.study.flink.recommend.beans
  * @date 2021/7/22 15:30
  */
 
-case class RateProducts(productId: Int, count: Int)
+case class RateProduct(productId: Int, counts: Int)
