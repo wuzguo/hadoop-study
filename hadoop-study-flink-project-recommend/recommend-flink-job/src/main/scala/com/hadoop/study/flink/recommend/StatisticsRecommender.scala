@@ -41,7 +41,7 @@ object StatisticsRecommender {
 
     // 历史热门
     def historyHotProducts(tableEnv: StreamTableEnvironment, ratingStream: DataStream[Rating]): Unit = {
-        val tableRating = tableEnv.fromDataStream(ratingStream, $"userId", $"productId")
+        val tableRating = tableEnv.fromDataStream(ratingStream, $"productId")
         // 5. 创建视图，执行SQL
         tableEnv.createTemporaryView("ratings", tableRating)
         // 只保存前 100 热门数据
@@ -54,23 +54,24 @@ object StatisticsRecommender {
 
     // 近期热门
     def recentHotProducts(tableEnv: StreamTableEnvironment, ratingStream: DataStream[Rating]): Unit = {
+
+        case class YearMonthFunction(patton: String) extends MapFunction[Rating, RecentRating] {
+            override def map(value: Rating): RecentRating = {
+                val format = new SimpleDateFormat(patton)
+                val time = format.format(new Date(value.timestamp * 1000L))
+                RecentRating(value.userId, value.productId, time.toInt)
+            }
+        }
+        
         val sourceStream = ratingStream.map(YearMonthFunction("yyyyMM"))
 
-        val tableRating = tableEnv.fromDataStream(sourceStream, $"userId", $"productId", $"yearMonth")
+        val tableRating = tableEnv.fromDataStream(sourceStream, $"productId", $"yearMonth")
         // 5. 创建视图，执行SQL
         tableEnv.createTemporaryView("recentRatings", tableRating)
-        val sql = "select productId, count(productId) as counts, yearMonth from recentRatings group by yearMonth, productId"
+        val sql = "select productId, count(productId) as counts, yearMonth from recentRatings group by yearMonth, productId order by counts desc"
         // 执行
         val table = tableEnv.sqlQuery(sql)
         // 写表
         table.toRetractStream[Row].addSink(RateRecentlyProductMongoSink("recommender", "rate_recently_products")).setParallelism(1)
-    }
-
-    case class YearMonthFunction(patton: String) extends MapFunction[Rating, RecentRating] {
-        override def map(value: Rating): RecentRating = {
-            val format = new SimpleDateFormat(patton)
-            val time = format.format(new Date(value.timestamp * 1000L))
-            RecentRating(value.userId, value.productId, time.toInt)
-        }
     }
 }

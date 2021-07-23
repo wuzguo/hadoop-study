@@ -8,7 +8,7 @@ package com.hadoop.study.flink.recommend.beans
  * @date 2021/7/20 14:34
  */
 
-case class RecentRating(userId: Int, productId: Int, yearMonth: Int) {
+case class RecentRating(productId: Int, yearMonth: Int) {
 
-    override def toString: String = s"(userId: ${userId}, productId: ${productId}, yearMonth: ${yearMonth})"
+    override def toString: String = s"productId: ${productId}, yearMonth: ${yearMonth})"
 }
