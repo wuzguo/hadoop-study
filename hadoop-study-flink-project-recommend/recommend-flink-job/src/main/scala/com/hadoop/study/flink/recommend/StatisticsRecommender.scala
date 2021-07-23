@@ -78,9 +78,9 @@ object StatisticsRecommender {
 
     // 优质商品
     def goodProducts(tableEnv: StreamTableEnvironment, ratingStream: DataStream[Rating]): Unit = {
-        val tableRating = tableEnv.fromDataStream(ratingStream, $"productId", $"score")
+        val averageProducts = tableEnv.fromDataStream(ratingStream, $"productId", $"score")
         // 5. 创建视图，执行SQL
-        tableEnv.createTemporaryView("average_products", tableRating)
+        tableEnv.createTemporaryView("average_products", averageProducts)
         // 只保存前 100 热门数据
         val sql = "select productId, avg(score) as avgScore from average_products group by productId order by avgScore desc limit 100"
         // 执行

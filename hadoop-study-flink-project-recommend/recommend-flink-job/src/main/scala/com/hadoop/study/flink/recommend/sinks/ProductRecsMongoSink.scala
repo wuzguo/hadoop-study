@@ -2,6 +2,7 @@ package com.hadoop.study.flink.recommend.sinks
 
 import com.hadoop.study.flink.recommend.beans.ProductRecs
 import com.hadoop.study.flink.recommend.utils.ConnHelper
+import com.mongodb.casbah.Imports.DBObject
 import com.mongodb.casbah.MongoCollection
 import com.mongodb.casbah.commons.MongoDBObject
 import org.apache.flink.configuration.Configuration
@@ -30,8 +31,8 @@ case class ProductRecsMongoSink(db: String, collection: String) extends RichSink
         mongoCollection.remove(MongoDBObject("productId" -> value.productId))
 
         // 构造集合
-        val recs = ListBuffer[MongoDBObject]()
-        value.recs.foreach(recommend => recs += MongoDBObject("productId" -> recommend.productId, "score" -> recommend.score))
+        val recs = ListBuffer[DBObject]()
+        value.recs.foreach(rec => recs += DBObject("productId" -> rec.productId, "score" -> rec.score))
         // 保存数据
         mongoCollection.insert(MongoDBObject("productId" -> value.productId, "recs" -> recs))
     }

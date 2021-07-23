@@ -64,10 +64,11 @@ object ItemCFRecommender {
         val sql = "select productId1, productId2 ,count(userId) as coCount, avg(count1) as count1, avg(count2) as count2 from item_cf_recommends group by productId1, productId2"
         // 执行
         val table = tableEnv.sqlQuery(sql)
+        table.printSchema()
         // 注册函数
-        tableEnv.createTemporarySystemFunction("simCal", classOf[SimilarityFunction])
-        val simTable = table.map(call("simCal", $"productId1", $"productId1", $"coCount", $"count1", $"count2"))
-          .as("productId1", "product2", "sim")
+        tableEnv.createTemporaryFunction("simCal", classOf[SimilarityFunction])
+        val simTable = table.map(call("simCal", $"productId1", $"productId2", $"coCount", $"count1", $"count2"))
+          .as($"productId1", $"product2", $"sim")
           .filter($"productId1" !== $"product2")
 
         val recsStream = simTable.toRetractStream[Row].map(new MapFunction[(Boolean, Row), ProductRecs] {
@@ -79,7 +80,7 @@ object ItemCFRecommender {
         }).keyBy(_.productId).reduce(new ReduceFunction[ProductRecs] {
             override def reduce(value1: ProductRecs, value2: ProductRecs): ProductRecs = {
                 val recs: mutable.Buffer[Recommendation] = value1.recs.toBuffer
-                recs += value2.recs
+                value2.recs.foreach(rec => recs += rec)
                 recs.sortBy(_.score)(Ordering.Double.reverse)
                 ProductRecs(value1.productId, recs)
             }
