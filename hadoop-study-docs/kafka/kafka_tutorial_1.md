@@ -12,7 +12,7 @@ topic是逻辑上的概念，而partition是物理上的概念，每个partition
 
 
 
-由于生产者生产的消息会不断追加到log文件末尾，为防止log文件过大导致数据定位效率低下，Kafka采取了分片和索引机制，将每个partition分为多个segment。每个segment对应两个文件——“.index”文件和“.log”文件。这些文件位于一个文件夹下，该文件夹的命名规则为：topic名称+分区序号。
+由于生产者生产的消息会不断追加到log文件末尾，为防止log文件过大导致数据定位效率低下，Kafka采取了分片和索引机制，将每个partition分为多个segment。每个segment对应两个文件—— ".index" 文件和 ".log" 文件。这些文件位于一个文件夹下，该文件夹的命名规则为：topic名称+分区序号。
 
 假如top-events这个topic有三个分区，则其对应的文件夹为：top-events-0、top-events-1、top-events-2。
 
@@ -24,7 +24,7 @@ index和log文件以当前segment的第一条消息的offset命名。下图为in
 
 ![](../images/202104/8.png)
 
-“.index”文件存储大量的索引信息，“.log”文件存储大量的数据，索引文件中的元数据指向对应数据文件中message的物理偏移地址。
+".index"文件存储大量的索引信息，".log"文件存储大量的数据，索引文件中的元数据指向对应数据文件中message的物理偏移地址。
 
 ### Kafka生产者
 
