@@ -24,6 +24,14 @@ object WordCount2 {
         val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
         // 计算
         wordCount0(sc, rdd)
+        wordCount1(sc, rdd)
+        wordCount2(sc, rdd)
+        wordCount3(sc, rdd)
+        wordCount4(sc, rdd)
+        wordCount5(sc, rdd)
+        wordCount6(sc, rdd)
+        wordCount7(sc, rdd)
+        wordCount8(sc, rdd)
         // 停止
         sc.stop()
     }
