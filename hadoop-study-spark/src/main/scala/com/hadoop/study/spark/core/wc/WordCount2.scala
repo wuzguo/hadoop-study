@@ -16,12 +16,10 @@ import scala.collection.mutable
 object WordCount2 {
 
     def main(args: Array[String]): Unit = {
-
         val sparConf = new SparkConf().setMaster("local").setAppName("WordCount")
         val sc = new SparkContext(sparConf)
 
         wordcount0(sc)
-
         sc.stop()
     }
 
