@@ -151,8 +151,6 @@ bin/spark submit class <main class> master <master url>
 | application-jar           | 打包好的应用jar，包含依赖。这个URL在集群中全局可见。 比如hdfs:// 共享存储系统，如果是file:// path，那么所有的节点的path都包含同样的jar。 | ...                                          |
 | application arguments     | 传给 main() 方法的参数。                                     |                                              |
 
-
-
 ##### Spark shell
 
 ```shell

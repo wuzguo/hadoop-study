@@ -20,14 +20,13 @@ object WordCount2 {
         val sparConf = new SparkConf().setMaster("local").setAppName("WordCount")
         val sc = new SparkContext(sparConf)
 
-        wordcount91011(sc)
+        wordcount0(sc)
 
         sc.stop()
-
     }
 
     // reduce, aggregate, fold
-    def wordcount91011(sc: SparkContext): Unit = {
+    def wordcount0(sc: SparkContext): Unit = {
         val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
         val words = rdd.flatMap(_.split(" "))
 
@@ -42,10 +41,9 @@ object WordCount2 {
         val wordCount = mapWord.reduce(
             (map1, map2) => {
                 map2.foreach {
-                    case (word, count) => {
+                    case (word, count) =>
                         val newCount = map1.getOrElse(word, 0L) + count
                         map1.update(word, newCount)
-                    }
                 }
                 map1
             }
@@ -122,5 +120,4 @@ object WordCount2 {
         val words = rdd.flatMap(_.split(" "))
         val wordCount: collection.Map[String, Long] = words.countByValue()
     }
-
 }
