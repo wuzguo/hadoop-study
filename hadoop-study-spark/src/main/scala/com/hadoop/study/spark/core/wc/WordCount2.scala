@@ -19,12 +19,12 @@ object WordCount2 {
         val sparConf = new SparkConf().setMaster("local").setAppName("WordCount")
         val sc = new SparkContext(sparConf)
 
-        wordcount0(sc)
+        wordCount0(sc)
         sc.stop()
     }
 
     // reduce, aggregate, fold
-    def wordcount0(sc: SparkContext): Unit = {
+    def wordCount0(sc: SparkContext): Unit = {
         val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
         val words = rdd.flatMap(_.split(" "))
 
@@ -51,49 +51,53 @@ object WordCount2 {
     }
 
     // groupBy
-    def wordcount1(sc: SparkContext): Unit = {
-
+    def wordCount1(sc: SparkContext): Unit = {
         val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
         val words = rdd.flatMap(_.split(" "))
         val group: RDD[(String, Iterable[String])] = words.groupBy(word => word)
         val wordCount: RDD[(String, Int)] = group.mapValues(iter => iter.size)
+        println(wordCount)
     }
 
     // groupByKey
-    def wordcount2(sc: SparkContext): Unit = {
+    def wordCount2(sc: SparkContext): Unit = {
         val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
         val words = rdd.flatMap(_.split(" "))
         val wordOne = words.map((_, 1))
         val group: RDD[(String, Iterable[Int])] = wordOne.groupByKey()
         val wordCount: RDD[(String, Int)] = group.mapValues(iter => iter.size)
+        println(wordCount)
     }
 
     // reduceByKey
-    def wordcount3(sc: SparkContext): Unit = {
+    def wordCount3(sc: SparkContext): Unit = {
         val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
         val words = rdd.flatMap(_.split(" "))
         val wordOne = words.map((_, 1))
         val wordCount: RDD[(String, Int)] = wordOne.reduceByKey(_ + _)
+        println(wordCount)
     }
 
     // aggregateByKey
-    def wordcount4(sc: SparkContext): Unit = {
+    def wordCount4(sc: SparkContext): Unit = {
         val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
         val words = rdd.flatMap(_.split(" "))
         val wordOne = words.map((_, 1))
         val wordCount: RDD[(String, Int)] = wordOne.aggregateByKey(0)(_ + _, _ + _)
+        println(wordCount)
     }
 
     // foldByKey
-    def wordcount5(sc: SparkContext): Unit = {
+    def wordCount5(sc: SparkContext): Unit = {
         val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
         val words = rdd.flatMap(_.split(" "))
         val wordOne = words.map((_, 1))
         val wordCount: RDD[(String, Int)] = wordOne.foldByKey(0)(_ + _)
+        println(wordCount)
     }
 
     // combineByKey
-    def wordcount6(sc: SparkContext): Unit = {
+    def wordCount6(sc: SparkContext): Unit = {
         val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
         val words = rdd.flatMap(_.split(" "))
         val wordOne = words.map((_, 1))
@@ -102,20 +106,23 @@ object WordCount2 {
             (x: Int, y) => x + y,
             (x: Int, y: Int) => x + y
         )
+        println(wordCount)
     }
 
     // countByKey
-    def wordcount7(sc: SparkContext): Unit = {
+    def wordCount7(sc: SparkContext): Unit = {
         val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
         val words = rdd.flatMap(_.split(" "))
         val wordOne = words.map((_, 1))
         val wordCount: collection.Map[String, Long] = wordOne.countByKey()
+        println(wordCount)
     }
 
     // countByValue
-    def wordcount8(sc: SparkContext): Unit = {
+    def wordCount8(sc: SparkContext): Unit = {
         val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
         val words = rdd.flatMap(_.split(" "))
         val wordCount: collection.Map[String, Long] = words.countByValue()
+        println(wordCount)
     }
 }
