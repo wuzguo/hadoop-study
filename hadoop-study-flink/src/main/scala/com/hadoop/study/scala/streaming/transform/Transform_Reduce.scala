@@ -33,7 +33,6 @@ object Transform_Reduce {
         val keyStream = sensorStream.keyBy(_.id)
         // 取最大的
         val reduceStream = keyStream.reduce(new ReduceFunction[Sensor] {
-
             override def reduce(value1: Sensor, value2: Sensor): Sensor = {
                 Sensor(value1.id, value2.timestamp, Math.max(value1.temp, value2.temp))
             }
