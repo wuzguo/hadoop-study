@@ -25,10 +25,8 @@ object Window_Time {
     def main(args: Array[String]): Unit = {
         // 1. 获取环境配置
         val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
-
         // 2. 从Socket读取文件
         val dss: DataStream[String] = env.readTextFile("./hadoop-study-datas/flink/core/sensor.txt")
-
         // 3. 转换成Sensor类型，分配时间戳和watermark
         val dataStream: DataStream[Sensor] = dss.map(line => {
             val values = line.split(",")
@@ -40,14 +38,12 @@ object Window_Time {
               }))
 
         // WatermarkStrategy.forBoundedOutOfOrderness[Sensor](Duration.ofSeconds(1))
-
         val sensors: DataStream[Integer] = dataStream.keyBy(_.id)
           // 滚动窗口15秒
           .window(TumblingEventTimeWindows.of(Time.seconds(15)))
           .aggregate(new IncrementFunction)
 
         sensors.print("incr")
-
 
         // 4. 全窗口函数
         val allStream: DataStream[(String, Long, Integer)] = dataStream.keyBy(_.id)
@@ -67,7 +63,7 @@ object Window_Time {
         sumStream.getSideOutput(output).print("late");
 
         sumStream.print("sum")
-
+        // 执行
         env.execute("Streaming Time Window")
     }
 
@@ -77,7 +73,6 @@ object Window_Time {
             out.collect((key, windowEnd, input.toList.size))
         }
     }
-
 
     // 自定义 增量聚合函数
     class IncrementFunction extends AggregateFunction[Sensor, Integer, Integer] {
