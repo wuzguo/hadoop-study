@@ -17,7 +17,7 @@
 
 #### 7.2 EventTime 引入
 
-在Flink 的流式处理中，绝大部分的业务都会使用 eventTime ，一般只在 eventTime 无法使用时，才会被迫使用 ProcessingTime 或者 Ing estionTime 。
+在Flink 的流式处理中，绝大部分的业务都会使用 eventTime ，一般只在 eventTime 无法使用时，才会被迫使用 ProcessingTime 或者 Ingestion Time 。
 
 在 Flink 1.12 以后，默认流时间特性已更改为EventTime，因此您不需要为不再启用事件时间支持。
 

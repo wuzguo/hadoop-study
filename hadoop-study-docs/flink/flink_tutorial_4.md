@@ -164,7 +164,7 @@ stream
       [.evictor(...)]            <-  optional: "evictor" (else no evictor)
       [.allowedLateness(...)]    <-  optional: "lateness" (else zero)
       [.sideOutputLateData(...)] <-  optional: "output tag" (else no side output for late data)
-       .reduce/aggregate/apply()      <-  required: "function"
+       .reduce/aggregate/apply() <-  required: "function"
       [.getSideOutput(...)]      <-  optional: "output tag"
 ```
 
@@ -177,7 +177,7 @@ stream
       [.evictor(...)]            <-  optional: "evictor" (else no evictor)
       [.allowedLateness(...)]    <-  optional: "lateness" (else zero)
       [.sideOutputLateData(...)] <-  optional: "output tag" (else no side output for late data)
-       .reduce/aggregate/apply()      <-  required: "function"
+       .reduce/aggregate/apply() <-  required: "function"
       [.getSideOutput(...)]      <-  optional: "output tag"
 ```
 
