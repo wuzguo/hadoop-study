@@ -22,7 +22,7 @@ object Window_Count {
         // 2. 从Socket读取文件
         val dss: DataStream[String] = env.readTextFile("./hadoop-study-datas/flink/core/sensor.txt")
 
-        // 3. 转换成Sensor类型，分配时间戳和watermark
+        // 3. 转换成Sensor类型，CountWindow 跟时间无关
         val sensors = dss.map(line => {
             val values = line.split(",")
             Sensor(values(0), values(1).trim.toLong, values(2).trim.toDouble)
