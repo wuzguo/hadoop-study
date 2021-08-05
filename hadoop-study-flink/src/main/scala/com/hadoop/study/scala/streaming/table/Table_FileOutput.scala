@@ -35,7 +35,7 @@ object Table_FileOutput {
           .createTemporaryTable("sensors")
 
         val sensorTable = tableEnv.from("sensors")
-        sensorTable.printSchema()
+        // sensorTable.printSchema()
         // sensorTable.toAppendStream[Row].print()
 
         // 3. 查询转换
