@@ -37,6 +37,7 @@ object Process_ApplicationCase {
           .process(new TempIncrWarningProcessFunction(10))
           .print()
 
+        // 执行
         env.execute("Streaming Process Application")
     }
 

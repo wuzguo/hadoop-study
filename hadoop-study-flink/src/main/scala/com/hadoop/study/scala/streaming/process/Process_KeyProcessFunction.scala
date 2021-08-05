@@ -34,7 +34,7 @@ object Process_KeyProcessFunction {
 
         // 测试KeyedProcessFunction，先分组然后自定义处理
         sensorStream.keyBy(_.id).process(new CustomProcessFunction).print()
-
+        // 执行
         env.execute("Streaming Process KeyProcessFunction")
     }
 
