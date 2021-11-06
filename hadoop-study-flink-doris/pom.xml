@@ -15,9 +15,21 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <scala.version>2.12</scala.version>
-        <flink.version>1.12.4</flink.version>
-        <doris.flink.version>1.0-SNAPSHOT</doris.flink.version>
+        <flink.version>1.13.2</flink.version>
+        <doris.version>1.0-SNAPSHOT</doris.version>
+        <dorisdb.version>1.0.32_1.13-SNAPSHOT</dorisdb.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>dorisdb-maven-releases</id>
+            <url>http://dorisdbvisitor:dorisdbvisitor134@nexus.dorisdb.com/repository/maven-releases/</url>
+        </repository>
+        <repository>
+            <id>dorisdb-maven-snapshots</id>
+            <url>http://dorisdbvisitor:dorisdbvisitor134@nexus.dorisdb.com/repository/maven-snapshots/</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -60,7 +72,12 @@
         <dependency>
             <groupId>org.apache</groupId>
             <artifactId>doris-flink</artifactId>
-            <version>${doris.flink.version}</version>
+            <version>${doris.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dorisdb.connector</groupId>
+            <artifactId>flink-connector-doris</artifactId>
+            <version>${dorisdb.version}</version>  <!-- for flink-1.13 -->
         </dependency>
     </dependencies>
 </project>
