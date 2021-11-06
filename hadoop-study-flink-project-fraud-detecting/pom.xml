@@ -14,6 +14,7 @@
     <modules>
         <module>fraud-detecting-app</module>
         <module>fraud-detecting-job</module>
+        <module>fraud-detecting-common</module>
     </modules>
 
     <properties>
