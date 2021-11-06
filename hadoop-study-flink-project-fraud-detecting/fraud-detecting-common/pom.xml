@@ -22,6 +22,8 @@
         <scala.version>2.12.10</scala.version>
     </properties>
 
+    <!--Common 包放在 Flink/lib 目录下，其他应用层依赖此jar包即可-->
+    <!--注意：执行 mvn install命令，取本地Maven仓库的包-->
     <dependencies>
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -136,8 +138,7 @@
                                 </filter>
                             </filters>
                             <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass></mainClass>
                                 </transformer>
                             </transformers>
